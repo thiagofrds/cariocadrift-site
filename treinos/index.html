@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Treinos | Carioca Drift</title>
 <meta name="description" content="Agenda dos treinos de drift da Carioca Drift no Rio de Janeiro. Ficha completa, como chegar e confirmação de presença.">
-<meta name="theme-color" content="#1B1A1F">
+<meta name="theme-color" content="#0B0B0B">
 <link rel="canonical" href="https://cariocadrift.com.br/treinos/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
@@ -17,67 +17,68 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
-<link rel="apple-touch-icon" href="/assets/logo.jpg">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@0,700;0,800;1,900&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/cd.js"></script>
 </head>
 <body>
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-<div class="barra-contagem" id="barraContagem" hidden></div>
-<header class="nav" id="topo">
+<header class="top" id="topo">
   <div class="wrap">
-    <a class="marca" href="/" aria-label="Carioca Drift, início">
-      <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
-      <span class="nome"><b>Carioca Drift</b><span class="tagline">More than drift. It's a culture.</span></span>
-    </a>
-    <nav class="nav-desktop" aria-label="Principal">
-      <ul class="menu">
+    <span class="rotulo-top" aria-hidden="true">Carioca Drift Culture</span>
+    <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
+    <nav aria-label="Principal">
+      <ul>
         <li><a href="/" >Home</a></li>
         <li><a href="/treinos/" aria-current="page">Treinos</a></li>
+        <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+        <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
         <li><a href="/escolinha/" >Escolinha</a></li>
         <li><a href="/sobre/" >Sobre</a></li>
       </ul>
     </nav>
-    <a class="btn btn-fogo btn-nav" id="navCta" href="/treinos/">Próximo treino</a>
-    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
+    <a class="cta" id="navCta" href="/treinos/">Próximo treino</a>
+    <button class="menu-btn" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
   </div>
 </header>
-<div class="menu-mobile" id="menuMobile" hidden>
+<div class="mm" id="menuMobile" hidden>
+  <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
   <nav aria-label="Menu">
     <ul>
       <li><a href="/" >Home</a></li>
       <li><a href="/treinos/" aria-current="page">Treinos</a></li>
+      <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+      <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
       <li><a href="/escolinha/" >Escolinha</a></li>
       <li><a href="/sobre/" >Sobre</a></li>
     </ul>
-    <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
+    <a class="ig" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_ →</a>
   </nav>
 </div>
 <style>
-.agenda{display:grid;gap:16px;padding-block:24px 40px}
-.agenda h2{font-size:clamp(30px,5vw,40px);color:var(--cinza);margin-top:16px}
-.vazio{padding:26px 22px;border:1px dashed var(--borracha);border-radius:10px;color:var(--cinza);display:grid;gap:6px}
-.vazio b{font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;color:var(--fumaca)}
-.evento.passado{opacity:.75}
+.agenda{display:grid;padding-block:24px 40px;border-bottom:1px solid var(--linha-forte)}
+.agenda h2{font-size:clamp(30px,5vw,40px);color:var(--cinza);margin-top:28px;padding-bottom:12px}
+.vazio{padding:26px 0;border-top:1px solid var(--linha-forte);color:var(--cinza);display:grid;gap:6px}
+.vazio b{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;color:var(--gelo)}
+.vazio a{color:var(--amarelo)}
+.evento.passado{opacity:.6}
 .evento.passado .data b{color:var(--cinza)}
-.regras{background:var(--pneu)}
-.regras ul{list-style:none;padding:0;margin-top:22px;display:grid}
-.regras li{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--borracha);align-items:start}
-.regras li:last-child{border-bottom:1px solid var(--borracha)}
-.regras i{width:12px;height:44px;border-radius:2px;background:var(--faisca);display:block;margin-top:2px}
-.regras b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;line-height:1}
-.regras p{color:var(--cinza);margin-top:4px;max-width:60ch}
-@media (min-width:900px){.regras ul{grid-template-columns:1fr 1fr;gap:0 40px}.regras li:nth-last-child(2){border-bottom:1px solid var(--borracha)}}
+.regras{background:var(--grafite)}
+.regras ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:18px}
+.regras li{padding-top:14px;border-top:2px solid var(--amarelo)}
+.regras b{display:block;font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.regras p{color:var(--cinza);margin-top:6px;max-width:40ch;font-size:15px}
+@media (min-width:900px){.regras ul{grid-template-columns:repeat(2,1fr);gap:28px 48px}}
 </style>
 
-<main>
+<main id="conteudo">
 <section class="cabecalho">
   <div class="wrap">
-    <p class="eyebrow">Agenda</p>
+    <span class="rot am">Agenda</span>
     <h1>Treinos</h1>
     <p class="prosa">Os treinos abertos da Carioca Drift. Ficha completa, como chegar e confirmação de presença em cada um.</p>
   </div>
@@ -89,13 +90,15 @@
 
 <section class="secao regras">
   <div class="wrap">
-    <p class="eyebrow">Antes de ir</p>
+    <span class="rot am">Antes de ir</span>
     <h2>Como funciona</h2>
     <ul>
-      <li><i></i><div><b>Aberto a todo mundo</b><p>Vem de carro, de carona ou só pra assistir. Família e amigos são bem-vindos.</p></div></li>
-      <li><i></i><div><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></div></li>
-      <li><i></i><div><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></div></li>
-      <li><i></i><div><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></div></li>
+      <li><b>Aberto a todo mundo</b><p>Vem de carro, de carona ou só pra assistir. Família e amigos são bem-vindos.</p></li>
+      <li><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></li>
+      <li><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></li>
+      <li><b>Pista para convidados</b><p>A participação na pista é exclusiva para pilotos convidados. Não há inscrição pública.</p></li>
+      <li><b>Caronas pagas</b><p>Valores e disponibilidade ainda não divulgados. Consulte a organização no direct.</p></li>
+      <li><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></li>
     </ul>
   </div>
 </section>
@@ -120,14 +123,11 @@
   }
 })();
 </script>
-<div class="zebra" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
-    <div class="rodape-marca">
-      <a class="marca" href="/">
-        <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
-        <span class="nome"><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
-      </a>
+    <div class="marca-rodape">
+      <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254" loading="lazy"></a>
+      <b>Carioca Drift Culture<small>More than drift. It's a culture.</small></b>
       <p>Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift e a cena carioca crescendo junto.</p>
     </div>
     <nav aria-label="Rodapé">
@@ -148,7 +148,7 @@
       </ul>
     </div>
     <div class="rodape-base">
-      <span>© 2026 Carioca Drift · Rio de Janeiro</span>
+      <span>© 2026 Carioca Drift Culture · Rio de Janeiro · Fotografias: Sergio Photos RJ</span>
       <a href="/admin/">Painel</a>
     </div>
   </div>

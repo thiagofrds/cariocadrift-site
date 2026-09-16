@@ -14,7 +14,7 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
   // ---------- Visitante ----------
   for (const [nome, vp, mobile] of [['375', { width: 375, height: 812 }, true], ['390', { width: 390, height: 844 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
     const ctx = await novo(vp, mobile); const p = await ctx.newPage();
-    const erros = []; p.on('console', m => { if (m.type() === 'error') erros.push(m.text()); }); p.on('pageerror', e => erros.push(e.message));
+    const erros = []; p.on('pageerror', e => erros.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/status of 409/.test(m.text())) erros.push(m.text()); }); p.on('response', r => { if (r.status() >= 400 && r.status() !== 409) erros.push(`HTTP ${r.status()} ${r.url()}`); });
     await p.goto(base + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
     // 1. identificar o próximo treino
     const card = await p.locator('#destaque').textContent();
@@ -24,8 +24,12 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
     /pilotos convidados/i.test(card) ? ok(`[${nome}] pista só pra convidados visível`) : falha(`[${nome}] regra de pilotos ausente`);
     /Caronas pagas/.test(card) ? ok(`[${nome}] caronas pagas visível`) : falha(`[${nome}] caronas pagas ausente`);
     // 2. ir pro evento pelo botão do card
-    await p.locator('#destaque a.btn-linha').click(); await p.waitForURL(/\/treinos\/open-drift-session\//).catch(() => {});
-    // servidor local não tem a rota bonita; abrir a versão com query
+    // E.2: no mobile só "Confirmar presença" fica visível; no desktop existe também "Ver o treino"
+    const linkVisivel = p.locator('#destaque a.btn').filter({ visible: true }).first();
+    (await linkVisivel.getAttribute('href')).startsWith('/treinos/open-drift-session/') ? ok(`[${nome}] botão visível do card leva ao evento`) : falha(`[${nome}] botão do card leva a ${await linkVisivel.getAttribute('href')}`);
+    await linkVisivel.click(); await p.waitForURL(/\/treinos\/open-drift-session\//).catch(() => {}); await p.waitForTimeout(1200);
+    (await p.locator('#treino').isVisible().catch(() => false)) ? ok(`[${nome}] página estática /treinos/open-drift-session/ renderiza o evento`) : falha(`[${nome}] página estática do evento não renderizou`);
+    // versão com query (mesma página, usada pelo restante do roteiro)
     await p.goto(base + '/treinos/evento/?t=open-drift-session', { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
     (await p.locator('.participar .bloco.caronas .btn').getAttribute('href')).includes('instagram.com/cariocadrift_') ? ok(`[${nome}] "Consultar caronas" leva ao Instagram`) : falha(`[${nome}] botão de caronas errado`);
     // 3. confirmar interesse com telefone de teste
@@ -46,7 +50,18 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
     // 5. validação vazia
     await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(1000); await p.click('#enviar'); await p.waitForTimeout(300);
     (await p.locator('#erroNome').textContent()).length && (await p.locator('#erroTel').textContent()).length ? ok(`[${nome}] validação de campos vazios`) : falha(`[${nome}] validação vazia não aparece`);
-    if (erros.length) falha(`[${nome}] erros de console: ${erros.join(' | ')}`); else ok(`[${nome}] sem erros de console`);
+    // 6. escolinha: formulário com pacote grava
+    if (nome === 'desktop') {
+      await p.goto(base + '/escolinha/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+      await p.click('[data-pacote="curso-chevette"]'); await p.waitForTimeout(300);
+      (await p.inputValue('#pacote')) === 'curso-chevette' ? ok('escolinha: botão do pacote pré-seleciona a opção') : falha('escolinha: pré-seleção do pacote falhou');
+      await p.fill('#nome', 'TESTE QA escolinha'); await p.fill('#tel', '21900000204'); await p.fill('#msg', 'Registro de teste do QA. Apagar.');
+      await p.click('#enviar'); await p.waitForTimeout(2500);
+      /na lista/i.test(await p.locator('#okTitulo').textContent()) && (await p.locator('#ok').evaluate(e => getComputedStyle(e).display)) === 'block' ? ok('escolinha: interesse gravado e confirmação exibida') : falha('escolinha: envio não concluiu');
+      const q = await p.request.get('https://trkwfwvqzfvscqwwldpv.supabase.co/rest/v1/interessados_escolinha?select=nome&nome=eq.TESTE%20QA%20escolinha', { headers: { apikey: 'sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm' } });
+      q.status() === 200 && (await q.json()).length === 0 ? ok('escolinha: anon não lê a tabela de interessados (RLS)') : falha('escolinha: leitura anônima devolveu ' + q.status());
+    }
+    if (erros.length) falha(`[${nome}] erros de console/rede: ${erros.join(' | ')}`); else ok(`[${nome}] sem erros de console nem respostas de erro`);
     await ctx.close();
   }
 
@@ -55,7 +70,7 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
   if (!email || !senha) { R.pendente.push('painel: sem conta de teste'); }
   else {
     const ctx = await novo({ width: 1440, height: 900 }, false); const p = await ctx.newPage();
-    const erros = []; p.on('console', m => { if (m.type() === 'error') erros.push(m.text()); }); p.on('pageerror', e => erros.push(e.message));
+    const erros = []; p.on('pageerror', e => erros.push(e.message)); p.on('console', m => { if (m.type() === 'error') erros.push(m.text()); }); p.on('response', r => { if (r.status() >= 400) erros.push(`HTTP ${r.status()} ${r.url()}`); });
     await p.goto(base + '/admin/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
     await p.fill('#email', 'naoexiste@cariocadrift.com.br'); await p.fill('#senha', 'senha-errada-qa'); await p.click('#entrar'); await p.waitForTimeout(1500);
     /incorretos/.test(await p.locator('#erroLogin').textContent()) ? ok('painel: login errado mostra mensagem') : falha('painel: login errado sem mensagem');

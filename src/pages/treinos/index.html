@@ -5,26 +5,25 @@ og_title: Treinos · Carioca Drift
 nav: treinos
 ---
 <style>
-.agenda{display:grid;gap:16px;padding-block:24px 40px}
-.agenda h2{font-size:clamp(30px,5vw,40px);color:var(--cinza);margin-top:16px}
-.vazio{padding:26px 22px;border:1px dashed var(--borracha);border-radius:10px;color:var(--cinza);display:grid;gap:6px}
-.vazio b{font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;color:var(--fumaca)}
-.evento.passado{opacity:.75}
+.agenda{display:grid;padding-block:24px 40px;border-bottom:1px solid var(--linha-forte)}
+.agenda h2{font-size:clamp(30px,5vw,40px);color:var(--cinza);margin-top:28px;padding-bottom:12px}
+.vazio{padding:26px 0;border-top:1px solid var(--linha-forte);color:var(--cinza);display:grid;gap:6px}
+.vazio b{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;color:var(--gelo)}
+.vazio a{color:var(--amarelo)}
+.evento.passado{opacity:.6}
 .evento.passado .data b{color:var(--cinza)}
-.regras{background:var(--pneu)}
-.regras ul{list-style:none;padding:0;margin-top:22px;display:grid}
-.regras li{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--borracha);align-items:start}
-.regras li:last-child{border-bottom:1px solid var(--borracha)}
-.regras i{width:12px;height:44px;border-radius:2px;background:var(--faisca);display:block;margin-top:2px}
-.regras b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;line-height:1}
-.regras p{color:var(--cinza);margin-top:4px;max-width:60ch}
-@media (min-width:900px){.regras ul{grid-template-columns:1fr 1fr;gap:0 40px}.regras li:nth-last-child(2){border-bottom:1px solid var(--borracha)}}
+.regras{background:var(--grafite)}
+.regras ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:18px}
+.regras li{padding-top:14px;border-top:2px solid var(--amarelo)}
+.regras b{display:block;font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.regras p{color:var(--cinza);margin-top:6px;max-width:40ch;font-size:15px}
+@media (min-width:900px){.regras ul{grid-template-columns:repeat(2,1fr);gap:28px 48px}}
 </style>
 
-<main>
+<main id="conteudo">
 <section class="cabecalho">
   <div class="wrap">
-    <p class="eyebrow">Agenda</p>
+    <span class="rot am">Agenda</span>
     <h1>Treinos</h1>
     <p class="prosa">Os treinos abertos da Carioca Drift. Ficha completa, como chegar e confirmação de presença em cada um.</p>
   </div>
@@ -36,13 +35,15 @@ nav: treinos
 
 <section class="secao regras">
   <div class="wrap">
-    <p class="eyebrow">Antes de ir</p>
+    <span class="rot am">Antes de ir</span>
     <h2>Como funciona</h2>
     <ul>
-      <li><i></i><div><b>Aberto a todo mundo</b><p>Vem de carro, de carona ou só pra assistir. Família e amigos são bem-vindos.</p></div></li>
-      <li><i></i><div><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></div></li>
-      <li><i></i><div><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></div></li>
-      <li><i></i><div><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></div></li>
+      <li><b>Aberto a todo mundo</b><p>Vem de carro, de carona ou só pra assistir. Família e amigos são bem-vindos.</p></li>
+      <li><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></li>
+      <li><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></li>
+      <li><b>Pista para convidados</b><p>A participação na pista é exclusiva para pilotos convidados. Não há inscrição pública.</p></li>
+      <li><b>Caronas pagas</b><p>Valores e disponibilidade ainda não divulgados. Consulte a organização no direct.</p></li>
+      <li><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></li>
     </ul>
   </div>
 </section>

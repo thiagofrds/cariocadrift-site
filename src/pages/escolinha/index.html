@@ -5,106 +5,104 @@ og_title: Escolinha de Drift com Fabinho Drift Show
 nav: escolinha
 ---
 <style>
-.capa{position:relative;isolation:isolate;padding:56px 0 48px;overflow:hidden;background:var(--pneu)}
-.capa::before{content:"";position:absolute;inset:auto 0 0;height:14px;background:repeating-linear-gradient(135deg,var(--faisca) 0 20px,var(--asfalto) 20px 40px);opacity:.9}
-.capa h1{font-size:clamp(56px,13vw,140px);line-height:.85}
-.capa h1 small{display:block;font-size:.42em;color:var(--faisca);letter-spacing:.01em;margin-top:.1em}
+.capa{padding:40px 0 48px;border-bottom:1px solid var(--linha)}
+.capa h1{font-size:clamp(52px,12vw,120px);line-height:.85}
+.capa h1 small{display:block;font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.2em;color:var(--amarelo);margin-top:14px}
 .capa .prosa{margin-top:16px}
 .capa .acoes{margin-top:26px}
-.capa .destaques{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
-.capa .destaques span{font-family:var(--rotulo);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--borracha);background:var(--asfalto);color:var(--fumaca)}
-@media (min-width:900px){.capa{padding:88px 0 80px}}
+.capa .destaques{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:22px}
+.capa .destaques span{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)}
+.capa .destaques span::before{content:"";display:inline-block;width:8px;height:8px;background:var(--amarelo);margin-right:8px;transform:skewX(-14deg)}
+@media (min-width:900px){.capa{padding:72px 0 72px}}
 
 /* pacotes */
 .pacotes{padding-block:56px 24px}
-.pacotes .grade{display:grid;gap:16px;margin-top:26px}
-.pacote{display:grid;gap:16px;align-content:start;padding:24px 22px 26px;border-radius:12px;background:var(--pneu);border:1px solid var(--borracha);position:relative;overflow:hidden}
-.pacote.curso{border-color:var(--faisca)}
-.pacote .faixa{position:absolute;inset:0 0 auto;height:6px;background:var(--borracha)}
-.pacote.curso .faixa{background:repeating-linear-gradient(90deg,var(--faisca) 0 28px,var(--asfalto) 28px 56px)}
-.pacote .topo{display:grid;gap:4px}
-.pacote .tag{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
-.pacote h3{font-size:clamp(34px,6vw,46px)}
-.pacote .resumo{color:var(--cinza)}
+.pacotes .grade{display:grid;gap:36px;margin-top:26px}
+.pacote{display:grid;gap:16px;align-content:start;padding-top:16px;border-top:2px solid var(--linha-forte)}
+.pacote.curso{border-top-color:var(--amarelo)}
+.pacote .faixa{display:none}
+.pacote .topo{display:grid;gap:6px}
+.pacote .tag{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--vermelho)}
+.pacote h3{font-size:clamp(32px,5vw,44px)}
+.pacote .resumo{color:var(--cinza);font-size:15px;max-width:44ch}
 .preco{display:grid;gap:2px}
-.preco b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(44px,8vw,60px);line-height:1;color:var(--faisca);font-variant-numeric:tabular-nums}
-.preco small{font-family:var(--rotulo);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+.preco b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(44px,8vw,60px);line-height:1;color:var(--amarelo);font-variant-numeric:tabular-nums}
+.preco small{font-family:var(--ui);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)}
 .precos{display:grid;gap:10px}
-.precos .opcao{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--raio);background:var(--asfalto);border:1px solid var(--borracha)}
-.precos .opcao b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;line-height:1;text-transform:uppercase}
+.precos .opcao{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--linha)}
+.precos .opcao b{display:block;font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
 .precos .opcao span{display:block;color:var(--cinza);font-size:14px;margin-top:2px}
-.precos .opcao .v{font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;color:var(--faisca);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.precos .opcao .v{font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;color:var(--amarelo);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
 .inclui{list-style:none;padding:0;display:grid;gap:8px}
-.inclui li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:16px}
-.inclui li::before{content:"";width:22px;height:22px;border-radius:50%;background:var(--faisca) center/12px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B1A1F' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12l5 5L20 6'/%3E%3C/svg%3E");margin-top:1px}
-.inclui b{color:var(--fumaca)}
+.inclui li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start;font-size:15px}
+.inclui li::before{content:"";width:10px;height:10px;background:var(--amarelo);transform:skewX(-14deg);margin-top:7px}
+.inclui b{color:var(--gelo)}
 .inclui span{color:var(--cinza)}
-.pacote .nota-p{font-size:14px;color:var(--cinza);padding-top:12px;border-top:1px solid var(--borracha)}
+.pacote .nota-p{font-size:14px;color:var(--cinza);padding-top:12px;border-top:1px solid var(--linha)}
 .pacote .btn{justify-self:start}
-.pagamento{display:flex;align-items:center;gap:14px;margin-top:16px;padding:16px 18px;border-radius:10px;background:var(--asfalto);border:1px dashed var(--borracha);color:var(--cinza)}
-.pagamento b{color:var(--fumaca)}
-.pagamento i{font-style:normal;width:40px;height:40px;border-radius:var(--raio);background:var(--pneu);display:grid;place-items:center;color:var(--faisca);flex:none}
+.pagamento{display:flex;align-items:center;gap:14px;margin-top:28px;padding:14px 0;border-top:1px solid var(--linha-forte);border-bottom:1px solid var(--linha-forte);color:var(--cinza);font-size:15px}
+.pagamento b{color:var(--gelo)}
+.pagamento i{font-style:normal;width:40px;height:40px;background:var(--amarelo);display:grid;place-items:center;color:var(--preto);flex:none}
 .pagamento svg{width:20px;height:20px}
-@media (min-width:900px){.pacotes .grade{grid-template-columns:1fr 1.15fr;gap:24px;align-items:start}.pacote{padding:30px 30px 32px}}
+@media (min-width:900px){.pacotes .grade{grid-template-columns:1fr 1.15fr;gap:56px;align-items:start}}
 
 /* formato do curso */
-.formato{background:var(--pneu)}
-.formato .grade{display:grid;gap:12px;margin-top:22px}
-.formato .card{padding:20px;border-radius:10px;background:var(--asfalto);border:1px solid var(--borracha);border-top:4px solid var(--faisca);display:grid;gap:6px;align-content:start}
-.formato .card b{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;text-transform:uppercase}
-.formato .card span{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--faisca)}
-.formato .card p{color:var(--cinza);font-size:16px}
-@media (min-width:900px){.formato .grade{grid-template-columns:repeat(3,1fr);gap:20px}}
+.formato{background:var(--grafite)}
+.formato .grade{display:grid;gap:18px;margin-top:22px}
+.formato .card{padding-top:14px;border-top:2px solid var(--amarelo);display:grid;gap:6px;align-content:start}
+.formato .card b{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase}
+.formato .card span{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.formato .card p{color:var(--cinza);font-size:15px;max-width:34ch}
+@media (min-width:900px){.formato .grade{grid-template-columns:repeat(3,1fr);gap:40px}}
 
 /* carros */
 .carros{padding-block:56px 24px}
-.carros .grade{display:grid;gap:12px;margin-top:22px}
-.carro{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:20px;border-radius:10px;background:var(--pneu);border:1px solid var(--borracha)}
-.carro .cor{width:56px;height:56px;border-radius:var(--raio);display:grid;place-items:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;color:var(--asfalto)}
-.carro b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1;text-transform:uppercase}
-.carro p{color:var(--cinza);font-size:15px;margin-top:4px}
-@media (min-width:900px){.carros .grade{grid-template-columns:1fr 1fr;gap:20px}}
+.carros .grade{display:grid;gap:18px;margin-top:22px}
+.carro{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding-top:14px;border-top:1px solid var(--linha-forte)}
+.carro .cor{width:56px;height:56px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;color:var(--preto)}
+.carro b{display:block;font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase}
+.carro p{color:var(--cinza);font-size:15px;margin-top:6px;max-width:40ch}
+@media (min-width:900px){.carros .grade{grid-template-columns:1fr 1fr;gap:40px}}
 
 /* como funciona */
-.como{padding-block:24px 40px}
-.como ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:12px}
-.como li{padding:20px;border-radius:10px;background:var(--pneu);border:1px solid var(--borracha);border-left:5px solid var(--faisca)}
-.como b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;line-height:1}
-.como p{color:var(--cinza);margin-top:6px}
-@media (min-width:900px){.como ul{grid-template-columns:repeat(3,1fr);gap:20px}}
+.como{padding-block:24px 56px}
+.como ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:18px}
+.como li{padding-top:14px;border-top:1px solid var(--linha-forte)}
+.como b{display:block;font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.como p{color:var(--cinza);margin-top:6px;font-size:15px;max-width:34ch}
+@media (min-width:900px){.como ul{grid-template-columns:repeat(3,1fr);gap:40px}}
 
 /* interesse */
-.interesse{padding-block:24px 72px}
+.interesse{padding-block:40px 72px;background:var(--grafite)}
 .interesse .chamada{display:none}
-.campo select{width:100%;margin-top:8px;padding:15px 14px;font:500 18px var(--texto);border:2px solid #CFCCC6;border-radius:var(--raio);background:#fff;color:var(--asfalto)}
-.campo select:focus{border-color:var(--asfalto);outline:none}
 @media (min-width:900px){
+  .interesse{padding-block:72px 88px}
   .interesse .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
   .interesse .chamada{display:block}
-  .interesse .chamada h2{font-size:76px}
-  .interesse .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}
+  .interesse .chamada h2{font-size:72px}
+  .interesse .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:18px}
   .cartao{justify-self:end}
 }
 </style>
 
-<main>
+<main id="conteudo">
 <section class="capa">
   <div class="wrap">
-    <p class="eyebrow">Escolinha de Drift</p>
+    <span class="rot am">Escolinha de Drift</span>
     <h1>Aprende com quem vive isso<small>com Fabinho Drift Show</small></h1>
     <p class="prosa">Pista, carro de drift, pneus e combustível inclusos. Você entra no carro com o Fabinho do lado, aprende o básico e vai evoluindo no seu ritmo, do zero até fechar a curva de lado.</p>
     <div class="destaques">
       <span>Carro incluso</span><span>Pneus inclusos</span><span>Instrutor ao lado</span><span>Datas a combinar</span>
     </div>
     <div class="acoes">
-      <a class="btn btn-fogo" href="#interesse">Tenho interesse</a>
+      <a class="btn am" href="#interesse">Tenho interesse</a>
       <a class="btn btn-linha" href="#pacotes">Ver pacotes</a>
     </div>
   </div>
 </section>
 
 <section class="wrap pacotes" id="pacotes">
-  <p class="eyebrow">Pacotes</p>
+  <span class="rot am">Pacotes</span>
   <h2>Dois jeitos de entrar na pista</h2>
   <div class="grade">
 
@@ -135,7 +133,7 @@ nav: escolinha
         <li><div><b>2 pares de pneus novos</b></div></li>
       </ul>
       <p class="nota-p"><b>Formato:</b> em dois dias, das 12h às 18h, ou tudo em um dia só, das 8h às 18h. O dia único rende, mas é bem mais cansativo pro aluno. Datas a combinar.</p>
-      <a class="btn btn-fogo" href="#interesse" data-pacote="curso-chevette">Quero o curso</a>
+      <a class="btn am" href="#interesse" data-pacote="curso-chevette">Quero o curso</a>
     </article>
   </div>
   <div class="pagamento">
@@ -146,7 +144,7 @@ nav: escolinha
 
 <section class="secao formato">
   <div class="wrap">
-    <p class="eyebrow">Curso completo</p>
+    <span class="rot am">Curso completo</span>
     <h2>Como é o curso</h2>
     <div class="grade">
       <div class="card"><span>Formato 1</span><b>Dois dias</b><p>Das 12h às 18h em cada dia. Ritmo bom pra absorver os módulos e descansar entre um e outro.</p></div>
@@ -157,17 +155,17 @@ nav: escolinha
 </section>
 
 <section class="wrap carros">
-  <p class="eyebrow">Os carros</p>
+  <span class="rot am">Os carros</span>
   <h2>Escolhe o seu</h2>
   <div class="grade">
-    <div class="carro"><div class="cor" style="background:var(--faisca)">CH</div><div><b>Chevette amarelo</b><p>Motor aspirado, leve e honesto. É o carro da Experiência e a opção mais em conta do curso: perfeito pra aprender a base sem sustos.</p></div></div>
-    <div class="carro"><div class="cor" style="background:var(--fogo);color:#fff">Z</div><div><b>Nissan Z</b><p>Mais potência e mais resposta. A opção do curso pra quem quer evoluir mais rápido e sentir um carro de drift de verdade.</p></div></div>
+    <div class="carro"><div class="cor" style="background:var(--amarelo)">CH</div><div><b>Chevette amarelo</b><p>Motor aspirado, leve e honesto. É o carro da Experiência e a opção mais em conta do curso: perfeito pra aprender a base sem sustos.</p></div></div>
+    <div class="carro"><div class="cor" style="background:var(--gelo)">Z</div><div><b>Nissan Z</b><p>Mais potência e mais resposta. A opção do curso pra quem quer evoluir mais rápido e sentir um carro de drift de verdade.</p></div></div>
   </div>
 </section>
 <!-- Fotos do Fabinho, dos carros e história da escolinha entram aqui quando o Thiago mandar. -->
 
 <section class="wrap como">
-  <p class="eyebrow">Como funciona</p>
+  <span class="rot am">Como funciona</span>
   <h2>Do interesse à pista</h2>
   <ul>
     <li><b>1. Deixa seu contato</b><p>Nome, WhatsApp e o pacote que te interessa. Leva 10 segundos.</p></li>
@@ -179,7 +177,7 @@ nav: escolinha
 <section class="interesse" id="interesse">
   <div class="wrap">
     <div class="chamada">
-      <p class="eyebrow">Lista de interesse</p>
+      <span class="rot am">Lista de interesse</span>
       <h2>Quer aprender?</h2>
       <p>Deixa seu contato e a gente te chama no WhatsApp pra combinar data, carro e pagamento.</p>
     </div>
@@ -199,7 +197,7 @@ nav: escolinha
             <option value="curso-nissan">Curso completo com o Nissan Z · R$ 8.500</option>
           </select></label>
         <label class="campo" for="msg"><span>Conta um pouco (opcional)</span><textarea id="msg" maxlength="500" placeholder="Já andou de drift? Tem carro? O que quer aprender?"></textarea></label>
-        <button class="btn btn-fogo" id="enviar" type="button">Quero ser chamado</button>
+        <button class="btn am" id="enviar" type="button">Quero ser chamado</button>
         <p class="nota">Seus dados ficam só com a Carioca Drift. Sem spam.</p>
       </div>
       <div class="ok" id="ok">

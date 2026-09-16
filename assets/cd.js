@@ -17,6 +17,8 @@ window.CD = (() => {
     }
   };
   const participacao = slug => PARTICIPACAO[slug] || null;
+  // Arquivos conceituais (renders) que não podem ser exibidos como fotografia real em nenhuma página.
+  const RENDERS_CONCEITUAIS = ["/assets/carro.jpg", "https://cariocadrift.com.br/assets/carro.jpg"];
 
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const paragrafos = s => esc(s).split(/\n{2,}|\n/).filter(Boolean).map(p => `<p>${p}</p>`).join("");
@@ -101,8 +103,21 @@ window.CD = (() => {
       })();
     } catch (e) {}
   }
-  const init = () => { menuMobile(); ctaProximo(); barraProximo(); };
+  // Cabeçalho no mobile: esconde a logo do topo enquanto a logo grande do hero está na tela (evita duas logos na primeira dobra)
+  function topoMarca(){
+    const topo = document.getElementById('topo'), alvo = document.querySelector('[data-marca-hero]'); if (!topo || !alvo) return;
+    new IntersectionObserver(([e]) => topo.classList.toggle('marca-oculta', e.isIntersecting), { threshold: 0 }).observe(alvo);
+  }
+  // Barra fixa inferior (mobile): aparece quando o bloco de ação (data-dock-alvo) sai da tela; some no rodapé
+  function dock(){
+    const el = document.getElementById('dock'), alvo = document.querySelector('[data-dock-alvo]'), rodape = document.querySelector('footer'); if (!el || !alvo) return;
+    let alvoVisivel = true, rodapeVisivel = false;
+    const atualiza = () => el.classList.toggle('on', !alvoVisivel && !rodapeVisivel);
+    new IntersectionObserver(([e]) => { alvoVisivel = e.isIntersecting || e.boundingClientRect.top > 0; atualiza(); }).observe(alvo);
+    if (rodape) new IntersectionObserver(([e]) => { rodapeVisivel = e.isIntersecting; atualiza(); }).observe(rodape);
+  }
+  const init = () => { menuMobile(); ctaProximo(); barraProximo(); topoMarca(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  return { SB_URL, SB_KEY, participacao, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
+  return { SB_URL, SB_KEY, participacao, RENDERS_CONCEITUAIS, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();
