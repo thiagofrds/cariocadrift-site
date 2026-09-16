@@ -36,11 +36,14 @@ grant select, delete on public.interessados_carona to authenticated;
 grant usage on sequence public.interessados_carona_id_seq to anon, authenticated;
 
 -- proteção contra envios abusivos (além do honeypot no formulário e da unicidade por telefone):
--- no máximo 30 registros por 10 minutos no total, e no máximo 3 por telefone por hora
+-- no máximo 60 registros por 10 minutos no total, e no máximo 3 por telefone por hora.
+-- O bloqueio consultivo por transação serializa apenas os inserts desta tabela, por milissegundos, para que a
+-- contagem seja exata mesmo com envios simultâneos: nunca barra a menos, nunca barra a mais do que o limite.
 create or replace function public.limita_envios_carona() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
-  if (select count(*) from public.interessados_carona where criado_em > now() - interval '10 minutes') >= 30 then
+  perform pg_advisory_xact_lock(hashtext('interessados_carona_limite'));
+  if (select count(*) from public.interessados_carona where criado_em > now() - interval '10 minutes') >= 60 then
     raise exception 'limite de envios atingido, tente mais tarde' using errcode = 'P0001';
   end if;
   if (select count(*) from public.interessados_carona where telefone = new.telefone and criado_em > now() - interval '1 hour') >= 3 then
@@ -58,5 +61,5 @@ create trigger interessados_carona_limite before insert on public.interessados_c
 -- 2. mesmo telefone no mesmo treino → 409 (unicidade); telefone com 9 dígitos → 400 (check); consentimento=false → 403/400 (policy/check).
 -- 3. anon update/delete → 0 linhas afetadas (sem policy).
 -- 4. usuário logado que não é admin → select devolve zero linhas; admin → vê e apaga.
--- 5. 4º envio do mesmo telefone em 1 hora → erro do gatilho; 31º envio em 10 minutos → erro do gatilho.
+-- 5. 4º envio do mesmo telefone em 1 hora → erro do gatilho; 61º envio em 10 minutos → erro do gatilho; com 40 envios simultâneos e 50 já na janela, exatamente 10 entram e 30 são barrados.
 -- 6. painel: aba Leads → Carona Radical lista, filtra por treino, pesquisa por nome/telefone, exporta CSV; registro de teste apagado ao final.

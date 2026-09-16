@@ -51,7 +51,7 @@ insert into _resultado select 4, 'admin: apaga o interesse geral', 'ok', _tenta(
 insert into _resultado select 4, 'admin: restou 1', '1', (select count(*)::text from interessados_carona), null;
 select _reset();
 
--- ===== 5. gatilho anti-abuso: 3 por telefone por hora; 30 por 10 minutos no total
+-- ===== 5. gatilho anti-abuso: 3 por telefone por hora; 60 por 10 minutos no total
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 5, '2º e 3º envio do mesmo telefone em treinos diferentes → ok', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-b','Teste Um','21999990001',true),('treino-c','Teste Um','21999990001',true)$$), null;
 insert into _resultado select 5, '4º envio do mesmo telefone em 1 hora → gatilho', 'P0001', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-d','Teste Um','21999990001',true)$$), null;
@@ -61,10 +61,10 @@ insert into interessados_carona (evento,nome,telefone,consentimento,criado_em) s
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 5, 'registros antigos não contam para a janela de 10 min', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Janela','21988880001',true)$$), null;
 select _reset();
-insert into interessados_carona (evento,nome,telefone,consentimento) select 'lote', 'Lote', (21977770000 + g)::text, true from generate_series(1, 30 - (select count(*) from interessados_carona where criado_em > now() - interval '10 minutes')::int) g;
-insert into _resultado select 5, 'janela de 10 min preenchida com exatamente 30', '30', (select count(*)::text from interessados_carona where criado_em > now() - interval '10 minutes'), null;
+insert into interessados_carona (evento,nome,telefone,consentimento) select 'lote', 'Lote', (21977770000 + g)::text, true from generate_series(1, 60 - (select count(*) from interessados_carona where criado_em > now() - interval '10 minutes')::int) g;
+insert into _resultado select 5, 'janela de 10 min preenchida com exatamente 60', '60', (select count(*)::text from interessados_carona where criado_em > now() - interval '10 minutes'), null;
 select _como('anon', '{"role":"anon"}');
-insert into _resultado select 5, 'total na janela = 30: 31º envio → gatilho', 'P0001', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Trinta e um','21966660001',true)$$), null;
+insert into _resultado select 5, 'total na janela = 60: 61º envio → gatilho', 'P0001', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Sessenta e um','21966660001',true)$$), null;
 select _reset();
 insert into _resultado select 5, 'anon não executa a função do gatilho diretamente', '42501', (select _tenta($$select public.limita_envios_carona()$$) from (select _como('anon','{"role":"anon"}')) x), null;
 select _reset();
