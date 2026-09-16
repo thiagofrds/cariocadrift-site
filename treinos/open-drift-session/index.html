@@ -56,7 +56,7 @@
       <li><a href="/escolinha/" >Escolinha</a></li>
       <li><a href="/sobre/" >Sobre</a></li>
     </ul>
-    <a class="ig" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_ →</a>
+    <a class="ig" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture →</a>
   </nav>
 </div>
 <style>
@@ -124,6 +124,18 @@
 .video i svg{width:18px;height:18px;margin-left:2px}
 .video small{display:block;color:var(--cinza);font-weight:400;font-size:14px}
 @media (min-width:900px){.pista .duas{grid-template-columns:1.25fr 1fr;gap:44px;align-items:start}}
+/* ===== VALORES ===== */
+.valores .grade{display:grid;gap:18px;margin-top:26px}
+.valores .v{display:grid;gap:4px;padding-top:12px;border-top:1px solid var(--linha-forte)}
+.valores .v .rot{color:var(--vermelho)}
+.valores .v b{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase}
+.valores .v .preco{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(34px,4.5vw,44px);line-height:1;color:var(--amarelo);font-variant-numeric:tabular-nums;margin-top:4px}
+.valores .v .preco.sc{font-size:clamp(24px,3vw,30px);color:var(--gelo);font-style:normal;font-weight:800}
+.valores .v p{color:var(--cinza);font-size:14px;max-width:30ch}
+.valores .v a{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo);justify-self:start;margin-top:4px}
+.valores .aviso{margin-top:22px;padding-top:12px;border-top:1px solid var(--linha-forte);font-size:14px;color:var(--cinza);max-width:60ch}
+.valores .aviso b{color:var(--gelo);font-weight:600}
+@media (min-width:800px){.valores .grade{grid-template-columns:repeat(4,1fr);gap:32px}}
 /* ===== PARTICIPAR ===== */
 .participar .grade{display:grid;gap:18px;margin-top:26px}
 .participar .bloco{display:grid;gap:8px;align-content:start;padding-top:12px;border-top:1px solid var(--linha-forte)}
@@ -238,12 +250,18 @@ ${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pis
     ${t.reel_url ? `<a class="video" href="${esc(t.reel_url)}" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></i><span>Assista ao vídeo<small>No Instagram da Carioca Drift</small></span></a>` : ""}
   </div></div></div></section>` : ""}
 
+${part && part.valores ? `<section class="secao valores" id="valores"><div class="wrap">
+  <span class="rot am">Valores</span><h2>Quanto custa</h2>
+  <div class="grade">${part.valores.map(v => `<div class="v"><span class="rot">${esc(v.rotulo)}</span><b>${esc(v.nome)}</b><span class="preco${/^R\$/.test(v.valor) ? '' : ' sc'}">${esc(v.valor)}</span><p>${esc(v.nota)}</p>${v.link ? `<a href="${esc(v.link)}">Como funciona →</a>` : ''}</div>`).join('')}</div>
+  <p class="aviso"><b>Ingressos do público vendidos somente no local, no dia.</b> Não há venda online. A pista é exclusiva para pilotos convidados; não há inscrição pública de pilotos.</p>
+</div></section>` : ''}
+
 ${part ? `<section class="secao participar" id="participar"><div class="wrap">
   <span class="rot am">Como participar</span><h2>Público, pilotos e caronas</h2>
   <div class="grade">
     <div class="bloco"><span class="rotulo">Público</span><b>Vem assistir</b><p>${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}${t.entrada_texto ? `: ${esc(t.entrada_texto)}` : '.'}` : ''}</p><p>${esc(part.publico)}</p><div class="acoes"><a class="btn am" href="#confirmar">Confirmar presença</a></div></div>
     <div class="bloco pilotos"><span class="rotulo">Pilotos</span><b>Pista só pra convidados</b><p>${esc(part.pilotos)}</p><p>Não há inscrição pública para pilotos.</p></div>
-    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">Consultar caronas</a></div></div>
+    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="/caronas/">Consultar caronas</a></div></div>
   </div>
   ${t.regra_titulo ? `<div class="seguranca"><b>Segurança</b><span>${esc(t.regra_titulo)}${t.regra_texto ? ` · ${esc(t.regra_texto)}` : ''}</span></div>` : ''}
 </div></section>` : ''}
@@ -361,6 +379,7 @@ ${part ? `<section class="secao participar" id="participar"><div class="wrap">
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/caronas/">Caronas</a></li>
         <li><a href="/escolinha/">Escolinha de Drift</a></li>
         <li><a href="/sobre/">Sobre</a></li>
       </ul>
@@ -368,7 +387,7 @@ ${part ? `<section class="secao participar" id="participar"><div class="wrap">
     <div>
       <span class="rotulo">Contato</span>
       <ul>
-        <li><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></li>
+        <li><a class="insta" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a></li>
         <li>Direct no Instagram pra parcerias e dúvidas</li>
         <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
       </ul>

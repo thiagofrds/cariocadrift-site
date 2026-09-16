@@ -7,7 +7,7 @@ const out = path.join(__dirname, 'e2'); fs.mkdirSync(out, { recursive: true });
 for (const f of fs.readdirSync(out)) if (f.endsWith('.png')) fs.unlinkSync(path.join(out, f));
 const R = { ok: [], falha: [] };
 const ok = m => R.ok.push(m), falha = m => R.falha.push(m);
-const paginas = { home: '/', treinos: '/treinos/', evento: '/treinos/evento/?t=open-drift-session', escolinha: '/escolinha/', sobre: '/sobre/', naoexiste: '/treinos/evento/?t=slug-que-nao-existe' };
+const paginas = { home: '/', treinos: '/treinos/', evento: '/treinos/evento/?t=open-drift-session', escolinha: '/escolinha/', caronas: '/caronas/', sobre: '/sobre/', naoexiste: '/treinos/evento/?t=slug-que-nao-existe' };
 const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390, height: 844 }, true], m375: [{ width: 375, height: 812 }, true], m360: [{ width: 360, height: 640 }, true] };
 
 (async () => {
@@ -15,7 +15,7 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
   for (const [vn, [vp, mobile]] of Object.entries(vps)) {
     for (const [pn, url] of Object.entries(paginas)) {
       if (vn === 'm360' && pn !== 'home' && pn !== 'evento') continue;
-      if (vn === 'm375' && pn === 'naoexiste') continue;
+      if (vn === 'm375' && (pn === 'naoexiste' || pn === 'caronas')) continue;
       const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile });
       const p = await ctx.newPage(); const erros = [];
       p.on('console', m => { if (m.type() === 'error') erros.push(m.text()); }); p.on('pageerror', e => erros.push('pageerror: ' + e.message));
@@ -46,6 +46,31 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         for (const [k, re] of Object.entries({ 'data 20.09': /20\.09/, 'horário 9h às 18h': /9h às 18h/, 'RJ Race Park': /RJ Race Park/, 'Ingressos no local': /Ingressos no local/i, 'pilotos convidados': /pilotos convidados/i, 'Caronas pagas': /Caronas pagas/i, 'Capacete': /Capacete/i, 'Open Drift Session': /Open Drift Session/ }))
           re.test(txt) ? ok(`${tag}: "${k}" presente`) : falha(`${tag}: "${k}" ausente`);
         /Comprar ingresso|checkout|Inscrever/i.test(txt) ? falha(`${tag}: texto de checkout ou inscrição indevido`) : ok(`${tag}: sem checkout nem inscrição pública`);
+      }
+      // refinamentos: instagram novo em todo lugar, sem o antigo; créditos do fotógrafo preservados
+      const html = await p.content();
+      /cariocadrift_[^a-z]/.test(html) ? falha(`${tag}: ainda há @cariocadrift_ antigo`) : ok(`${tag}: sem o Instagram antigo`);
+      const igLinks = await p.evaluate(() => [...document.querySelectorAll('a[href*="instagram.com"]')].map(a => a.getAttribute('href')).filter(h => !/instagram\.com\/(reel|p)\//.test(h)));  // reels/posts do banco (ex.: vídeo da pista) não são o perfil
+      igLinks.length && igLinks.every(h => h === 'https://www.instagram.com/cariocadriftculture/') ? ok(`${tag}: ${igLinks.length} link(s) do Instagram apontam para @cariocadriftculture`) : (igLinks.length ? falha(`${tag}: links do Instagram divergentes: ${[...new Set(igLinks)].join(', ')}`) : ok(`${tag}: sem links de Instagram`));
+      if (pn === 'home') {
+        const mapa = await p.evaluate(() => { const i = document.querySelector('.onde img'); i.scrollIntoView(); return { nat: i.naturalWidth / i.naturalHeight, ren: i.clientWidth / i.clientHeight, fit: getComputedStyle(i).objectFit, cortado: i.clientWidth < i.naturalWidth * 0 }; });
+        Math.abs(mapa.nat - mapa.ren) < 0.01 && mapa.fit !== 'cover' ? ok(`${tag}: mapa inteiro, proporção preservada (${mapa.ren.toFixed(3)} vs ${mapa.nat.toFixed(3)})`) : falha(`${tag}: mapa cortado: ${JSON.stringify(mapa)}`);
+        const esc = await p.locator('.escola').textContent();
+        !/R\$|10x|módulos|Chevette|Nissan/.test(esc) && /estruturação/.test(esc) && /sob consulta/i.test(esc) ? ok(`${tag}: escolinha na home sem preços, com "em estruturação" e "Valores sob consulta"`) : falha(`${tag}: bloco da escolinha na home ainda comercial`);
+        (await p.locator('#participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas não aponta para /caronas/`);
+        const part = await p.locator('#participar').textContent();
+        /R\$ 30/.test(part) && /R\$ 15/.test(part) && /R\$ 80/.test(part) && /sob consulta/i.test(part) && /no local/i.test(part) ? ok(`${tag}: resumo de valores (30/15/80, caronas sob consulta, venda no local)`) : falha(`${tag}: resumo de valores incompleto`);
+        await p.locator('.onde').screenshot({ path: path.join(out, `${tag}-mapa.png`) });
+      }
+      if (pn === 'evento') {
+        const val = await p.locator('#valores').textContent().catch(() => '');
+        /R\$ 30/.test(val) && /R\$ 15/.test(val) && /R\$ 80/.test(val) && /Sob consulta/.test(val) && /somente no local/i.test(val) && /exclusiva para pilotos convidados/i.test(val) && !/por veículo|por pessoa|por período/i.test(val) ? ok(`${tag}: bloco de valores completo, estacionamento sem especificação`) : falha(`${tag}: bloco de valores incompleto`);
+        (await p.locator('.participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas do evento errado`);
+      }
+      if (pn === 'caronas') {
+        const t = await p.locator('main').textContent();
+        /paga/i.test(t) && /disponibilidade/i.test(t) && /confirma/i.test(t) && /direct/i.test(t) && !/R\$/.test(t) && !/garantid[ao] /i.test(t.replace('Não há reserva garantida','')) ? ok(`${tag}: caronas pagas, sujeitas a disponibilidade e confirmação, sem preço nem reserva garantida`) : falha(`${tag}: texto de caronas fora da regra`);
+        (await p.locator('a.btn.am[href="https://www.instagram.com/cariocadriftculture/"]').count()) === 1 ? ok(`${tag}: CTA de contato pelo canal oficial`) : falha(`${tag}: CTA de contato ausente`);
       }
       if (pn === 'naoexiste') (await p.locator('#naoAchado').isVisible()) ? ok(`${tag}: slug inexistente mostra "Treino não encontrado"`) : falha(`${tag}: slug inexistente sem estado de erro`);
       await p.screenshot({ path: path.join(out, `${tag}-dobra.png`) });

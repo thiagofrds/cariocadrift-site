@@ -13,7 +13,14 @@ window.CD = (() => {
     "open-drift-session": {
       publico: "Confirme seu interesse em participar do evento. Ingressos disponíveis no local.",
       pilotos: "Participação na pista exclusiva para pilotos convidados.",
-      caronas: "Caronas pagas. Consulte informações e disponibilidade com a organização."
+      caronas: "Caronas pagas. Valor e disponibilidade sob consulta com a organização.",
+      // Valores informados pela organização em 16/09/2026. Venda só no local; sem checkout online.
+      valores: [
+        { rotulo: "Público", nome: "Assistir", valor: "R$ 30", nota: "Ingresso vendido no local, no dia." },
+        { rotulo: "Estacionamento", nome: "Estacionamento", valor: "R$ 15", nota: "Condições a confirmar com a organização." },
+        { rotulo: "Pilotos", nome: "Piloto convidado", valor: "R$ 80", nota: "Pista exclusiva para pilotos convidados. Não há inscrição pública." },
+        { rotulo: "Caronas", nome: "Carona", valor: "Sob consulta", nota: "Valor e disponibilidade com a organização.", link: "/caronas/" }
+      ]
     }
   };
   const participacao = slug => PARTICIPACAO[slug] || null;

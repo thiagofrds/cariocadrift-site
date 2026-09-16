@@ -89,7 +89,8 @@ Legenda: **aprovado** / **falhou** / **não testado**.
 |---|---|---|
 | Senha do administrador | **aprovado** | Trocada por você pelo `scripts/trocar-senha-admin.js` (duas tentativas recusadas pelo script, terceira concluída). API de administração confirma `updated_at` e `last_sign_in_at` às 19:02 UTC. Logout global executado. Linha `ADMIN_SENHA_INICIAL` removida de `.env.local`. Zip antigo em `~/Downloads/cariocadrift-site.zip` ainda existe: apagar |
 | Sessões antigas | **parcial** | Refresh tokens revogados na troca de senha e de novo ao fim do teste de recuperação. Access tokens já emitidos continuam válidos até expirar (padrão 1 h): uma aba antiga pode seguir lendo o painel até lá, sem conseguir renovar. Verificação final: recarregar a aba antiga após 1 h e confirmar que pede login |
-| Enforce HTTPS | **aprovado** | Ativado após confirmar certificado `CN=cariocadrift.com.br` válido até 15/12/2026 e HTTPS 200 nos dois domínios. Testes: `www` → 301 para `https://cariocadrift.com.br/`; `/treinos/` em HTTP → 301 HTTPS; raiz em HTTP → ver linha abaixo. DNS e domínio não tocados |
+| HTTPS · falha reportada por usuário | **em investigação** | Captura real de um celular com `NET::ERR_CERT_COMMON_NAME_INVALID` em `cariocadrift.com.br`. Item reaberto; diagnóstico somente de leitura na seção 11. O lançamento fica bloqueado até HTTPS funcionar sem avisos nos dois domínios em conexões diferentes |
+| Enforce HTTPS | ativado (ver linha acima) | Ativado após confirmar certificado `CN=cariocadrift.com.br` válido até 15/12/2026 e HTTPS 200 nos dois domínios. Testes: `www` → 301 para `https://cariocadrift.com.br/`; `/treinos/` em HTTP → 301 HTTPS; raiz em HTTP → ver linha abaixo. DNS e domínio não tocados |
 | Raiz em HTTP → HTTPS | **aprovado** | Logo após ativar, o CDN devolveu 200 em cache (`Age` 390 s, `max-age` 600 s). Após expirar: `http://cariocadrift.com.br/` → 301 → `https://cariocadrift.com.br/` (200) |
 | Capa do evento | **aguardando escolha** | Render bloqueado. Prévias com fotos do acervo ainda não usadas no site: `capa-3132`, `capa-3142`, `capa-3127` (desktop e mobile). Crédito "Foto Sergio Photos RJ · Registro de treino anterior" automático para fotos do acervo. Banco não alterado |
 | Supabase Auth | **aprovado** | Salvo em produção e confirmado após recarregar o painel do Supabase: Site URL `https://cariocadrift.com.br`; Redirect URLs: `https://cariocadrift.com.br/admin/` (total 1). Nenhuma outra configuração do Auth tocada |
@@ -100,3 +101,47 @@ Legenda: **aprovado** / **falhou** / **não testado**.
 | Merge | não autorizado | `fase-01-home` pronto, 3 commits desde o QA (E.2, checklist, crédito da capa) |
 
 **Só testável após a publicação:** prévia de link no WhatsApp e Instagram com o novo `og.jpg`; formulários e painel no domínio real; página `/treinos/open-drift-session/` com 200 no GitHub Pages; recuperação de senha por e-mail (depende da configuração do Auth).
+
+---
+
+## 11. HTTPS: diagnóstico da falha reportada (somente leitura, 16/09 19:26 UTC)
+
+Relato: captura real de um celular com `NET::ERR_CERT_COMMON_NAME_INVALID` em `cariocadrift.com.br`. Nada foi alterado: DNS, domínio no Pages e "Enforce HTTPS" ficaram como estavam.
+
+**DNS (resolvedores do sistema, Google 8.8.8.8, Cloudflare 1.1.1.1, Quad9 9.9.9.9, OpenDNS 208.67.222.222 e o autoritativo a.sec.dns.br):** respostas idênticas em todos. `cariocadrift.com.br` A = 185.199.108/109/110/111.153, sem AAAA, sem CAA, sem MX, sem TXT, sem curinga; `www` = CNAME `thiagofrds.github.io`, que resolve para os mesmos quatro IPv4 e para 2606:50c0:8000/8001/8002/8003::153 em IPv6; CAA herdado do github.io permite Let's Encrypt, DigiCert e Sectigo. Zona no Registro.br com DNSSEC (registro DS presente), TTL 3600. Nenhum endereço fora do GitHub Pages, nenhum registro antigo, nenhum proxy (o próprio GitHub confirma `is_proxied: false`).
+
+**Certificado entregue por cada endereço, com SNI:**
+
+| IP | SNI | CN | SANs | Válido até | Emissor | Validação |
+|---|---|---|---|---|---|---|
+| 185.199.108.153 | cariocadrift.com.br e www | cariocadrift.com.br | cariocadrift.com.br, www.cariocadrift.com.br | 15/12/2026 | Let's Encrypt | OK |
+| 185.199.109.153 | idem | idem | idem | idem | idem | OK |
+| 185.199.110.153 | idem | idem | idem | idem | idem | OK |
+| 185.199.111.153 | idem | idem | idem | idem | idem | OK |
+| 2606:50c0:8000::153 | idem | idem | idem | idem | idem | OK |
+| 2606:50c0:8001::153 | idem | idem | idem | idem | idem | OK |
+| 2606:50c0:8002::153 | idem | idem | idem | idem | idem | OK |
+| 2606:50c0:8003::153 | idem | idem | idem | idem | idem | OK |
+| qualquer IP, **sem SNI** | — | *.github.io | — | — | — | falha de nome (esperado; todo navegador moderno envia SNI) |
+
+Cadeia completa e válida nos 16 testes (8 endereços × 2 nomes). O certificado tem `notBefore` = 16/09/2026 17:39 UTC (14:39 em Brasília). `www` responde 301 para o domínio principal em HTTPS. Relatório de saúde do GitHub Pages: `is_valid`, `responds_to_https`, `is_https_eligible`, `https_error: null`, `caa_error: null` para os dois domínios. Todas as minhas requisições saíram pelo ponto de presença GIG (Rio) da Fastly; não tenho acesso a rede móvel nem a outros pontos de presença, então isso **não foi testado**.
+
+**Causa mais provável (não comprovada):** o celular acessou antes das 14:39 de Brasília de hoje, quando todos os clientes recebiam o certificado `*.github.io`, exatamente o erro reportado; ou acessou nos primeiros minutos após a emissão, por um ponto de presença que ainda não tinha o certificado novo. **Hipóteses restantes, não comprovadas:** rede móvel ou Wi-Fi com interceptação TLS (portal cativo, proxy corporativo), ou navegador muito antigo sem SNI.
+
+**Correção proposta:** nenhuma alteração de infraestrutura, porque nada está errado do lado servidor. Pedido de dados para fechar: horário da captura, URL exata (com ou sem `www`), rede (Wi-Fi ou operadora) e, se o erro persistir agora, o nome do certificado mostrado nos detalhes do aviso. Se o erro se repetir com hora posterior a 14:39 e certificado `*.github.io`, abrir chamado no suporte do GitHub Pages com esses dados; nesse cenário, remover e readicionar o domínio é a única ação disponível do nosso lado, e só com sua autorização.
+
+## 12. Refinamentos da E.2 e valores do evento (QA de 16/09, fim do dia)
+
+Roteiros: `capturas-e2.js` 241 verificações, `qa-lancamento.js` 64, zero falhas reais (a única linha de falha é o HTTP 400 provocado pelo próprio teste de login errado do painel). Capturas em `docs/capturas/e2/`.
+
+| Refinamento | Resultado | Evidência |
+|---|---|---|
+| 1. Mapa do traçado inteiro na Home | aprovado | proporção renderizada igual à do arquivo (1,596), sem `object-fit: cover`; no celular, "toque para ampliar" abre o arquivo original. `home-d1440-mapa.png`, `home-m390-mapa.png` |
+| 2. Instagram `@cariocadriftculture` | aprovado | zero ocorrências do @ antigo nas 7 páginas; todo link de perfil aponta para `instagram.com/cariocadriftculture/` (o link "Assista ao vídeo" do treino é um reel, vem do banco e não é o perfil). Créditos Sergio Photos RJ intactos |
+| 3. Layout mais limpo | aprovado (visual) | cabeçalhos das seções integrados (fonte das fotos abaixo do subtítulo, link de detalhes junto do título), legendas das fotos em linha única com separador, bloco "Segurança" alinhado, escolinha da Home reduzida a título, frase e botão, legenda de seções redundante removida do mapa |
+| 4. Página `/caronas/` | aprovado | texto: paga, depende de disponibilidade, confirmação da organização, capacete, sem preço e sem reserva garantida; CTA único pelo direct do Instagram; "Consultar caronas" da Home, do treino e da agenda apontam para ela; sem formulário (não foi necessário criar tabela) |
+| 5. Escolinha sem preços | aprovado | Home e página sem R$, parcelamento, pacotes, módulos, carros ou datas; mensagem "em estruturação" e "Valores sob consulta"; CTA "Quero receber informações" leva ao formulário; campo de pacote removido da interface, envio grava `pacote = nao-sei` (coluna já aceita esse valor, **sem alteração de banco**); envio real testado e apagado |
+| Valores do Open Drift Session | aprovado | página do treino com bloco "Quanto custa": Assistir R$ 30 (vendido no local), Estacionamento R$ 15 (condições a confirmar, sem "por veículo/pessoa/período"), Piloto convidado R$ 80 (pista exclusiva, sem inscrição pública), Carona sob consulta com link para `/caronas/`; aviso de venda somente no local. Home com resumo discreto em "Como participar". Sem checkout. Valores no código (`assets/cd.js`), banco intocado |
+| Navegação e links | aprovado | 7 páginas × 4 larguras sem erro de console nem rolagem horizontal; `caronas/` no rodapé |
+| Formulário do treino e painel | aprovado | 3 confirmações + duplicado + validação; painel completo com upload, publicação, CSVs; registros de teste apagados |
+| Não testado | — | prévia de link nas redes, produção real (dependem do merge) |

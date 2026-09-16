@@ -31,7 +31,7 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
     (await p.locator('#treino').isVisible().catch(() => false)) ? ok(`[${nome}] página estática /treinos/open-drift-session/ renderiza o evento`) : falha(`[${nome}] página estática do evento não renderizou`);
     // versão com query (mesma página, usada pelo restante do roteiro)
     await p.goto(base + '/treinos/evento/?t=open-drift-session', { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
-    (await p.locator('.participar .bloco.caronas .btn').getAttribute('href')).includes('instagram.com/cariocadrift_') ? ok(`[${nome}] "Consultar caronas" leva ao Instagram`) : falha(`[${nome}] botão de caronas errado`);
+    (await p.locator('.participar .bloco.caronas .btn').getAttribute('href')) === '/caronas/' ? ok(`[${nome}] "Consultar caronas" leva à página interna /caronas/`) : falha(`[${nome}] botão de caronas errado`);
     // 3. confirmar interesse com telefone de teste
     const tel = nome === 'desktop' ? '21900000201' : nome === '390' ? '21900000202' : '21900000203';
     await p.fill('#nome', 'TESTE QA visitante'); await p.fill('#tel', tel);
@@ -53,8 +53,8 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
     // 6. escolinha: formulário com pacote grava
     if (nome === 'desktop') {
       await p.goto(base + '/escolinha/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
-      await p.click('[data-pacote="curso-chevette"]'); await p.waitForTimeout(300);
-      (await p.inputValue('#pacote')) === 'curso-chevette' ? ok('escolinha: botão do pacote pré-seleciona a opção') : falha('escolinha: pré-seleção do pacote falhou');
+      (await p.locator('#pacote').count()) === 0 ? ok('escolinha: formulário sem campo de pacote obrigatório') : falha('escolinha: campo de pacote ainda presente');
+      !/R\$|10x|módulos|Chevette|Nissan/.test(await p.locator('main').textContent()) ? ok('escolinha: sem preços, parcelamento ou pacotes na página') : falha('escolinha: ainda há preço/pacote na página');
       await p.fill('#nome', 'TESTE QA escolinha'); await p.fill('#tel', '21900000204'); await p.fill('#msg', 'Registro de teste do QA. Apagar.');
       await p.click('#enviar'); await p.waitForTimeout(2500);
       /na lista/i.test(await p.locator('#okTitulo').textContent()) && (await p.locator('#ok').evaluate(e => getComputedStyle(e).display)) === 'block' ? ok('escolinha: interesse gravado e confirmação exibida') : falha('escolinha: envio não concluiu');

@@ -42,7 +42,7 @@ nav: treinos
       <li><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></li>
       <li><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></li>
       <li><b>Pista para convidados</b><p>A participação na pista é exclusiva para pilotos convidados. Não há inscrição pública.</p></li>
-      <li><b>Caronas pagas</b><p>Valores e disponibilidade ainda não divulgados. Consulte a organização no direct.</p></li>
+      <li><b>Caronas pagas</b><p>Dependem de disponibilidade e confirmação da organização. <a href="{{root}}caronas/">Como funciona a carona →</a></p></li>
       <li><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></li>
     </ul>
   </div>
@@ -59,8 +59,8 @@ nav: treinos
     const passados = todos.filter(t => CD.fim(t) < agora).reverse();
     let html = "";
     if (prox.length) html += prox.map((t, i) => CD.cardTreino(t).replace('class="tag">', `class="tag">${i === 0 ? "Próximo · " : ""}`)).join("");
-    else html += `<div class="vazio"><b>Nenhum treino marcado</b><span>As próximas datas saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></div>`;
-    if (prox.length) html += `<div class="vazio"><b>Próximas datas em breve</b><span>Os novos treinos entram aqui e saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></div>`;
+    else html += `<div class="vazio"><b>Nenhum treino marcado</b><span>As próximas datas saem primeiro no <a href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a>.</span></div>`;
+    if (prox.length) html += `<div class="vazio"><b>Próximas datas em breve</b><span>Os novos treinos entram aqui e saem primeiro no <a href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a>.</span></div>`;
     if (passados.length) html += `<h2>Já rolou</h2>` + passados.map(t => CD.cardTreino(t).replace('class="evento"', 'class="evento passado"')).join("");
     ag.innerHTML = html;
   } catch (e) {

@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Carioca Drift</title>
-<meta name="description" content="Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift com o Fabinho Drift Show e a cena carioca.">
+<meta name="description" content="Drift e cultura automotiva no Rio de Janeiro. Treinos abertos ao público no RJ Race Park, escolinha de drift em estruturação e a cena carioca.">
 <meta name="theme-color" content="#0B0B0B">
 <link rel="canonical" href="https://cariocadrift.com.br/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Carioca Drift">
 <meta property="og:title" content="Carioca Drift · More than drift. It's a culture.">
-<meta property="og:description" content="Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift com o Fabinho Drift Show e a cena carioca.">
+<meta property="og:description" content="Drift e cultura automotiva no Rio de Janeiro. Treinos abertos ao público no RJ Race Park, escolinha de drift em estruturação e a cena carioca.">
 <meta property="og:url" content="https://cariocadrift.com.br/">
 <meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -56,7 +56,7 @@
       <li><a href="/escolinha/" >Escolinha</a></li>
       <li><a href="/sobre/" >Sobre</a></li>
     </ul>
-    <a class="ig" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_ →</a>
+    <a class="ig" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture →</a>
   </nav>
 </div>
 <style>
@@ -71,7 +71,7 @@
 .hero .foto{order:2}
 .hero .foto .quadro{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
 .hero .foto .quadro img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom}
-.hero .foto figcaption{padding:6px 0 0}
+.hero .foto figcaption{padding:8px 0 0}
 .hero .evento-bloco{order:3;display:grid;gap:6px;padding-top:2px}
 .hero .data{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .hero .data b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(56px,15vw,72px);line-height:.8;color:var(--amarelo);letter-spacing:-.03em}
@@ -107,21 +107,24 @@
 
 /* ===== como participar ===== */
 .participar{background:var(--grafite);padding:44px 0 48px}
+.participar .cab{display:grid;gap:6px;margin-bottom:26px}
+.participar .cab .rot{color:var(--cinza)}
 .participar h2{font-size:clamp(34px,5vw,52px)}
+.participar .cab a{justify-self:start;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo);margin-top:6px}
 .participar .tres{display:grid;gap:18px}
 .participar .item{display:grid;gap:6px;padding-top:12px;border-top:1px solid var(--linha-forte)}
 .participar .item .rot{color:var(--vermelho)}
 .participar .item b{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
 .participar .item p{color:var(--cinza);font-size:15px;max-width:34ch}
 .participar .item a{display:inline-block;margin-top:4px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo)}
-.participar .seg{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-size:14px;color:var(--gelo)}
+.participar .seg{margin-top:26px;padding-top:12px;border-top:1px solid var(--linha-forte);display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:baseline;font-size:14px;color:var(--gelo)}
 .participar .seg .rot{color:var(--amarelo)}
-.participar .seg a{color:var(--cinza);text-decoration:none;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-left:auto}
 @media (min-width:800px){.participar .tres{grid-template-columns:repeat(3,1fr);gap:36px}}
 
 /* ===== experiência: ensaio fotográfico ===== */
 .exp{padding:72px 0 56px}
-.exp .cab{margin-bottom:28px}
+.exp .cab{display:grid;gap:10px;margin-bottom:28px}
+.exp .cab .fonte{color:var(--cinza)}
 .exp h2{font-size:clamp(40px,6vw,72px)}
 .exp .ensaio{display:grid;gap:36px}
 .exp .bloco{display:grid;gap:8px;align-content:start}
@@ -138,33 +141,28 @@
 /* ===== onde ===== */
 .onde{padding:56px 0 72px;background:var(--grafite)}
 .onde .duas{display:grid;gap:26px}
-.onde figure{margin:0;border:1px solid var(--linha-forte)}
-.onde figure img{width:100%;aspect-ratio:16/10;object-fit:cover;filter:saturate(.8)}
+.onde figure{margin:0}
+.onde figure a{display:block}
+.onde figure img{width:100%;height:auto;display:block}
+.onde figure figcaption{padding:8px 0 0;font-family:var(--ui);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)}
+.onde figure .ampliar{display:none}
+@media (max-width:899px){.onde figure .ampliar{display:inline}}
 .onde .txt{display:grid;gap:14px;align-content:center}
 .onde h2{font-size:clamp(40px,6vw,64px)}
 .onde .end{font-size:17px;color:var(--gelo)}
 .onde .end span{display:block;color:var(--cinza);font-size:15px}
 .onde .rotas{display:flex;gap:10px;flex-wrap:wrap}
 .onde .rotas .btn{min-height:46px;font-size:14px;padding:0 18px}
-.onde .secoes{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-family:var(--ui);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza)}
-.onde .secoes i{display:inline-block;width:22px;height:6px;margin-right:8px;transform:skewX(-14deg);vertical-align:middle}
 @media (min-width:900px){.onde .duas{grid-template-columns:1.35fr 1fr;gap:56px;align-items:center}}
 
 /* ===== escolinha ===== */
-.escola{padding:72px 0}
-.escola .cab-e{display:grid;gap:18px;margin-bottom:40px}
+.escola{padding:72px 0;border-top:1px solid var(--linha)}
+.escola .wrap{display:grid;gap:22px}
 .escola h2{font-size:clamp(40px,6vw,72px)}
 .escola h2 em{font-style:italic;font-weight:900;color:var(--amarelo)}
-.escola .cab-e p{color:var(--cinza);max-width:44ch;font-size:17px}
-.escola .cab-e .rot{margin-bottom:10px}
-.escola .pacotes{display:grid;gap:28px}
-.escola .pac{display:grid;gap:6px;padding-top:16px;border-top:2px solid var(--amarelo);text-decoration:none}
-.escola .pac .rot{color:var(--cinza)}
-.escola .pac b{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase}
-.escola .pac .v{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(36px,4.5vw,48px);line-height:1;color:var(--amarelo);margin-top:6px}
-.escola .pac p{color:var(--cinza);font-size:14px;max-width:30ch}
-.escola .rod{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:36px;color:var(--cinza);font-size:14px}
-@media (min-width:900px){.escola .cab-e{grid-template-columns:1.2fr .8fr;align-items:end}.escola .cab-e p{justify-self:end}.escola .pacotes{grid-template-columns:repeat(3,1fr);gap:40px}}
+.escola p{color:var(--cinza);max-width:48ch;font-size:17px}
+.escola .acoes{margin-top:4px}
+@media (min-width:900px){.escola .wrap{grid-template-columns:1.2fr .8fr;align-items:center;gap:56px}.escola .acoes{justify-self:end}}
 
 /* ===== a cena: tira fotográfica horizontal + instagram ===== */
 .cena{padding:56px 0 64px;background:var(--grafite);border-top:1px solid var(--linha)}
@@ -208,19 +206,19 @@
 
 <section class="participar" id="participar" hidden>
   <div class="wrap">
-    <div class="cab"><h2>Como participar</h2><span class="rot" id="participarRot"></span></div>
+    <div class="cab"><span class="rot" id="participarRot"></span><h2>Como participar</h2><a id="partLink" href="/treinos/">Todos os detalhes do treino →</a></div>
     <div class="tres">
       <div class="item"><span class="rot">Público</span><b id="partPublicoTitulo">Ingressos no local</b><p id="partPublico"></p></div>
       <div class="item"><span class="rot">Pilotos</span><b>Só convidados</b><p id="partPilotos"></p></div>
-      <div class="item"><span class="rot">Caronas</span><b>Caronas pagas</b><p id="partCaronas"></p><a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">Consultar caronas →</a></div>
+      <div class="item"><span class="rot">Caronas</span><b>Caronas pagas</b><p id="partCaronas"></p><a href="/caronas/">Consultar caronas →</a></div>
     </div>
-    <div class="seg" id="partSeg" hidden><span class="rot">Segurança</span><span id="partSegTexto"></span><a id="partLink" href="/treinos/">Todos os detalhes do treino →</a></div>
+    <div class="seg" id="partSeg" hidden><span class="rot">Segurança</span><span id="partSegTexto"></span></div>
   </div>
 </section>
 
 <section class="exp">
   <div class="wrap">
-    <div class="cab"><div><span class="rot am">A experiência</span><h2>O que rola na pista</h2><p class="sub" style="margin-top:10px">Um domingo inteiro de drift, carros e gente boa.</p></div><span class="rot">Registros de treinos anteriores · Fotos: Sergio Photos RJ</span></div>
+    <div class="cab"><span class="rot am">A experiência</span><h2>O que rola na pista</h2><p class="sub">Um domingo inteiro de drift, carros e gente boa.</p><span class="rot fonte">Registros de treinos anteriores · Fotos: Sergio Photos RJ</span></div>
     <div class="ensaio">
       <figure class="foto f1"><img src="/assets/fotos/foto-3141.jpg" alt="Dois carros de drift em tandem com fumaça dos pneus" width="1307" height="915" loading="lazy"><figcaption><b>Tandem</b><span>Sergio Photos RJ</span></figcaption></figure>
       <div class="bloco b1"><span class="n">01</span><b>Pista o dia todo</b><p>Das 9h às 18h, os pilotos da cena carioca andando da iniciação à pista completa.</p></div>
@@ -236,29 +234,25 @@
 
 <section class="onde">
   <div class="wrap duas">
-    <figure><img src="/assets/pista.jpg" alt="Vista aérea do traçado do RJ Race Park com as três seções marcadas" width="870" height="545" loading="lazy"></figure>
+    <figure><a href="/assets/pista.jpg" target="_blank" rel="noopener" aria-label="Abrir o mapa do traçado em tamanho real"><img src="/assets/pista.jpg" alt="Vista aérea do traçado do RJ Race Park: largada, zonas externas ZE1 a ZE3, clipes internos CI1 a CI4, touch and go, zona de iniciação e legenda das três seções" width="870" height="545" loading="lazy"></a><figcaption>Traçado e legenda das seções<span class="ampliar"> · toque para ampliar</span></figcaption></figure>
     <div class="txt">
       <span class="rot am">Onde</span>
       <h2>RJ Race Park</h2>
       <p class="end">Estrada do Frutuoso, 320<span>Santa Cruz · Rio de Janeiro</span></p>
       <div class="rotas"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=RJ+Race+Park+Estrada+do+Frutuoso+320+Santa+Cruz+Rio+de+Janeiro" target="_blank" rel="noopener">Google Maps</a><a class="btn" href="https://waze.com/ul?q=RJ%20Race%20Park%20Estrada%20do%20Frutuoso%20320%20Santa%20Cruz%20Rio%20de%20Janeiro&navigate=yes" target="_blank" rel="noopener">Waze</a></div>
-      <div class="secoes"><span><i style="background:var(--vermelho)"></i>1ª seção</span><span><i style="background:var(--amarelo)"></i>2ª seção</span><span><i style="background:var(--verde)"></i>3ª seção</span><span><i style="background:var(--gelo)"></i>Zona de iniciação</span></div>
+      
     </div>
   </div>
 </section>
 
 <section class="escola">
   <div class="wrap">
-    <div class="cab-e">
-      <div><span class="rot am">Escolinha de drift · com Fabinho Drift Show</span><h2>Aprende com quem <em>vive isso.</em></h2></div>
-      <p>Pista, carro de drift, pneus e combustível inclusos. Você entra no carro com o instrutor do lado e evolui no seu ritmo, do zero até fechar a curva de lado.</p>
+    <div>
+      <span class="rot am">Escolinha de drift</span>
+      <h2>Aprende com quem <em>vive isso.</em></h2>
+      <p>A Escolinha de Drift está em estruturação. Em breve, mais informações sobre as experiências, os cursos e as próximas datas. Valores sob consulta.</p>
     </div>
-    <div class="pacotes num">
-      <a class="pac" href="/escolinha/#pacotes"><span class="rot">Experiência individual</span><b>Experiência Drift</b><span class="v">R$ 2.000</span><p>2 horas de pista e carro · Chevette · 1 par de pneus · 10 min com instrutor no carro</p></a>
-      <a class="pac" href="/escolinha/#pacotes"><span class="rot">Curso completo básico</span><b>Com o Chevette</b><span class="v">R$ 4.500</span><p>8 módulos · pista, carro, 2 tanques de combustível, 2 pares de pneus novos</p></a>
-      <a class="pac" href="/escolinha/#pacotes"><span class="rot">Curso completo básico</span><b>Com o Nissan Z</b><span class="v">R$ 8.500</span><p>8 módulos · mesma estrutura, mais potência</p></a>
-    </div>
-    <div class="rod"><span>Dois dias (12h às 18h) ou um dia (8h às 18h). Cartão em até 10x sem juros. Datas a combinar.</span><a class="btn am" href="/escolinha/">Conhecer a escolinha</a></div>
+    <div class="acoes"><a class="btn am" href="/escolinha/#interesse">Quero receber informações</a></div>
   </div>
 </section>
 
@@ -270,7 +264,7 @@
 
 <section class="cena">
   <div class="wrap">
-    <div class="cab"><div><span class="rot am">A cena</span><h2>Mesma cultura, carros diferentes.</h2><p>Registros de treinos anteriores. Vídeos, bastidores e próximas datas saem primeiro no Instagram.</p></div><a class="btn" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></div>
+    <div class="cab"><div><span class="rot am">A cena</span><h2>Mesma cultura, carros diferentes.</h2><p>Registros de treinos anteriores. Vídeos, bastidores e próximas datas saem primeiro no Instagram.</p></div><a class="btn" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a></div>
     <div class="tira">
       <figure class="foto"><img src="/assets/fotos/foto-3123.jpg" alt="Carro de drift à noite sob luzes rosa e azul" width="1320" height="1045" loading="lazy"><figcaption><span>Noite</span><span>Sergio Photos RJ</span></figcaption></figure>
       <figure class="foto"><img src="/assets/fotos/foto-3143.jpg" alt="BMW de corrida em movimento com fundo em arrasto" width="1313" height="915" loading="lazy"><figcaption><span>Velocidade</span><span>Sergio Photos RJ</span></figcaption></figure>
@@ -295,7 +289,7 @@
   const passados = todos.filter(t => fim(t) < agora).reverse();
 
   if (!prox) {
-    caixa.innerHTML = `<span class="rot am">Agenda</span><div class="vazio"><h2>Próximo treino em breve</h2><p>As novas datas saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</p></div><div class="acoes"><a class="btn am" href="/treinos/">Ver treinos</a></div>`;
+    caixa.innerHTML = `<span class="rot am">Agenda</span><div class="vazio"><h2>Próximo treino em breve</h2><p>As novas datas saem primeiro no <a href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a>.</p></div><div class="acoes"><a class="btn am" href="/treinos/">Ver treinos</a></div>`;
     document.getElementById('dock').remove();
   } else {
     const x = CD.dataLocal(prox.data);
@@ -319,8 +313,9 @@
     if (part) {
       document.getElementById('participarRot').textContent = `${prox.titulo} · ${dd}.${mm}`;
       if (prox.entrada_titulo) document.getElementById('partPublicoTitulo').textContent = prox.entrada_titulo;
-      document.getElementById('partPublico').textContent = part.publico;
-      document.getElementById('partPilotos').textContent = `${part.pilotos} Não há inscrição pública.`;
+      const val = (part.valores || []).reduce((o, v) => (o[v.rotulo] = v, o), {});
+      document.getElementById('partPublico').textContent = val['Público'] ? `Ingresso ${val['Público'].valor}, vendido no local, no dia.${val['Estacionamento'] ? ` Estacionamento ${val['Estacionamento'].valor}.` : ''}` : part.publico;
+      document.getElementById('partPilotos').textContent = val['Pilotos'] ? `${part.pilotos} ${val['Pilotos'].valor} por piloto convidado. Não há inscrição pública.` : `${part.pilotos} Não há inscrição pública.`;
       document.getElementById('partCaronas').textContent = part.caronas;
       document.getElementById('partLink').href = url;
       if (prox.regra_titulo) { document.getElementById('partSegTexto').textContent = `${prox.regra_titulo}${prox.regra_texto ? ' · ' + prox.regra_texto : ''}`; document.getElementById('partSeg').hidden = false; }
@@ -349,6 +344,7 @@
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/caronas/">Caronas</a></li>
         <li><a href="/escolinha/">Escolinha de Drift</a></li>
         <li><a href="/sobre/">Sobre</a></li>
       </ul>
@@ -356,7 +352,7 @@
     <div>
       <span class="rotulo">Contato</span>
       <ul>
-        <li><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></li>
+        <li><a class="insta" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a></li>
         <li>Direct no Instagram pra parcerias e dúvidas</li>
         <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
       </ul>
