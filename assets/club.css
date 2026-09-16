@@ -69,7 +69,7 @@
 /* cartão de membro */
 .cartao-membro{position:relative;overflow:hidden;border:1px solid var(--c-linha-forte);background:#000;display:grid;grid-template-columns:1fr;max-width:720px}
 .cartao-membro .fundo{position:absolute;inset:0;opacity:.28;background:center/cover no-repeat;filter:blur(1px)}
-.cartao-membro .conteudo{position:relative;padding:26px;display:grid;gap:10px;background:linear-gradient(90deg,rgba(5,5,6,.96) 0%,rgba(5,5,6,.9) 55%,rgba(5,5,6,.55) 100%)}
+.cartao-membro .conteudo{position:relative;padding:26px;display:grid;gap:10px;justify-items:start;background:linear-gradient(90deg,rgba(5,5,6,.96) 0%,rgba(5,5,6,.9) 55%,rgba(5,5,6,.55) 100%)}
 .cartao-membro .nome{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,44px);line-height:.9;text-transform:uppercase;color:var(--c-branco)}
 .cartao-membro .meta{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-prata-escura)}
 .cartao-membro .meta b{color:var(--c-amarelo)}

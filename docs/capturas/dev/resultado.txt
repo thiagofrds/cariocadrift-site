@@ -1,0 +1,40 @@
+OK   1.1 prévia usa o projeto DEV (?env=dev)  
+OK   1.2 visitante vê entrar/criar  
+OK   1.3 @ ocupado devolve indisponível com sugestões  ["qa_admin_rj","qa_admin_drift","qa_admin_26"]
+OK   1.4 @ reservado devolve indisponível  
+OK   1.5 normalização: "Thiago Rodrigues!" → thiagorodrigues livre  
+OK   1.6 perfil privado não aparece para visitante  
+OK   1.7 visitante não lê a tabela usuarios  HTTP 401
+OK   2.1 conta com @ reservado nasce pendente e cai na tela de escolher @  
+OK   2.2 @ reservado recusado na definição  
+OK   2.3 @ de outro usuário recusado  
+OK   2.4 define @qapiloto e entra em Minha Conta  
+OK   2.5 salva apresentação, Instagram e telefone  
+OK   2.6 envia foto para o bucket privado e mostra no perfil  
+OK   2.7 UPDATE direto em perfil_publico é negado (privilégio por coluna)  42501
+OK   2.8 UPDATE direto em handle é negado  42501
+OK   2.9 perfil nasce privado  
+OK   2.10 liga perfil público (com confirmação)  
+OK   2.11 solicita associação em Minha Conta → Pendente  
+OK   2.12 cancela a solicitação → Cancelada  
+OK   2.13 /clube/ mostra status cancelada com "Solicitar de novo"  
+OK   2.14 solicita de novo pelo Club → pendente com jornada  
+OK   2.15 /u/qapiloto/ público: nome, @, Piloto, Instagram, foto assinada; sem selo de membro  
+OK   2.16 /u/qa_admin/ (privado) → "Perfil não disponível"  
+OK   3.1 admin legado (tabela admins) entra no painel  
+OK   3.2 aba Usuários lista as duas contas; origem da permissão = legado  
+OK   3.3 concede "fotografo" ao piloto  
+OK   3.4 admin não concede capacidade a si mesmo (função recusa)  Não deu: ninguém concede capacidade a si mesmo
+OK   3.5 aba Clube mostra a solicitação pendente do piloto com a mensagem  
+OK   3.6 aprova → aparece em Membros como Membro  
+OK   3.7 histórico registra "aprovada" por QA Admin  
+OK   4.1 Minha Conta mostra Membro e a capacidade Fotógrafo credenciado  
+OK   4.2 /clube/ abre a área interna com cartão de membro  
+OK   4.3 perfil público exibe "Membro do Clube"  
+OK   4.4 desliga perfil público → /u/qapiloto/ indisponível e foto não assina para visitante  
+OK   4.5 visitante não assina foto de perfil privado  HTTP 400
+OK   5.1 encerra a associação com motivo  
+OK   5.2 revoga "fotografo"  
+OK   5.3 piloto vê Encerrada com o motivo, sem capacidade  
+OK   5.4 /clube/ mostra Associação encerrada e "Solicitar de novo"  
+39/39 casos OK

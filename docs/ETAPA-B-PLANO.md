@@ -149,3 +149,20 @@ Executar qualquer migration em produção; alterar `admins` ou `eh_admin()` de p
 | C. Docker Desktop no Mac + `supabase start` | US$ 0 | tudo local, inclusive Auth e Storage | instalar Docker (≈ 1 GB), consumo de máquina, e-mails de código só em caixa local |
 
 Recomendação: A para fidelidade com a produção, B se o custo pesar. Nada será criado sem sua palavra.
+
+## 9. Estado em 17/09/2026 (madrugada): Supabase DEV criado e etapa B validada de ponta a ponta
+
+Autorização do Thiago em 16/09 ("eu tenho o supabase pro" / "faz você aí"): opção A.
+
+| Item | Estado |
+|---|---|
+| Projeto DEV | `carioca-drift-dev`, ref `fswlocaiktcthuwyvccp`, organização Dtc (Pro), Micro, sa-east-1. Senha do banco gerada pelo painel e **não guardada** por ninguém aqui (acesso ao banco só pelo SQL Editor). Chave publicável em `.env.dev.local` (gitignored) e em `assets/cd.js` (`AMBIENTES.dev`); chave secreta **não** lida nem guardada |
+| Migrations | as 13 (5 de produção + B1–B8) aplicadas no DEV pelo SQL Editor, em uma única transação, em 16/09 ≈ 23:50 UTC: 13 tabelas, 19 funções, 23 policies em `public`, 8 em `storage`, buckets `fotos` (público) e `avatares` (privado), gatilho `cria_perfil_usuario` em `auth.users` |
+| Auth do DEV | Site URL `http://localhost:8766`; Redirect URLs `http://localhost:8766/**` e `http://192.168.68.51:8766/**`. **Confirmação de e-mail continua ligada** (o desligamento foi barrado pelo classificador de segurança do Claude Code; nada foi alterado). SMTP padrão do Supabase: 2 e-mails/hora e só para membros da organização; em 16/09 já devolveu `429 email rate limit exceeded` |
+| Contas de QA | criadas por SQL no DEV, já confirmadas, com hash bcrypt gerado localmente (senhas em arquivos 600 fora do repo, nunca no transcript): `qa-dev-admin@cariocadrift.com.br` (admin legado via `admins`, @qa_admin) e `qa-dev-piloto@cariocadrift.com.br` (metadado com @ reservado "admin" → nasceu `handle_pendente`, exercitando o caminho de colisão). `qa-admin@cariocadrift.dev` não existe (GoTrue recusou o domínio) |
+| QA real | `docs/capturas/qa-etapa-b-dev.js` (Playwright, prévia local `?env=dev`): **39/39 casos** em 16/09: ambiente, @ (ocupado/reservado/normalização/sugestões), perfil privado invisível, `usuarios` sem leitura anônima, @ pendente → definição, edição de perfil, foto no bucket privado com URL assinada, privilégio por coluna (42501 em `perfil_publico` e `handle`), liga/desliga perfil público, `/u/`, Clube (solicitar em Minha Conta e no Club, cancelar, solicitar de novo, aprovar, área do membro, selo no perfil público, encerrar com motivo), capacidades (conceder/revogar fotógrafo, recusa a si mesmo), origem da permissão = legado, foto não assina para perfil privado. Capturas em `docs/capturas/dev/` (gitignored) |
+| Ajustes feitos após o QA | cadastro entra direto quando o projeto devolve sessão (sem confirmação de e-mail); ponto final após o motivo em recusa/encerramento; selo "Membro" do cartão não estica |
+| Não testado | cadastro completo pela tela com código por e-mail (limite do SMTP padrão); recuperação de senha; celular físico na rede (só viewport 390 no Playwright). Para testar o e-mail de verdade: SMTP próprio no DEV (decisão do Thiago) ou usar o próprio e-mail da organização dentro do limite de 2/hora |
+| Dados no DEV agora | piloto: @qapiloto, perfil privado, associação **encerrada**, sem capacidades; admin: @qa_admin. Limpeza: apagar os dois usuários no painel Authentication do DEV (cascata apaga perfis, associação, histórico) |
+
+Regras mantidas: nenhuma alteração em produção, nenhum merge, nada publicado, nenhuma credencial de produção usada.

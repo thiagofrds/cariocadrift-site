@@ -4,7 +4,7 @@ window.CD = (() => {
   // e só quando o projeto DEV existir; até lá as páginas de conta mostram o aviso "ambiente não configurado".
   const AMBIENTES = {
     prod: { url: "https://trkwfwvqzfvscqwwldpv.supabase.co", key: "sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm" },
-    dev:  { url: "", key: "" }   // preencher quando o projeto carioca-drift-dev for criado (com autorização)
+    dev:  { url: "https://fswlocaiktcthuwyvccp.supabase.co", key: "sb_publishable_DkjxhjjCgMYv0i51qOsfZw_lSYHfXBe" }   // carioca-drift-dev (criado em 16/09 com autorização); só usado em localhost com ?env=dev
   };
   const LOCAL = /^(localhost|127\.0\.0\.1|192\.168\.)/.test(location.hostname);
   const envParam = new URLSearchParams(location.search).get('env');

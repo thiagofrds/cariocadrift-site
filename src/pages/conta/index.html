@@ -209,9 +209,10 @@ extra_head: <meta name="robots" content="noindex">
     const handle = await checaHandle($('cHandle'), $('hDica')); if (!handle) return e.textContent = 'Escolha um @ disponível.';
     if (!aceite) return e.textContent = 'Aceite os termos para continuar.';
     $('criar').disabled = true;
-    const { error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, preferencia: pref, handle, aceite: 'true' } } });
+    const { data, error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, preferencia: pref, handle, aceite: 'true' } } });
     $('criar').disabled = false;
     if (error) return e.textContent = /already/i.test(error.message) ? 'Esse e-mail já tem conta. Entre com sua senha ou use "Esqueci minha senha".' : 'Não deu pra criar a conta agora.';
+    if (data && data.session) return carregar();   // projeto sem confirmação de e-mail (DEV): entra direto
     $('fCriar').hidden = true; $('fCodigo').hidden = false; $('codEmail').textContent = email; $('codigo').focus();
     $('confirmar').onclick = async () => {
       const { error: e2 } = await sb.auth.verifyOtp({ email, token: $('codigo').value.trim(), type: 'signup' });
@@ -251,7 +252,7 @@ extra_head: <meta name="robots" content="noindex">
     if (caps && caps.length) { $('mcCapacidades').hidden = false; $('mcCapacidades').innerHTML = caps.map(c => `<span class="status on">${c === 'admin' ? 'Administração' : 'Fotógrafo credenciado'}</span>`).join(' ') + (caps.includes('admin') ? ' <a class="btn btn-linha btn-p" href="/admin/">Abrir painel</a>' : ''); }
     // clube
     const st = assoc ? assoc.status : null;
-    const T = { null: ['Você ainda não solicitou associação.', '—', ''], pendente: ['Solicitação enviada. A organização vai analisar e você acompanha por aqui.', 'Pendente', 'on'], aprovada: ['Você é membro do Clube Carioca Drift.', 'Membro', 'ok'], recusada: ['Sua solicitação foi recusada' + (assoc && assoc.motivo ? ': ' + assoc.motivo : '.') + ' Você pode solicitar de novo.', 'Recusada', 'no'], cancelada: ['Você cancelou a solicitação. Pode solicitar de novo quando quiser.', 'Cancelada', ''], encerrada: ['Sua associação foi encerrada' + (assoc && assoc.motivo ? ': ' + assoc.motivo : '.') + ' Você pode solicitar de novo.', 'Encerrada', 'no'] };
+    const T = { null: ['Você ainda não solicitou associação.', '—', ''], pendente: ['Solicitação enviada. A organização vai analisar e você acompanha por aqui.', 'Pendente', 'on'], aprovada: ['Você é membro do Clube Carioca Drift.', 'Membro', 'ok'], recusada: ['Sua solicitação foi recusada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + '.' : '.') + ' Você pode solicitar de novo.', 'Recusada', 'no'], cancelada: ['Você cancelou a solicitação. Pode solicitar de novo quando quiser.', 'Cancelada', ''], encerrada: ['Sua associação foi encerrada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + '.' : '.') + ' Você pode solicitar de novo.', 'Encerrada', 'no'] };
     const [txt, rot, cls] = T[st] || T[null];
     $('clubeTxt').textContent = txt; $('clubeStatus').textContent = rot; $('clubeStatus').className = 'status ' + cls;
     $('clubeAcoes').innerHTML = st === 'aprovada' ? '<a class="btn am" href="/clube/">Entrar na área do clube</a>' : st === 'pendente' ? '<button class="btn btn-linha" id="cancelarAssoc" type="button">Cancelar solicitação</button>' : '<button class="btn am" id="solicitarAssoc" type="button">Solicitar associação</button>';
