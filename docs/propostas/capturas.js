@@ -6,7 +6,7 @@ require('fs').mkdirSync(out, { recursive: true });
 (async () => {
   const browser = await chromium.launch();
   const problemas = [];
-  for (const prop of ['a', 'b']) for (const [nome, vp, mobile] of [['1440', { width: 1440, height: 900 }, false], ['390', { width: 390, height: 844 }, true], ['375', { width: 375, height: 812 }, true]]) {
+  for (const prop of ['a', 'b', 'c']) for (const [nome, vp, mobile] of [['1440', { width: 1440, height: 900 }, false], ['390', { width: 390, height: 844 }, true], ['375', { width: 375, height: 812 }, true]]) {
     const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile });
     const p = await ctx.newPage(); const erros = []; p.on('console', m => { if (m.type() === 'error') erros.push(m.text()); });
     await p.goto(`${base}${prop}/`, { waitUntil: 'networkidle' }); await p.waitForTimeout(1200); await p.evaluate(() => document.fonts.ready);
