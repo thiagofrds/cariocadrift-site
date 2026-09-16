@@ -1,11 +1,12 @@
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
 <div class="barra-contagem" id="barraContagem" hidden></div>
-<header class="nav">
+<header class="nav" id="topo">
   <div class="wrap">
-    <a class="marca" href="{{root}}">
-      <span class="logo"><img src="{{root}}assets/logo.jpg" alt="Carioca Drift Culture"></span>
-      <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
+    <a class="marca" href="{{root}}" aria-label="Carioca Drift, início">
+      <span class="logo"><img src="{{root}}assets/logo.jpg" alt="" width="44" height="44"></span>
+      <span class="nome"><b>Carioca Drift</b><span class="tagline">More than drift. It's a culture.</span></span>
     </a>
-    <nav aria-label="Principal">
+    <nav class="nav-desktop" aria-label="Principal">
       <ul class="menu">
         <li><a href="{{root}}" {{cur:home}}>Home</a></li>
         <li><a href="{{root}}treinos/" {{cur:treinos}}>Treinos</a></li>
@@ -13,5 +14,19 @@
         <li><a href="{{root}}sobre/" {{cur:sobre}}>Sobre</a></li>
       </ul>
     </nav>
+    <a class="btn btn-fogo btn-nav" id="navCta" href="{{root}}treinos/">Próximo treino</a>
+    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><span></span><span></span><span></span></button>
   </div>
 </header>
+<div class="menu-mobile" id="menuMobile" hidden>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="{{root}}" {{cur:home}}>Home</a></li>
+      <li><a href="{{root}}treinos/" {{cur:treinos}}>Treinos</a></li>
+      <li><a href="{{root}}escolinha/" {{cur:escolinha}}>Escolinha</a></li>
+      <li><a href="{{root}}sobre/" {{cur:sobre}}>Sobre</a></li>
+    </ul>
+    <a class="btn btn-fogo" id="menuCta" href="{{root}}treinos/">Próximo treino</a>
+    <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
+  </nav>
+</div>

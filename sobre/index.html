@@ -26,14 +26,15 @@
 <script src="/assets/cd.js"></script>
 </head>
 <body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
 <div class="barra-contagem" id="barraContagem" hidden></div>
-<header class="nav">
+<header class="nav" id="topo">
   <div class="wrap">
-    <a class="marca" href="/">
-      <span class="logo"><img src="/assets/logo.jpg" alt="Carioca Drift Culture"></span>
-      <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
+    <a class="marca" href="/" aria-label="Carioca Drift, início">
+      <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
+      <span class="nome"><b>Carioca Drift</b><span class="tagline">More than drift. It's a culture.</span></span>
     </a>
-    <nav aria-label="Principal">
+    <nav class="nav-desktop" aria-label="Principal">
       <ul class="menu">
         <li><a href="/" >Home</a></li>
         <li><a href="/treinos/" >Treinos</a></li>
@@ -41,8 +42,22 @@
         <li><a href="/sobre/" aria-current="page">Sobre</a></li>
       </ul>
     </nav>
+    <a class="btn btn-fogo btn-nav" id="navCta" href="/treinos/">Próximo treino</a>
+    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><span></span><span></span><span></span></button>
   </div>
 </header>
+<div class="menu-mobile" id="menuMobile" hidden>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="/" >Home</a></li>
+      <li><a href="/treinos/" >Treinos</a></li>
+      <li><a href="/escolinha/" >Escolinha</a></li>
+      <li><a href="/sobre/" aria-current="page">Sobre</a></li>
+    </ul>
+    <a class="btn btn-fogo" id="menuCta" href="/treinos/">Próximo treino</a>
+    <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
+  </nav>
+</div>
 <style>
 .sobre{display:grid;gap:28px;padding-block:8px 56px}
 .sobre .emblema{width:min(100%,260px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:4px solid var(--faisca);box-shadow:0 0 0 10px var(--pneu);background:#000}
@@ -101,19 +116,34 @@
 <div class="zebra" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
-    <a class="marca" href="/">
-      <span class="logo"><img src="/assets/logo.jpg" alt=""></span>
-      <span><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
-    </a>
+    <div class="rodape-marca">
+      <a class="marca" href="/">
+        <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
+        <span class="nome"><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
+      </a>
+      <p>Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift e a cena carioca crescendo junto.</p>
+    </div>
     <nav aria-label="Rodapé">
+      <span class="rotulo">Site</span>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/treinos/">Treinos</a></li>
-        <li><a href="/escolinha/">Escolinha</a></li>
+        <li><a href="/escolinha/">Escolinha de Drift</a></li>
         <li><a href="/sobre/">Sobre</a></li>
       </ul>
     </nav>
-    <p><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></p>
+    <div>
+      <span class="rotulo">Contato</span>
+      <ul>
+        <li><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></li>
+        <li>Direct no Instagram pra parcerias e dúvidas</li>
+        <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
+      </ul>
+    </div>
+    <div class="rodape-base">
+      <span>© 2026 Carioca Drift · Rio de Janeiro</span>
+      <a href="/admin/">Painel</a>
+    </div>
   </div>
 </footer>
 </body>

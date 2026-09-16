@@ -44,8 +44,27 @@ window.CD = (() => {
     </a>`;
   }
 
-  async function treinosPublicados() {
-    return rest("treinos?select=*&publicado=eq.true&order=data.asc");
+  let _treinos = null;
+  function treinosPublicados() {
+    if (!_treinos) _treinos = rest("treinos?select=*&publicado=eq.true&order=data.asc").catch(e => { _treinos = null; throw e; });
+    return _treinos;
+  }
+
+  // Menu mobile
+  function menuMobile(){
+    const btn = document.getElementById('abrirMenu'), menu = document.getElementById('menuMobile'); if (!btn || !menu) return;
+    const abrir = on => { menu.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.setAttribute('aria-label', on ? 'Fechar menu' : 'Abrir menu'); document.body.classList.toggle('menu-aberto', on); if (on) menu.querySelector('a').focus(); };
+    btn.addEventListener('click', () => abrir(menu.hidden));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { abrir(false); btn.focus(); } });
+    matchMedia('(min-width:900px)').addEventListener('change', e => { if (e.matches) abrir(false); });
+  }
+
+  // Botão "Próximo treino" no header (todas as páginas)
+  async function ctaProximo(){
+    try {
+      const t = (await treinosPublicados()).find(x => fim(x) >= new Date()); if (!t) return;
+      for (const id of ['navCta','menuCta']) { const b = document.getElementById(id); if (b) { b.href = `/treinos/${esc(t.slug)}/`; b.textContent = `Treino ${dataCurta(t.data)}`; } }
+    } catch (e) {}
   }
 
   // Barra fixa no topo com o próximo treino (todas as páginas, menos onde window.SEM_BARRA = true)
@@ -69,7 +88,8 @@ window.CD = (() => {
       })();
     } catch (e) {}
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', barraProximo); else barraProximo();
+  const init = () => { menuMobile(); ctaProximo(); barraProximo(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
   return { SB_URL, SB_KEY, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();

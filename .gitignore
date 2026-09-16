@@ -1,2 +1,4 @@
 .env.local
 *.csv
+.DS_Store
+supabase/.temp/
