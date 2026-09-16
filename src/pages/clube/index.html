@@ -1,60 +1,177 @@
 ---
-title: Clube | Carioca Drift
-desc: Área do Clube Carioca Drift, exclusiva para membros aprovados.
-og_title: Clube Carioca Drift
+title: Carioca Drift Club
+desc: Carioca Drift Club, a camada de membros da Carioca Drift. Conta é uma coisa; ser membro é outra. Solicite associação e acompanhe o status.
+og_title: Carioca Drift Club
 nav: conta
-extra_head: <meta name="robots" content="noindex">
+layout: club
+body_class: club
+extra_head: <link rel="stylesheet" href="/assets/club.css"><meta name="robots" content="noindex">
 ---
 <style>
-.clube{padding-block:40px 72px}
-.clube h1{font-size:clamp(44px,9vw,84px)}
-.clube h1 em{font-style:italic;font-weight:900;color:var(--amarelo)}
-.clube .cartao-m{border:1px solid var(--linha-forte);border-top:3px solid var(--amarelo);padding:22px;display:grid;gap:10px;max-width:560px;margin-top:24px}
-.clube .cartao-m b{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
-.clube .cartao-m .rot{color:var(--amarelo)}
-.clube .lista{margin-top:36px;display:grid;gap:18px}
-.clube .lista li{list-style:none;padding-top:14px;border-top:1px solid var(--linha-forte)}
-.clube .lista b{display:block;font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}
-.clube .lista p{color:var(--cinza);font-size:15px;margin-top:6px;max-width:44ch}
-.bloqueio{padding:60px 0;text-align:center}
-.bloqueio h1{font-size:clamp(40px,8vw,72px)}
-.bloqueio p{color:var(--cinza);margin-top:12px;max-width:44ch;margin-inline:auto}
-@media (min-width:900px){.clube .lista{grid-template-columns:repeat(3,1fr);gap:40px}}
+.estado{padding-block:40px 72px}
+.estado .cab{display:grid;gap:10px;margin-bottom:24px}
+.estado h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,8vw,72px);line-height:.9;text-transform:uppercase;color:var(--c-branco)}
+.estado .grade{display:grid;gap:24px}
+@media (min-width:900px){.estado .grade{grid-template-columns:1.1fr .9fr;gap:56px;align-items:start}}
+.estado .capa{border:1px solid var(--c-linha);background:#000}
+.estado .capa img{width:100%;height:auto;display:block}
+.membro-area .cabeca{position:relative;overflow:hidden;background:#000}
+.membro-area .cabeca img{width:100%;height:auto;max-height:52vh;object-fit:cover;object-position:center 40%;display:block;opacity:.9}
+.membro-area .cabeca .veu{position:absolute;inset:auto 0 0;height:50%;background:linear-gradient(transparent,var(--c-preto))}
+.membro-area .dentro{position:relative;margin-top:-56px;display:grid;gap:18px}
+.demo{position:fixed;top:64px;left:0;right:0;z-index:40;background:var(--c-vermelho);color:#fff;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:6px}
+.demo a{color:#fff}
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="coroa" viewBox="0 0 24 24"><path d="M3 18h18l-1.5-9-4.5 3.5L12 5l-3 7.5L4.5 9 3 18zm0 2h18v1.5H3z"/></symbol></svg>
 
 <main id="conteudo">
-  <div class="wrap clube" id="area" hidden>
-    <span class="rot am">Área exclusiva</span>
-    <h1>Clube <em>Carioca Drift</em></h1>
-    <p class="prosa">Bem-vindo, <b id="cNome"></b>. Esta área é dos membros aprovados do clube.</p>
-    <div class="cartao-m"><span class="rot">Sua associação</span><b>Membro desde <span id="cDesde"></span></b><p class="nota" style="text-align:left;margin:0">Ser membro não libera pista, não é ingresso e não garante participação em eventos. Pista e ingressos seguem as regras de cada treino.</p></div>
-    <ul class="lista">
-      <li><b>Comunicados</b><p>Avisos da organização para os membros aparecerão aqui.</p></li>
-      <li><b>Encontros</b><p>Atividades do clube, quando houver, serão anunciadas aqui.</p></li>
-      <li><b>Benefícios</b><p>A definir pela organização. Nada foi prometido ainda.</p></li>
-    </ul>
+
+<!-- ENTRADA: visitante ou logado sem associação -->
+<section id="entrada" hidden>
+  <div class="club-hero">
+    <div class="wrap grid">
+      <div class="texto">
+        <span class="rot">Carioca Drift Club · Rio de Janeiro</span>
+        <h1>Mais que <span>drift.</span><br>Uma camada de <span>membros.</span></h1>
+        <p class="lema">Drift is a lifestyle · Same culture, different cars</p>
+        <p>O Club é a comunidade fechada da Carioca Drift: quem faz parte tem identificação de membro no perfil e acesso à área interna. Você cria sua conta como todo mundo e, quando quiser, solicita associação. A organização analisa e responde por aqui.</p>
+        <div class="acoes" id="entradaAcoes"></div>
+        <div class="regra"><b>Conta não é membro. Membro não é piloto autorizado. Membro não é ingresso.</b> Ser membro não libera pista, não é ingresso e não garante participação em eventos.</div>
+      </div>
+      <img class="arte" src="/assets/marca/club/hero-z-azul.jpg" alt="Arte do Carioca Drift Club: Nissan Z azul com a skyline do Rio ao fundo" width="1400" height="1050" fetchpriority="high">
+      <div class="veu"></div>
+    </div>
   </div>
-  <div class="wrap bloqueio" id="bloqueio" hidden>
-    <span class="rot am">Clube Carioca Drift</span>
-    <h1 id="bTitulo">Área dos membros</h1>
-    <p id="bTexto"></p>
-    <div class="acoes" style="justify-content:center;margin-top:24px" id="bAcoes"></div>
+  <div class="club-linha"></div>
+  <div class="wrap club-secao">
+    <span class="rot">Como funciona</span>
+    <h2>Da conta ao Club</h2>
+    <div class="club-cards">
+      <div class="club-card"><span class="n">01</span><b>Conta</b><p>Crie sua conta normal. Ninguém vira membro automaticamente.</p></div>
+      <div class="club-card"><span class="n">02</span><b>Solicitação</b><p>Em Minha Conta ou aqui, peça associação e deixe uma mensagem se quiser.</p></div>
+      <div class="club-card destaque"><span class="n">03</span><b>Decisão</b><p>A organização aprova ou recusa. Você acompanha o status e recebe o motivo em caso de recusa.</p></div>
+    </div>
   </div>
+  <div class="wrap club-secao" style="padding-top:0">
+    <span class="rot">O que muda sendo membro</span>
+    <h2>Identificação e área interna</h2>
+    <div class="club-cards duas">
+      <div class="club-card"><b>Selo no perfil</b><p>Seu perfil público, se você quiser deixá-lo público, mostra o selo de membro do Club.</p><span class="selo"><svg><use href="#coroa"/></svg>Membro</span></div>
+      <div class="club-card"><b>Área do Club</b><p>Comunicados e atividades da organização para membros. Benefícios formais ainda não foram definidos; nada foi prometido.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLICITAR: logado, cadastro completo, sem pedido ativo -->
+<section id="solicitar" class="wrap estado" hidden>
+  <div class="cab"><span class="rot">Carioca Drift Club</span><h1>Solicitar associação</h1></div>
+  <div class="grade">
+    <div class="capa"><img src="/assets/marca/club/hero-m2-preto.jpg" alt="Arte do Carioca Drift Club: BMW M2 preto" width="1400" height="1050" loading="lazy"></div>
+    <div class="cartao">
+      <h2 style="font-size:32px">Seu pedido</h2>
+      <p class="sub" id="solNome"></p>
+      <label class="campo" for="solMsg"><span>Mensagem para a organização (opcional)</span><textarea id="solMsg" maxlength="500" placeholder="Conta desde quando você acompanha ou anda, e por que quer fazer parte."></textarea></label>
+      <div class="erro" id="solErro"></div>
+      <button class="btn am" id="solEnviar" type="button">Enviar solicitação</button>
+      <p class="nota">Enviar não garante aprovação. A decisão é da organização e você acompanha o status aqui e em Minha Conta.</p>
+      <div class="regra"><b>Não libera pista, não é ingresso, não garante participação.</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS: pendente / recusada / cancelada / encerrada -->
+<section id="status" class="wrap estado" hidden>
+  <div class="cab"><span class="rot">Carioca Drift Club</span><h1 id="stTitulo"></h1><span id="stSelo"></span></div>
+  <div class="grade">
+    <div>
+      <p class="prosa" id="stTexto" style="color:var(--c-prata)"></p>
+      <div class="jornada" id="stJornada"></div>
+      <div class="acoes" id="stAcoes" style="margin-top:22px"></div>
+    </div>
+    <div class="capa"><img src="/assets/marca/club/hero-350z-prata.jpg" alt="Arte do Carioca Drift Club: 350Z prata" width="1400" height="1050" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- ÁREA INTERNA: membro aprovado -->
+<section id="membro" class="membro-area" hidden>
+  <div class="cabeca"><img src="/assets/marca/club/hero-m2-preto.jpg" alt="" width="1400" height="1050"><div class="veu"></div></div>
+  <div class="wrap dentro">
+    <span class="rot" style="color:var(--c-amarelo)">Área dos membros</span>
+    <div class="cartao-membro">
+      <div class="fundo" style="background-image:url(/assets/marca/club/logo-club-brilho.jpg)"></div>
+      <div class="conteudo">
+        <span class="selo"><svg><use href="#coroa"/></svg>Membro</span>
+        <div class="nome" id="mNome"></div>
+        <div class="meta">@<span id="mHandle"></span> · Membro desde <b id="mDesde"></b></div>
+      </div>
+    </div>
+    <div class="club-cards">
+      <div class="club-card destaque"><b>Comunicados</b><p>Avisos da organização para os membros aparecerão aqui.</p></div>
+      <div class="club-card"><b>Encontros</b><p>Atividades do Club, quando houver, serão anunciadas aqui.</p></div>
+      <div class="club-card"><b>Benefícios</b><p>A definir pela organização. Nada foi prometido ainda.</p></div>
+    </div>
+    <div class="regra" style="max-width:720px"><b>Ser membro não libera pista, não é ingresso e não garante participação em eventos.</b> Pista e ingressos seguem as regras de cada treino.</div>
+  </div>
+</section>
+
+<div class="wrap estado" id="semAmbiente" hidden><div class="regra"><b>Módulo de contas ainda não ativo.</b> O Club roda no ambiente de desenvolvimento, que ainda não foi criado.</div></div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (async () => {
-  const $ = id => document.getElementById(id);
-  const bloqueia = (titulo, texto, acoes) => { $('bloqueio').hidden = false; $('bTitulo').textContent = titulo; $('bTexto').textContent = texto; $('bAcoes').innerHTML = acoes; };
-  const libera = (nome, desde) => { $('area').hidden = false; $('cNome').textContent = nome; $('cDesde').textContent = desde; };
-  if (CD.DEMO) { const e = new URLSearchParams(location.search).get('demo'); return e === 'membro' ? libera('Ana', '17.09.2026') : bloqueia('Área dos membros', 'Você precisa ser membro aprovado do Clube Carioca Drift para entrar aqui.', '<a class="btn am" href="/conta/">Ir para minha conta</a>'); }
-  if (!CD.CONTAS_DISPONIVEIS) return bloqueia('Área dos membros', 'O módulo de contas ainda não está ativo.', '<a class="btn btn-linha" href="/">Home</a>');
-  const sb = supabase.createClient(CD.SB_URL, CD.SB_KEY);
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) return bloqueia('Área dos membros', 'Entre na sua conta para acessar a área do clube.', '<a class="btn am" href="/conta/">Entrar</a>');
-  const [{ data: p }, { data: a }] = await Promise.all([sb.from('usuarios').select('nome_exibicao').eq('id', session.user.id).single(), sb.from('associacoes').select('status, membro_desde').eq('usuario_id', session.user.id).maybeSingle()]);
-  if (!a || a.status !== 'aprovada') return bloqueia('Área dos membros', a && a.status === 'pendente' ? 'Sua solicitação está em análise. Você acompanha o status em Minha Conta.' : 'Você precisa ser membro aprovado do Clube Carioca Drift para entrar aqui. Solicite a associação em Minha Conta.', '<a class="btn am" href="/conta/">Ir para minha conta</a>');
-  libera(p.nome_exibicao, new Date(a.membro_desde).toLocaleDateString('pt-BR'));
+  const $ = id => document.getElementById(id), { esc } = CD;
+  const so = id => { for (const s of ['entrada','solicitar','status','membro','semAmbiente']) $(s).hidden = s !== id; };
+  const fmt = iso => iso ? new Date(iso).toLocaleDateString('pt-BR') : '';
+  const SELO = { pendente: ['pendente','Pendente'], recusada: ['recusada','Recusada'], cancelada: ['prata','Cancelada'], encerrada: ['encerrada','Encerrada'] };
+  function entrada(logado, completo){
+    so('entrada');
+    $('entradaAcoes').innerHTML = !logado ? '<a class="btn am" href="/conta/">Criar conta ou entrar</a><a class="btn" href="#como">Como funciona</a>'
+      : !completo ? '<a class="btn am" href="/conta/">Concluir cadastro</a>'
+      : '<button class="btn am" id="irSolicitar" type="button">Solicitar associação</button><a class="btn" href="/conta/">Minha conta</a>';
+    const b = $('irSolicitar'); if (b) b.addEventListener('click', () => solicitar());
+  }
+  let perfilAtual = null, sb = null;
+  function solicitar(){ so('solicitar'); $('solNome').textContent = perfilAtual ? `${perfilAtual.nome_exibicao} · @${perfilAtual.handle}` : ''; window.scrollTo({ top: 0 }); }
+  function status(a){
+    so('status'); const [cls, rot] = SELO[a.status] || ['prata', a.status];
+    $('stSelo').innerHTML = `<span class="selo ${cls}"><svg><use href="#coroa"/></svg>${rot}</span>`;
+    const T = { pendente: ['Solicitação em análise', 'Seu pedido chegou à organização. Você acompanha o status aqui e em Minha Conta; não há prazo garantido.'], recusada: ['Solicitação recusada', 'A organização não aprovou desta vez' + (a.motivo ? ': ' + a.motivo : '.') + ' Você pode solicitar de novo.'], cancelada: ['Solicitação cancelada', 'Você cancelou o pedido. Pode solicitar de novo quando quiser.'], encerrada: ['Associação encerrada', 'Sua associação foi encerrada' + (a.motivo ? ': ' + a.motivo : '.') + ' Você pode solicitar de novo.'] };
+    const [t, x] = T[a.status] || ['Status', '']; $('stTitulo').textContent = t; $('stTexto').textContent = x;
+    const passos = [['Conta criada', 'feito', ''], ['Solicitação enviada', a.status === 'pendente' ? 'atual' : 'feito', fmt(a.solicitada_em)], ['Decisão da organização', a.status === 'pendente' ? '' : 'feito', a.decidida_em ? fmt(a.decidida_em) : 'aguardando'], ['Membro do Club', a.status === 'aprovada' ? 'feito' : '', '']];
+    $('stJornada').innerHTML = passos.map(([b, c, s], i) => `<div class="passo ${c}"><i>${i + 1}</i><div><b>${b}</b><small>${esc(s)}</small></div></div>`).join('');
+    $('stAcoes').innerHTML = a.status === 'pendente' ? '<button class="btn" id="cancelar" type="button">Cancelar solicitação</button><a class="btn" href="/conta/">Minha conta</a>' : '<button class="btn am" id="denovo" type="button">Solicitar de novo</button><a class="btn" href="/conta/">Minha conta</a>';
+    const c = $('cancelar'); if (c) c.addEventListener('click', async () => { if (!confirm('Cancelar sua solicitação?')) return; await sb.rpc('cancelar_solicitacao_associacao'); await carregar(); });
+    const d = $('denovo'); if (d) d.addEventListener('click', () => solicitar());
+  }
+  function membro(p, a){ so('membro'); $('mNome').textContent = p.nome_exibicao; $('mHandle').textContent = p.handle; $('mDesde').textContent = fmt(a.membro_desde); }
+
+  if (CD.DEMO) {
+    const e = new URLSearchParams(location.search).get('demo') || 'entrada';
+    const faixa = document.createElement('div'); faixa.className = 'demo'; faixa.innerHTML = `Demonstração visual · "${esc(e)}" · sem gravação · <a href="?demo=entrada">entrada</a> · <a href="?demo=logado">logado</a> · <a href="?demo=solicitar">solicitar</a> · <a href="?demo=pendente">pendente</a> · <a href="?demo=recusada">recusada</a> · <a href="?demo=membro">membro</a>`; document.body.prepend(faixa);
+    perfilAtual = { nome_exibicao: 'Ana', handle: 'ana_souza' };
+    if (e === 'entrada') entrada(false, false); if (e === 'logado') entrada(true, true); if (e === 'solicitar') solicitar();
+    if (e === 'pendente') status({ status: 'pendente', solicitada_em: '2026-09-17T14:10:00Z' }); if (e === 'recusada') status({ status: 'recusada', solicitada_em: '2026-09-10T14:10:00Z', decidida_em: '2026-09-12T10:00:00Z', motivo: 'Vamos abrir novas vagas no próximo treino.' });
+    if (e === 'membro') membro(perfilAtual, { membro_desde: '2026-09-16T20:00:00Z' });
+    return;
+  }
+  if (!CD.CONTAS_DISPONIVEIS) { so('semAmbiente'); return; }
+  sb = supabase.createClient(CD.SB_URL, CD.SB_KEY);
+  $('solEnviar').addEventListener('click', async () => {
+    $('solEnviar').disabled = true; const { data, error } = await sb.rpc('solicitar_associacao', { mensagem_txt: $('solMsg').value.trim() || null }); $('solEnviar').disabled = false;
+    if (error || !data.ok) return $('solErro').textContent = data && data.motivo === 'cadastro_incompleto' ? 'Conclua o cadastro em Minha Conta antes.' : 'Não deu pra enviar agora.';
+    await carregar();
+  });
+  async function carregar(){
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return entrada(false, false);
+    const { data: p } = await sb.from('usuarios').select('nome_exibicao,handle,estado_cadastro').eq('id', session.user.id).single(); perfilAtual = p;
+    if (!p || p.estado_cadastro !== 'completo') return entrada(true, false);
+    const { data: a } = await sb.from('associacoes').select('*').eq('usuario_id', session.user.id).maybeSingle();
+    if (!a) return entrada(true, true);
+    if (a.status === 'aprovada') return membro(p, a);
+    status(a);
+  }
+  await carregar();
 })();
 </script>

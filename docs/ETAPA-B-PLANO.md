@@ -125,3 +125,27 @@ Os da seção 8.1 (B) da arquitetura, sem alteração. Demonstração no DEV par
 ## 7. O que continua proibido nesta etapa
 
 Executar qualquer migration em produção; alterar `admins` ou `eh_admin()` de produção; trocar a fonte de publicação do GitHub Pages sem autorização; commitar qualquer arquivo gerado com dados de usuário; colocar chave de serviço ou senha de banco no GitHub ou no site; merge em `main`; publicar; imprimir credenciais; conectar a qualquer banco do NMI.
+
+
+## 8. Estado em 16/09/2026 (noite): o que já existe no branch
+
+| Item | Estado |
+|---|---|
+| Migrations B1–B8 (`supabase/migrations/20260917000100` a `000800`) | escritas; aplicadas e testadas num Postgres local isolado com shim do Supabase (papéis, `auth.jwt()`, `auth.users`, storage). **Não aplicadas em nenhum projeto Supabase** |
+| Suíte `supabase/tests/etapa-b.sql` | 124 casos, todos passando: gatilho de perfil, @ (normalização, reservados, colisão, pendente), privilégios por coluna, visibilidade e projeção pública, storage de avatares, capacidades e modo duplo com revogação e rollback, Clube (solicitação, decisão, encerramento, selo), regressão do painel atual, inventário de privilégios |
+| Reordenação em relação ao plano | B2 = funções do @; B3 = gatilho (o gatilho depende de `normalizar_handle`). B8 passou a ser o Clube; a revogação geral de privilégios (antigo B8) vira B9 após o inventário no DEV |
+| Achado técnico | policies de storage não podem consultar `public.usuarios` diretamente (rodam como o papel da API); a visibilidade fica em `avatar_visivel()`, função `security definer` em plpgsql |
+| Páginas | `/conta/` (entrar, criar, código, @ pendente, Minha Conta com perfil, foto, visibilidade, Clube, capacidades), `/u/` (perfil público), `/clube/` (identidade própria do Club: entrada, solicitar, status, área interna), painel com abas Clube e Usuários |
+| Modo demonstração | só em localhost com `?demo=<estado>`: mostra cada estado sem banco. `?env=dev` selecionará o DEV quando existir |
+| Prévia | `http://localhost:8766` (worktree `cariocadrift-etapa-b`, branch `etapa-b-contas`); no celular na mesma rede: `http://192.168.68.51:8766` |
+| Bloqueado | tudo que exige Auth/PostgREST reais: cadastro, código por e-mail, login, upload, RLS de ponta a ponta. Depende do Supabase DEV |
+
+### 8.1 Supabase DEV: custo para sua autorização
+
+| Opção | Custo | Prós | Contras |
+|---|---|---|---|
+| A. Projeto novo na organização Dtc (Pro) | ≈ US$ 10/mês em Micro, cobrado por hora; pausado = US$ 0 de compute | mesma conta, backups, sem pausa automática | custo recorrente enquanto ativo |
+| B. Organização nova no plano Free, projeto Free | US$ 0 | sem custo | pausa após 7 dias sem uso, limites menores, sem backups; precisa de uma organização separada na sua conta |
+| C. Docker Desktop no Mac + `supabase start` | US$ 0 | tudo local, inclusive Auth e Storage | instalar Docker (≈ 1 GB), consumo de máquina, e-mails de código só em caixa local |
+
+Recomendação: A para fidelidade com a produção, B se o custo pesar. Nada será criado sem sua palavra.

@@ -1,0 +1,86 @@
+/* ===== Carioca Drift Club · identidade da área do clube (só páginas do Club; o site institucional não usa) ===== */
+.club{
+  --c-preto:#050506; --c-grafite:#111114; --c-linha:#232329; --c-linha-forte:#3A3A44;
+  --c-prata:#D8D8DE; --c-prata-escura:#8E8E98; --c-branco:#FFFFFF;
+  --c-amarelo:#FFD100; --c-vermelho:#FF1E1E;
+  --c-metal:linear-gradient(180deg,#FFFFFF 0%,#C9C9D2 45%,#7C7C88 50%,#E6E6EC 100%);
+  background:var(--c-preto);color:var(--c-prata);
+}
+.club .wrap{max-width:1200px}
+/* cabeçalho do club: logo limpa, pequena, à esquerda; volta ao site à direita */
+.club-topo{position:sticky;top:0;z-index:25;background:rgba(5,5,6,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--c-linha)}
+.club-topo .wrap{display:flex;align-items:center;gap:16px;min-height:64px}
+.club-topo .logo-club{display:block;height:44px;aspect-ratio:3/2;overflow:hidden;position:relative;flex:none}
+.club-topo .logo-club img{position:absolute;inset:-18% -8%;width:116%;height:auto;max-width:none}
+.club-topo .rot{font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--c-prata-escura)}
+.club-topo nav{margin-left:auto;display:flex;gap:4px}
+.club-topo nav a{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--c-prata-escura);padding:10px 12px}
+.club-topo nav a:hover,.club-topo nav a[aria-current]{color:var(--c-branco)}
+.club-topo nav a.sair{border:1px solid var(--c-linha-forte)}
+@media (max-width:640px){.club-topo .rot{display:none}.club-topo nav a{padding:10px 8px;font-size:11px}}
+/* selo de membro: coroa + texto metálico */
+.selo{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border:1px solid var(--c-amarelo);background:rgba(255,209,0,.06);font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-amarelo)}
+.selo svg{width:16px;height:16px;fill:var(--c-amarelo)}
+.selo.prata{border-color:var(--c-linha-forte);color:var(--c-prata);background:transparent}
+.selo.prata svg{fill:var(--c-prata)}
+.selo.pendente{border-color:var(--c-prata-escura);color:var(--c-prata)}
+.selo.recusada,.selo.encerrada{border-color:var(--c-vermelho);color:var(--c-vermelho)}
+.selo.recusada svg,.selo.encerrada svg{fill:var(--c-vermelho)}
+/* hero: arte completa, nada por cima da arte; texto vem abaixo (mobile) ou ao lado (desktop) */
+.club-hero{position:relative;overflow:hidden;background:#000}
+.club-hero .arte{display:block;width:100%;height:auto;max-height:78vh;object-fit:cover;object-position:center}
+.club-hero .veu{position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,var(--c-preto))}
+.club-hero .texto{position:relative;margin-top:-64px;padding-bottom:36px;display:grid;gap:14px}
+.club-hero .rot{color:var(--c-amarelo)}
+.club-hero h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,9vw,96px);line-height:.88;text-transform:uppercase;color:var(--c-branco)}
+.club-hero h1 span{background:var(--c-metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.club-hero .lema{font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--c-prata-escura)}
+.club-hero p{max-width:52ch;color:var(--c-prata);font-size:17px}
+@media (min-width:900px){
+  .club-hero .grid{display:grid;grid-template-columns:5fr 7fr;gap:48px;align-items:center;padding:0}
+  .club-hero .texto{margin-top:0;order:1;padding:56px 0}
+  .club-hero .arte{order:2;max-height:none;aspect-ratio:4/3}
+  .club-hero .veu{display:none}
+}
+/* linha metálica de seção */
+.club-linha{height:2px;background:linear-gradient(90deg,transparent,var(--c-prata-escura) 20%,var(--c-branco) 50%,var(--c-prata-escura) 80%,transparent)}
+.club-secao{padding-block:56px}
+.club-secao h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,56px);line-height:.9;text-transform:uppercase;color:var(--c-branco)}
+.club-secao .rot{color:var(--c-amarelo)}
+/* cards: base escura limpa, borda fina, acento só onde importa */
+.club-cards{display:grid;gap:14px;margin-top:24px}
+.club-card{background:var(--c-grafite);border:1px solid var(--c-linha);padding:22px;display:grid;gap:8px;align-content:start;position:relative}
+.club-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c-linha-forte)}
+.club-card.destaque::before{background:var(--c-amarelo)}
+.club-card.alerta::before{background:var(--c-vermelho)}
+.club-card .n{font-family:var(--display);font-style:italic;font-weight:900;font-size:40px;line-height:.8;color:var(--c-amarelo)}
+.club-card b{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase;color:var(--c-branco)}
+.club-card p{color:var(--c-prata-escura);font-size:15px}
+@media (min-width:800px){.club-cards{grid-template-columns:repeat(3,1fr);gap:20px}.club-cards.duas{grid-template-columns:1fr 1fr}}
+/* jornada / status */
+.jornada{display:grid;gap:0;margin-top:24px;border:1px solid var(--c-linha)}
+.jornada .passo{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:16px 18px;border-top:1px solid var(--c-linha);align-items:center}
+.jornada .passo:first-child{border-top:0}
+.jornada .passo i{font-style:normal;width:36px;height:36px;border:1px solid var(--c-linha-forte);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:18px;color:var(--c-prata-escura)}
+.jornada .passo.feito i{border-color:var(--c-amarelo);color:var(--c-amarelo)}
+.jornada .passo.atual i{border-color:var(--c-branco);color:var(--c-branco);background:var(--c-grafite)}
+.jornada .passo b{display:block;font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-branco)}
+.jornada .passo small{color:var(--c-prata-escura);font-size:13px}
+/* cartão de membro */
+.cartao-membro{position:relative;overflow:hidden;border:1px solid var(--c-linha-forte);background:#000;display:grid;grid-template-columns:1fr;max-width:720px}
+.cartao-membro .fundo{position:absolute;inset:0;opacity:.55;background:center/cover no-repeat}
+.cartao-membro .conteudo{position:relative;padding:26px;display:grid;gap:10px;background:linear-gradient(90deg,rgba(5,5,6,.92) 0%,rgba(5,5,6,.75) 60%,rgba(5,5,6,.2) 100%)}
+.cartao-membro .nome{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,44px);line-height:.9;text-transform:uppercase;color:var(--c-branco)}
+.cartao-membro .meta{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-prata-escura)}
+.cartao-membro .meta b{color:var(--c-amarelo)}
+/* botões do club */
+.club .btn{border-color:var(--c-linha-forte);color:var(--c-branco)}
+.club .btn.am{background:var(--c-amarelo);border-color:var(--c-amarelo);color:#000}
+.club .btn.metal{background:var(--c-metal);border-color:var(--c-prata);color:#000}
+.club .btn.metal:hover{background:var(--c-branco)}
+.club .cartao{background:var(--c-grafite);border-color:var(--c-linha);border-top-color:var(--c-amarelo);color:var(--c-prata)}
+.club .campo input,.club .campo textarea{background:#000;border-color:var(--c-linha-forte);color:var(--c-branco)}
+.club .nota{color:var(--c-prata-escura)}
+.club .regra{margin-top:18px;padding:14px 16px;border:1px solid var(--c-linha);border-left:2px solid var(--c-vermelho);font-size:14px;color:var(--c-prata-escura)}
+.club .regra b{color:var(--c-prata)}
+.club footer{border-top-color:var(--c-linha)}

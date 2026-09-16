@@ -29,6 +29,7 @@ def render(tpl, meta, root, path):
         out = out.replace("{{" + k + "}}", v)
     out = out.replace("{{og_title}}", meta.get("og_title", meta["title"]))
     out = out.replace("{{extra_head}}", meta.get("extra_head", ""))
+    out = out.replace("{{body_class}}", meta.get("body_class", ""))
     out = out.replace("{{root}}", root).replace("{{path}}", path)
     out = re.sub(r'\{\{cur:(\w+)\}\}',
                  lambda m: 'aria-current="page"' if m.group(1) == meta.get("nav") else "", out)
@@ -41,7 +42,8 @@ for pagina in sorted((SRC / "pages").rglob("index.html")):
     root = "/"
     path = (str(rel).replace("\\", "/") + "/") if profundidade else ""
     meta, corpo = meta_e_corpo(pagina.read_text(encoding="utf-8"))
-    html = "".join(render(PARTIALS[p], meta, root, path) for p in ("head", "nav")) \
+    nav = "nav-club" if meta.get("layout") == "club" else "nav"     # área do Club tem cabeçalho próprio
+    html = "".join(render(PARTIALS[p], meta, root, path) for p in ("head", nav)) \
          + render(corpo, meta, root, path) \
          + render(PARTIALS["footer"], meta, root, path)
     destino = RAIZ / rel / "index.html"

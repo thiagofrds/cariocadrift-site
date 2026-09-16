@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/cd.js"></script>
 <meta name="robots" content="noindex"></head>
-<body>
+<body class="">
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 <header class="top" id="topo">
   <div class="wrap">
@@ -272,8 +272,10 @@
     $('login').hidden = !!sessao; $('app').hidden = !sessao;
     if (sessao) { $('quem').textContent = sessao.user.email; await carregarTreinos(); }
   }
-  sb.auth.getSession().then(({data}) => mostrar(data.session));
-  sb.auth.onAuthStateChange((ev, s) => { if (ev === 'SIGNED_OUT') mostrar(null); if (ev === 'PASSWORD_RECOVERY') trocarSenha(); });
+  if (!CD.DEMO) {
+    sb.auth.getSession().then(({data}) => mostrar(data.session));
+    sb.auth.onAuthStateChange((ev, s) => { if (ev === 'SIGNED_OUT') mostrar(null); if (ev === 'PASSWORD_RECOVERY') trocarSenha(); });
+  }
 
   $('entrar').addEventListener('click', async () => {
     $('erroLogin').textContent = '';

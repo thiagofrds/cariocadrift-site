@@ -216,8 +216,10 @@ extra_head: <meta name="robots" content="noindex">
     $('login').hidden = !!sessao; $('app').hidden = !sessao;
     if (sessao) { $('quem').textContent = sessao.user.email; await carregarTreinos(); }
   }
-  sb.auth.getSession().then(({data}) => mostrar(data.session));
-  sb.auth.onAuthStateChange((ev, s) => { if (ev === 'SIGNED_OUT') mostrar(null); if (ev === 'PASSWORD_RECOVERY') trocarSenha(); });
+  if (!CD.DEMO) {
+    sb.auth.getSession().then(({data}) => mostrar(data.session));
+    sb.auth.onAuthStateChange((ev, s) => { if (ev === 'SIGNED_OUT') mostrar(null); if (ev === 'PASSWORD_RECOVERY') trocarSenha(); });
+  }
 
   $('entrar').addEventListener('click', async () => {
     $('erroLogin').textContent = '';
