@@ -25,7 +25,7 @@ window.CD = (() => {
   };
   const participacao = slug => PARTICIPACAO[slug] || null;
   // Lista de interesse da Carona Radical: só liga depois que a tabela interessados_carona existir e os testes passarem.
-  const CARONA_LISTA_ATIVA = false;
+  const CARONA_LISTA_ATIVA = true;   // tabela interessados_carona aplicada em produção em 16/09/2026 (commit 332537a), validada pela API
   // Arquivos conceituais (renders) que não podem ser exibidos como fotografia real em nenhuma página.
   const RENDERS_CONCEITUAIS = ["/assets/carro.jpg", "https://cariocadrift.com.br/assets/carro.jpg"];
 

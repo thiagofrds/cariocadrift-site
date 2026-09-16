@@ -19,6 +19,8 @@ const EMAIL = 'qa-e2@cariocadrift.com.br', ARQ = '/tmp/cd-qa-senha';
     const u = (lista.users || []).find(x => x.email === EMAIL);
     if (u) { const d = await fetch(`${URL}/auth/v1/admin/users/${u.id}`, { method: 'DELETE', headers: H }); console.log('usuário QA apagado:', d.status); }
     console.log('admins:', (await fetch(`${URL}/rest/v1/admins?email=eq.${encodeURIComponent(EMAIL)}`, { method: 'DELETE', headers: H })).status);
+    const dc = await fetch(`${URL}/rest/v1/interessados_carona?nome=like.TESTE%20QA*`, { method: 'DELETE', headers: { ...H, Prefer: 'return=representation' } }); console.log('interessados_carona apagados:', dc.ok ? (await dc.json()).length : dc.status);
+    const dt = await fetch(`${URL}/rest/v1/tentativas_carona?telefone=like.219000190*`, { method: 'DELETE', headers: { ...H, Prefer: 'return=representation' } }); console.log('tentativas_carona apagadas:', dt.ok ? (await dt.json()).length : dt.status);
     for (const t of ['confirmacoes', 'interessados_escolinha', 'treinos']) {
       const col = t === 'treinos' ? 'titulo' : 'nome';
       const d = await fetch(`${URL}/rest/v1/${t}?${col}=like.TESTE%20QA*`, { method: 'DELETE', headers: { ...H, Prefer: 'return=representation' } });

@@ -202,3 +202,14 @@ Roteiros: `capturas-e2.js` 241 verificações, `qa-lancamento.js` 64, zero falha
 | Concorrência | 50 na janela + 40 simultâneos: exatamente 10 entram; 6 simultâneos do mesmo telefone: exatamente 3 | idem |
 
 Ainda não aplicada. Formulário oculto. Sem merge.
+
+## 18. Carona Radical em produção: migration aplicada e validação real (16/09, noite)
+
+| Item | Resultado | Detalhe |
+|---|---|---|
+| Migration aplicada | **aprovado** | Aplicada por você pelo terminal com `scripts/aplicar-migration-carona.sh`, na conexão direta ao projeto carioca-drift, banco `postgres`, arquivo conferido pelo checksum da versão aprovada (commit 332537a), transação única. Objetos confirmados: tabelas `interessados_carona` e `tentativas_carona`, três policies, `anon` só com INSERT nas cinco colunas do formulário, gatilho `interessados_carona_limite` |
+| Validação pela API real | **25 de 25** | `supabase/tests/validar-producao-carona.js`: inserção 201 com `return=minimal`; leitura anônima 401; id e `criado_em` (antigo e futuro) enviados pelo cliente → 401 sem gravar; duplicata → 201 sem linha nova; treino inexistente → 409/23503; telefone curto → 400; sem consentimento → 401; origem diferente → 401; interesse geral → 201; update e delete anônimos → 401 e registro intacto; limite por telefone: 3 tentativas ok e 4ª barrada com a mesma resposta para telefone novo e cadastrado. Registros e tentativas de teste apagados. Limite global de 60 **não testado em produção**, por decisão (barraria visitantes reais) |
+| Formulário ligado | feito | `CARONA_LISTA_ATIVA = true` no build de `fase-01-home` (ainda não publicado) |
+| QA no navegador, formulário → painel | **22 de 22** | mobile 390 pela página do Open Drift Session e desktop 1440 pela página geral: formulário visível, treino de origem identificado, validação dos três campos, envio com a mensagem exata "Interesse registrado! … O cadastro não garante vaga.", registro gravado com treino e consentimento, reenvio mostra a mesma confirmação sem gravar linha nova, sem erros de console. Painel › Leads › Carona Radical: os dois registros com origem e treino/geral, pesquisa por nome e por telefone, filtro por treino, CSV com cabeçalho e registros, exclusão refletida no banco. Registros e tentativas apagados ao final |
+| Capturas gerais | 252 verificações, zero falhas | página de caronas com formulário ativo: consentimento, botão, aviso "decidir na hora", honeypot invisível, associação ao treino |
+| Não feito | — | teste de carga em produção; merge; publicação |
