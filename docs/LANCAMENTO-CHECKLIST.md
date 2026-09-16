@@ -228,3 +228,7 @@ Ainda não aplicada. Formulário oculto. Sem merge.
 | Não feito | — | teste de carga; publicação de treino de teste; qualquer migration nova; etapa B |
 
 **Site novo no ar em https://cariocadrift.com.br.**
+
+## 20. Imagem de prévia com foto real (16/09, noite)
+
+Licença de uso das fotografias do Sergio Photos RJ confirmada por você. `assets/og.jpg` (1200×630) passou a ter a foto 3126 à direita, inteira na base e com a marca d'água visível, sem nada por cima; à esquerda, painel preto com a logo oficial, tagline, linha de contexto e o crédito "Foto: Sergio Photos RJ". Gerada por composição em navegador, sem edição da fotografia. A prévia do evento continua com a capa provisória da marca até a escolha da capa.
