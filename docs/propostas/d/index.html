@@ -63,14 +63,22 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 .dock a b{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:0}
 @media (max-width:900px){.dock{display:block}body{padding-bottom:84px}}
 
-/* ===== hero: marca + frase em cima, grid de largada embaixo ===== */
-.hero{padding:56px 0 0}
+/* ===== hero: vídeo real ao fundo da marca, grid de largada embaixo em preto ===== */
+.hero{padding:0}
+.hero .midia{position:relative;isolation:isolate;padding:56px 0 48px;overflow:hidden;min-height:520px;display:flex;align-items:flex-end}
+.hero .midia video,.hero .midia img.poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.hero .midia .veu{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,11,11,.55) 0%,rgba(11,11,11,.15) 40%,rgba(11,11,11,.85) 80%,var(--preto) 100%)}
+.hero .midia .wrap{width:min(100% - 2*var(--g),1200px)}
+.hero .registro{position:absolute;right:var(--g);top:16px;font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(237,237,237,.7)}
+.hero .v-desk{display:none}.hero .v-mob{display:block}
+@media (min-width:900px){.hero .v-desk{display:block}.hero .v-mob{display:none}.hero .midia{min-height:min(78vh,720px);padding:96px 0 64px}.hero .midia .veu{background:linear-gradient(90deg,rgba(11,11,11,.85) 0%,rgba(11,11,11,.45) 45%,rgba(11,11,11,.1) 100%),linear-gradient(180deg,rgba(11,11,11,.4) 0%,rgba(11,11,11,0) 30%,var(--preto) 100%)}}
+@media (prefers-reduced-motion:reduce){.hero .midia video{display:none!important}}
 .hero .marca{display:grid;gap:28px;align-items:end}
 .hero .logo{width:min(100%,360px)}
-.hero .frase{max-width:36ch;color:var(--gelo);font-size:18px;line-height:1.5}
+.hero .frase{max-width:36ch;color:var(--gelo);font-size:18px;line-height:1.5;text-shadow:0 1px 12px rgba(0,0,0,.6)}
 .hero .frase b{color:var(--amarelo);font-weight:600}
 .hero .frase .rot{display:block;margin-bottom:12px}
-.hero .grid{margin-top:44px;padding:28px 0 40px;border-top:1px solid var(--linha);display:grid;gap:22px}
+.hero .grid{margin-top:0;padding:36px 0 40px;display:grid;gap:22px}
 .hero .data{display:grid;gap:6px}
 .hero .data b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(96px,22vw,200px);line-height:.8;color:var(--amarelo);letter-spacing:-.03em}
 .hero .data span{font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
@@ -83,14 +91,13 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 .hero .acoes{display:grid;gap:10px;align-content:end}
 .hero .acoes .nota{font-size:12px;color:var(--cinza);line-height:1.45}
 @media (min-width:900px){
-  .hero{padding:88px 0 0}
   .hero .marca{grid-template-columns:1fr 1fr;gap:64px}
   .hero .logo{width:min(100%,540px)}
   .hero .frase{justify-self:end;max-width:34ch;font-size:20px}
-  .hero .grid{margin-top:72px;padding:40px 0 64px;grid-template-columns:auto 1fr 280px;gap:48px;align-items:end}
+  .hero .grid{margin-top:0;padding:48px 0 64px;grid-template-columns:auto 1fr 280px;gap:48px;align-items:end}
   .hero .acoes{padding-bottom:6px}
 }
-@media (max-width:900px){.hero{padding-top:36px}.hero .logo{width:min(100%,272px)}.hero .marca{gap:18px}.hero .frase{font-size:16px;max-width:40ch}.hero .frase .rot{margin-bottom:6px}.hero .grid{margin-top:26px;padding:22px 0 32px;gap:16px}.hero .data b{font-size:clamp(80px,22vw,110px)}.hero .evento .meta{font-size:15px}.hero .acoes .btn.linha{display:none}}
+@media (max-width:900px){.hero .midia{padding:28px 0 28px;min-height:58vh}.hero .logo{width:min(100%,250px)}.hero .marca{gap:18px}.hero .frase{font-size:15px;max-width:40ch}.hero .frase .rot{margin-bottom:6px}.hero .grid{margin-top:0;padding:26px 0 32px;gap:16px}.hero .data b{font-size:clamp(80px,22vw,110px)}.hero .evento .meta{font-size:15px}.hero .acoes .btn.linha{display:none}}
 
 /* ===== ficha: lista editorial, um filete só ===== */
 .ficha{background:var(--grafite);padding:64px 0}
@@ -122,6 +129,12 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 
 /* ===== o que rola: numerais grandes, grade deslocada ===== */
 .rola{padding:24px 0 80px}
+.rola .duas{display:grid;gap:28px}
+.rola .clipe{position:relative;border:1px solid var(--linha-forte);background:#000;aspect-ratio:832/464;overflow:hidden}
+.rola .clipe video{width:100%;height:100%;object-fit:cover;display:block}
+.rola .clipe span{position:absolute;left:0;bottom:0;padding:6px 10px;background:var(--preto);font-family:var(--ui);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)}
+@media (min-width:900px){.rola .duas{grid-template-columns:1fr 1.6fr;gap:48px;align-items:start}.rola .clipe{margin-top:8px}}
+@media (prefers-reduced-motion:reduce){.rola .clipe video{display:none}}
 .rola .cab{margin-bottom:8px}
 .rola h2{font-size:clamp(44px,7vw,88px)}
 .rola ol{list-style:none;padding:0;display:grid;gap:0}
@@ -130,7 +143,7 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 .rola li b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,4.5vw,44px);line-height:.95;text-transform:uppercase}
 .rola li p{color:var(--cinza);max-width:38ch;font-size:15px}
 .rola li .tag{font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--vermelho)}
-@media (min-width:900px){.rola ol{grid-template-columns:repeat(4,1fr);gap:40px}.rola li:nth-child(even){margin-top:56px}}
+@media (min-width:900px){.rola ol{grid-template-columns:1fr 1fr;gap:24px 40px}.rola li:nth-child(even){margin-top:40px}}
 
 /* ===== escolinha: manchete + três blocos de preço sem caixas ===== */
 .escola{background:var(--grafite);padding:72px 0}
@@ -185,11 +198,17 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
 <div class="dock"><a href="#treino"><span>Próximo treino</span><b>20.09 →</b></a></div>
 
 <section class="hero">
-  <div class="wrap">
-    <div class="marca">
+  <div class="midia">
+    <video class="v-desk" autoplay muted loop playsinline preload="metadata" poster="../../../assets/video/01-frame-hero.jpg" aria-hidden="true"><source src="../../../assets/video/01-hero-noite-drift-23s-a-28s.mp4" type="video/mp4"></video>
+    <video class="v-mob" autoplay muted loop playsinline preload="metadata" poster="../../../assets/video/02-frame-mobile.jpg" aria-hidden="true"><source src="../../../assets/video/02-mobile-drone-17s-a-23s.mp4" type="video/mp4"></video>
+    <div class="veu"></div>
+    <span class="registro">Registro de treino anterior</span>
+    <div class="wrap marca">
       <a class="logo" href="#"><img src="../../../assets/marca/logos/logo-carioca-drift-transparente.png" alt="Carioca Drift Culture"></a>
       <p class="frase"><span class="rot am">Rio de Janeiro</span>Treinos abertos no RJ Race Park, escolinha com instrutor e a cena do drift carioca crescendo junto. <b>More than drift. It's a culture.</b></p>
     </div>
+  </div>
+  <div class="wrap">
     <div class="grid num" id="treino">
       <div class="data"><span>Domingo<em>Set · 2026</em></span><b>20.09</b></div>
       <div class="evento">
@@ -238,12 +257,15 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
 <section class="rola">
   <div class="wrap">
     <div class="cab"><span class="rot am">Programa do dia</span><h2>O que rola</h2></div>
+    <div class="duas">
+    <div class="clipe"><video autoplay muted loop playsinline preload="metadata" poster="../../../assets/video/03-frame-cultura.jpg" aria-hidden="true"><source src="../../../assets/video/03-cultura-pista-23s-a-29s.mp4" type="video/mp4"></video><span>Registro de treino anterior</span></div>
     <ol class="num">
       <li><span class="n">01</span><b>Pilotos locais</b><p>A galera do drift carioca andando o dia todo, da iniciação à pista completa.</p><span class="tag">Pista só pra convidados</span></li>
       <li><span class="n">02</span><b>Carona radical</b><p>O banco do carona com um piloto de verdade. Capacete obrigatório.</p><span class="tag">Caronas pagas</span></li>
       <li><span class="n">03</span><b>Zona de iniciação</b><p>Ao lado do estacionamento, pra quem está começando andar sem pressão.</p></li>
       <li><span class="n">04</span><b>Público e comunidade</b><p>Família, amigos e quem só quer assistir. Traz o seu carro e troca ideia com quem vive isso.</p></li>
     </ol>
+    </div>
   </div>
 </section>
 
