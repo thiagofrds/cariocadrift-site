@@ -6,43 +6,52 @@ nav: sobre
 ---
 <style>
 .sobre{display:grid;gap:28px;padding-block:8px 56px}
-.sobre .emblema{width:min(100%,260px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:4px solid var(--faisca);box-shadow:0 0 0 10px var(--pneu);background:#000}
-.sobre .emblema img{width:100%;height:100%;object-fit:cover;transform:scale(1.14)}
-@media (min-width:900px){.sobre{grid-template-columns:300px 1fr;gap:56px;align-items:start;padding-block:24px 88px}}
-.pilares{background:var(--pneu)}
-.pilares ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:12px}
-.pilares li{padding:20px;border-radius:10px;background:var(--asfalto);border:1px solid var(--borracha);border-top:4px solid var(--fogo)}
-.pilares b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;text-transform:uppercase;line-height:1}
-.pilares p{color:var(--cinza);margin-top:6px}
-@media (min-width:900px){.pilares ul{grid-template-columns:repeat(3,1fr);gap:20px}}
+.sobre .marca-sobre{display:grid;gap:14px;justify-items:start;align-content:start}
+.sobre .marca-sobre .logo{width:min(100%,300px);height:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.5))}
+.sobre .marca-sobre .rot{color:var(--amarelo)}
+@media (min-width:900px){.sobre{grid-template-columns:340px 1fr;gap:64px;align-items:start;padding-block:24px 80px}}
+.pilares{background:var(--grafite)}
+.pilares ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:18px}
+.pilares li{padding-top:14px;border-top:2px solid var(--amarelo)}
+.pilares b{display:block;font-family:var(--display);font-weight:800;font-size:30px;text-transform:uppercase;line-height:1}
+.pilares p{color:var(--cinza);margin-top:6px;font-size:15px;max-width:34ch}
+@media (min-width:900px){.pilares ul{grid-template-columns:repeat(3,1fr);gap:40px}}
 .contato{padding-block:56px 72px}
 .contato .acoes{margin-top:22px}
+.foto-sobre{padding-block:0 56px}
+.foto-sobre .foto img{aspect-ratio:16/9;object-fit:cover;object-position:center bottom}
 </style>
 
-<main>
+<main id="conteudo">
 <section class="cabecalho">
   <div class="wrap">
-    <p class="eyebrow">Sobre</p>
+    <span class="rot am">Sobre</span>
     <h1>Carioca Drift</h1>
   </div>
 </section>
 
 <section class="wrap sobre">
-  <div class="emblema"><img src="{{root}}assets/logo.jpg" alt="Emblema Carioca Drift Culture"></div>
+  <div class="marca-sobre">
+    <span class="logo" aria-hidden="true"><img src="{{root}}assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></span>
+    <span class="rot">More than drift. It's a culture.</span>
+  </div>
   <div class="prosa">
     <p><strong>More than drift. It's a culture.</strong> A Carioca Drift reúne pilotos e entusiastas de drift do Rio de Janeiro em torno de uma ideia simples: pista aberta, gente boa e a cultura automotiva carioca em movimento.</p>
     <p>A gente organiza treinos abertos no RJ Race Park, em Santa Cruz, onde quem já anda encontra pista e quem está chegando encontra o caminho pra começar. A Escolinha de Drift, com o Fabinho Drift Show, é a porta de entrada pra quem quer aprender de verdade.</p>
     <p>Tudo o que rola sai primeiro no Instagram. Chega junto.</p>
   </div>
 </section>
-<!-- Quando quiser, entram aqui: história do grupo, quem faz parte, fotos da galera. -->
+
+<section class="wrap foto-sobre">
+  <figure class="foto"><img src="{{root}}assets/fotos/foto-3135.jpg" alt="BMW branco e BMW turquesa próximos na pista" width="1320" height="880" loading="lazy"><figcaption><b>Registro de treino anterior</b><span>Sergio Photos RJ</span></figcaption></figure>
+</section>
 
 <section class="secao pilares">
   <div class="wrap">
-    <p class="eyebrow">O que a gente faz</p>
+    <span class="rot am">O que a gente faz</span>
     <h2>Três frentes</h2>
     <ul>
-      <li><b>Treinos abertos</b><p>Dias de pista no RJ Race Park pra pilotos locais, carona e público.</p></li>
+      <li><b>Treinos abertos</b><p>Dias de pista no RJ Race Park pra pilotos convidados, carona e público.</p></li>
       <li><b>Escolinha de drift</b><p>Aulas com o Fabinho Drift Show pra quem quer começar ou evoluir.</p></li>
       <li><b>Cultura</b><p>Encontros, conteúdo e a cena carioca do drift crescendo junto.</p></li>
     </ul>
@@ -50,11 +59,11 @@ nav: sobre
 </section>
 
 <section class="wrap contato">
-  <p class="eyebrow">Contato</p>
+  <span class="rot am">Contato</span>
   <h2>Chega junto</h2>
   <p class="prosa">Parcerias, dúvidas ou só pra trocar ideia: chama no direct do Instagram.</p>
   <div class="acoes">
-    <a class="btn btn-faisca" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
+    <a class="btn am" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a>
     <a class="btn btn-linha" href="{{root}}treinos/">Próximo treino</a>
   </div>
 </section>

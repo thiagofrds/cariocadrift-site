@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Painel | Carioca Drift</title>
 <meta name="description" content="Painel administrativo da Carioca Drift.">
-<meta name="theme-color" content="#1B1A1F">
+<meta name="theme-color" content="#0B0B0B">
 <link rel="canonical" href="https://cariocadrift.com.br/admin/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
@@ -17,37 +17,61 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
-<link rel="apple-touch-icon" href="/assets/logo.jpg">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@0,700;0,800;1,900&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/cd.js"></script>
 <meta name="robots" content="noindex"></head>
 <body>
-<div class="barra-contagem" id="barraContagem" hidden></div>
-<header class="nav">
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="top" id="topo">
   <div class="wrap">
-    <a class="marca" href="/">
-      <span class="logo"><img src="/assets/logo.jpg" alt="Carioca Drift Culture"></span>
-      <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
-    </a>
+    <span class="rotulo-top" aria-hidden="true">Carioca Drift Culture</span>
+    <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
     <nav aria-label="Principal">
-      <ul class="menu">
+      <ul>
         <li><a href="/" >Home</a></li>
         <li><a href="/treinos/" >Treinos</a></li>
+        <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+        <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
         <li><a href="/escolinha/" >Escolinha</a></li>
         <li><a href="/sobre/" >Sobre</a></li>
       </ul>
     </nav>
+    <a class="cta" id="navCta" href="/treinos/">Próximo treino</a>
+    <button class="menu-btn" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
   </div>
 </header>
+<div class="mm" id="menuMobile" hidden>
+  <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="/" >Home</a></li>
+      <li><a href="/treinos/" >Treinos</a></li>
+      <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+      <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
+      <li><a href="/escolinha/" >Escolinha</a></li>
+      <li><a href="/sobre/" >Sobre</a></li>
+    </ul>
+    <a class="ig" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture →</a>
+  </nav>
+</div>
 <style>
 .painel{padding-block:32px 72px}
 .painel h1{font-size:clamp(44px,8vw,72px)}
 .abas{display:flex;gap:6px;flex-wrap:wrap;margin-top:22px;border-bottom:1px solid var(--borracha);padding-bottom:12px}
-.abas button{padding:10px 14px;border-radius:999px;border:1px solid var(--borracha);background:transparent;font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+.abas button{padding:10px 14px;border-radius:0;border:1px solid var(--borracha);background:transparent;font-family:var(--rotulo);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza)}
+.subabas{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
+.subabas button{padding:8px 12px;border:1px solid var(--borracha);background:transparent;font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza)}
+.subabas button[aria-selected="true"]{color:var(--gelo);border-color:var(--amarelo);box-shadow:inset 0 -2px 0 var(--amarelo)}
+.ferramentas{display:grid;gap:10px;margin-bottom:16px}
+.ferramentas input,.ferramentas select{width:100%;padding:11px 12px;font:500 15px var(--texto);border:1px solid var(--borracha);background:var(--pneu);color:var(--fumaca);border-radius:0}
+.ferramentas .resumo{font-family:var(--rotulo);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);align-self:center}
+@media (min-width:800px){.ferramentas{grid-template-columns:1.2fr 1fr auto auto;align-items:center}}
+@media (max-width:699px){.tabela.leads thead{display:none}.tabela.leads tr{display:grid;gap:2px;padding:12px 0;border-bottom:1px solid var(--borracha)}.tabela.leads td{display:block;padding:0;border:0}.tabela.leads td[data-r]::before{content:attr(data-r) " ";font-family:var(--rotulo);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza)}.tabela.leads td.nome{font-weight:700;font-size:17px}}
 .abas button[aria-selected="true"]{background:var(--faisca);color:var(--asfalto);border-color:var(--faisca)}
 .aba{margin-top:24px}
 .barra{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
@@ -60,11 +84,11 @@
 .tabela td{padding:12px 8px;border-bottom:1px solid var(--borracha);vertical-align:top}
 .tabela .num{font-variant-numeric:tabular-nums}
 .tabela .acoes-linha{display:flex;gap:6px;flex-wrap:wrap}
-.tabela .acoes-linha button,.tabela .acoes-linha a{padding:6px 10px;border-radius:999px;border:1px solid var(--borracha);background:var(--pneu);font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--fumaca);text-decoration:none}
+.tabela .acoes-linha button,.tabela .acoes-linha a{padding:6px 10px;border-radius:0;border:1px solid var(--borracha);background:var(--pneu);font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--fumaca);text-decoration:none}
 .tabela .acoes-linha .perigo{color:#FF8A80;border-color:#5a2a26}
 .rolagem{overflow-x:auto}
-.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-family:var(--rotulo);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-.pill.on{background:var(--verde);color:#062}
+.pill{display:inline-block;padding:3px 9px;border-radius:0;font-family:var(--rotulo);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pill.on{background:var(--amarelo);color:var(--preto)}
 .pill.off{background:var(--borracha);color:var(--cinza)}
 /* formulário escuro */
 .form{display:grid;gap:16px;max-width:820px}
@@ -95,7 +119,7 @@
 <script>window.SEM_BARRA = true;</script>
 <main class="painel">
   <div class="wrap">
-    <p class="eyebrow">Carioca Drift</p>
+    <span class="rot am">Carioca Drift</span>
     <h1>Painel</h1>
 
     <!-- LOGIN -->
@@ -105,7 +129,7 @@
       <label class="campo" for="email"><span>E-mail</span><input id="email" type="email" autocomplete="username" placeholder="voce@email.com"></label>
       <label class="campo" for="senha"><span>Senha</span><input id="senha" type="password" autocomplete="current-password"></label>
       <div class="erro" id="erroLogin"></div>
-      <button class="btn btn-fogo" id="entrar" type="button">Entrar</button>
+      <button class="btn am" id="entrar" type="button">Entrar</button>
       <p class="nota"><a href="#" id="esqueci">Esqueci minha senha</a></p>
     </div>
 
@@ -117,8 +141,7 @@
       </div>
       <div class="abas" role="tablist">
         <button role="tab" data-aba="treinos" aria-selected="true">Treinos</button>
-        <button role="tab" data-aba="confirmacoes" aria-selected="false">Confirmações</button>
-        <button role="tab" data-aba="escolinha" aria-selected="false">Escolinha</button>
+        <button role="tab" data-aba="leads" aria-selected="false">Leads</button>
       </div>
 
       <!-- TREINOS -->
@@ -177,16 +200,29 @@
         </form>
       </section>
 
-      <!-- CONFIRMAÇÕES -->
-      <section class="aba" id="aba-confirmacoes" hidden>
-        <div class="barra"><h2>Confirmações</h2><div class="acoes"><select id="filtroTreino" class="f"></select><button class="btn btn-cinza btn-p" id="csvConf" type="button">Baixar CSV</button></div></div>
-        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>Telefone</th><th>Treino</th><th>Quando</th><th></th></tr></thead><tbody id="tbConf"></tbody></table></div>
-      </section>
-
-      <!-- ESCOLINHA -->
-      <section class="aba" id="aba-escolinha" hidden>
-        <div class="barra"><h2>Interessados na escolinha</h2><button class="btn btn-cinza btn-p" id="csvEsc" type="button">Baixar CSV</button></div>
-        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Pacote</th><th>Mensagem</th><th>Quando</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
+      <!-- LEADS -->
+      <section class="aba" id="aba-leads" hidden>
+        <div class="barra"><h2>Leads</h2><span class="sessao">Formulários enviados pelo site. Só administradores enxergam (verificação no banco).</span></div>
+        <div class="subabas" role="tablist">
+          <button role="tab" data-sub="confirmacoes" aria-selected="true">Treinos</button>
+          <button role="tab" data-sub="carona" aria-selected="false">Carona Radical</button>
+          <button role="tab" data-sub="escolinha" aria-selected="false">Escolinha</button>
+        </div>
+        <div class="ferramentas">
+          <input id="buscaLeads" type="search" placeholder="Pesquisar por nome ou telefone" autocomplete="off">
+          <select id="filtroTreino"></select>
+          <span class="resumo" id="resumoLeads"></span>
+          <div class="acoes"><button class="btn btn-cinza btn-p" id="csvConf" type="button">CSV confirmações</button><button class="btn btn-cinza btn-p" id="csvCarona" type="button" hidden>CSV carona</button><button class="btn btn-cinza btn-p" id="csvEsc" type="button" hidden>CSV escolinha</button></div>
+        </div>
+        <div class="sub" id="sub-confirmacoes">
+          <div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>Telefone</th><th>Data</th><th>Origem</th><th>Treino</th><th></th></tr></thead><tbody id="tbConf"></tbody></table></div>
+        </div>
+        <div class="sub" id="sub-carona" hidden>
+          <div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>Telefone</th><th>Data</th><th>Origem</th><th>Treino</th><th></th></tr></thead><tbody id="tbCarona"></tbody></table></div>
+        </div>
+        <div class="sub" id="sub-escolinha" hidden>
+          <div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>Telefone</th><th>Data</th><th>Origem</th><th>Mensagem</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
+        </div>
       </section>
     </div>
   </div>
@@ -239,12 +275,27 @@
   $('trocarSenha').addEventListener('click', trocarSenha);
 
   // ---------- Abas ----------
+  let subAtual = 'confirmacoes';
   document.querySelectorAll('.abas [role=tab]').forEach(b => b.addEventListener('click', async () => {
     document.querySelectorAll('.abas [role=tab]').forEach(x => x.setAttribute('aria-selected', x === b));
     document.querySelectorAll('.aba').forEach(s => s.hidden = s.id !== 'aba-' + b.dataset.aba);
-    if (b.dataset.aba === 'confirmacoes') await carregarConf();
-    if (b.dataset.aba === 'escolinha') await carregarEsc();
+    if (b.dataset.aba === 'leads') await abrirSub(subAtual);
   }));
+  document.querySelectorAll('.subabas [role=tab]').forEach(b => b.addEventListener('click', () => abrirSub(b.dataset.sub)));
+  async function abrirSub(sub){
+    subAtual = sub;
+    document.querySelectorAll('.subabas [role=tab]').forEach(x => x.setAttribute('aria-selected', x.dataset.sub === sub));
+    document.querySelectorAll('#aba-leads .sub').forEach(d => d.hidden = d.id !== 'sub-' + sub);
+    $('csvConf').hidden = sub !== 'confirmacoes'; $('csvCarona').hidden = sub !== 'carona'; $('csvEsc').hidden = sub !== 'escolinha';
+    $('filtroTreino').hidden = sub === 'escolinha';
+    if (sub === 'confirmacoes') await carregarConf();
+    if (sub === 'carona') await carregarCarona();
+    if (sub === 'escolinha') await carregarEsc();
+  }
+  const normaliza = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const casaBusca = c => { const q = normaliza($('buscaLeads').value.trim()); if (!q) return true; return normaliza(c.nome).includes(q) || String(c.telefone).includes(q.replace(/\D/g, '')); };
+  $('buscaLeads').addEventListener('input', () => { desenharConf(); desenharCarona(); desenharEsc(); });
+  const nomeTreino = slug => { const t = treinos.find(x => x.slug === slug); return t ? `${dataCurta(t.data)} · ${t.titulo}` : (slug || '—'); };
 
   // ---------- Treinos ----------
   let treinos = [], editando = null;
@@ -353,42 +404,79 @@
     conf = data; desenharConf();
   }
   function desenharConf(){
-    const f = $('filtroTreino').value; const lista = conf.filter(c => !f || c.evento === f);
-    $('tbConf').innerHTML = lista.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(c.evento)}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="5">Nenhuma confirmação.</td></tr>';
+    const f = $('filtroTreino').value; const lista = conf.filter(c => (!f || c.evento === f) && casaBusca(c));
+    if (subAtual === 'confirmacoes') $('resumoLeads').textContent = `${lista.length} de ${conf.length}`;
+    $('tbConf').innerHTML = lista.map(c => `<tr><td class="nome">${esc(c.nome)}</td><td class="num" data-r="Telefone"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td class="num" data-r="Data">${fmtQuando(c.criado_em)}</td><td data-r="Origem">Site · confirmação de presença</td><td data-r="Treino">${esc(nomeTreino(c.evento))}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Nenhuma confirmação.</td></tr>';
   }
-  $('filtroTreino').addEventListener('change', desenharConf);
+  $('filtroTreino').addEventListener('change', () => { desenharConf(); desenharCarona(); });
   $('tbConf').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar essa confirmação?')) return; await sb.from('confirmacoes').delete().eq('id', +b.dataset.del); await carregarConf(); });
-  $('csvConf').addEventListener('click', () => { const f = $('filtroTreino').value; baixaCsv(`confirmacoes${f ? '-' + f : ''}.csv`, [['nome','telefone','treino','quando'], ...conf.filter(c => !f || c.evento === f).map(c => [c.nome, c.telefone, c.evento, c.criado_em])]); });
+  $('csvConf').addEventListener('click', () => { const f = $('filtroTreino').value; baixaCsv(`confirmacoes${f ? '-' + f : ''}.csv`, [['nome','telefone','treino','origem','quando'], ...conf.filter(c => (!f || c.evento === f) && casaBusca(c)).map(c => [c.nome, c.telefone, c.evento, 'site-confirmacao', c.criado_em])]); });
+
+  // ---------- Carona Radical (tabela interessados_carona; até a migration ser aplicada, mostra aviso) ----------
+  let carona = [];
+  async function carregarCarona(){
+    const { data, error } = await sb.from('interessados_carona').select('*').order('criado_em', {ascending:false});
+    if (error) { carona = []; $('tbCarona').innerHTML = `<tr><td colspan="6">${/relation|does not exist|schema cache|404/i.test(error.message) ? 'A lista de interesse da Carona Radical ainda não foi ativada no banco (migration pendente de autorização).' : esc(error.message)}</td></tr>`; $('resumoLeads').textContent = ''; return; }
+    carona = data; desenharCarona();
+  }
+  function desenharCarona(){
+    if (!carona.length && subAtual !== 'carona') return;
+    const f = $('filtroTreino').value; const lista = carona.filter(c => (!f || c.evento === f) && casaBusca(c));
+    if (subAtual === 'carona') $('resumoLeads').textContent = `${lista.length} de ${carona.length}`;
+    // um telefone pode ter mais de um "interesse geral" quando um treino é apagado (o registro do treino vira geral); marcar
+    const geraisPorTel = {}; carona.forEach(c => { if (!c.evento) geraisPorTel[c.telefone] = (geraisPorTel[c.telefone] || 0) + 1; });
+    $('tbCarona').innerHTML = lista.map(c => `<tr><td class="nome">${esc(c.nome)}</td><td class="num" data-r="Telefone"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td class="num" data-r="Data">${fmtQuando(c.criado_em)}</td><td data-r="Origem">Site · Carona Radical</td><td data-r="Treino">${c.evento ? esc(nomeTreino(c.evento)) : (geraisPorTel[c.telefone] > 1 ? 'Interesse geral <span class="pill off">repetido</span>' : 'Interesse geral')}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Ninguém na lista ainda.</td></tr>';
+  }
+  $('tbCarona').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar esse interessado em carona?')) return; await sb.from('interessados_carona').delete().eq('id', +b.dataset.del); await carregarCarona(); });
+  $('csvCarona').addEventListener('click', () => { const f = $('filtroTreino').value; baixaCsv(`interessados-carona${f ? '-' + f : ''}.csv`, [['nome','telefone','treino','origem','consentimento','quando'], ...carona.filter(c => (!f || c.evento === f) && casaBusca(c)).map(c => [c.nome, c.telefone, c.evento || '', 'site-carona', c.consentimento ? 'sim' : 'nao', c.criado_em])]); });
 
   // ---------- Escolinha ----------
   let escl = [];
   async function carregarEsc(){
     const { data, error } = await sb.from('interessados_escolinha').select('*').order('criado_em', {ascending:false});
     if (error) { $('tbEsc').innerHTML = `<tr><td colspan="5">${esc(error.message)}</td></tr>`; return; }
-    escl = data;
-    const PAC = {experiencia:'Experiência', 'curso-chevette':'Curso · Chevette', 'curso-nissan':'Curso · Nissan Z', 'nao-sei':'Não sabe'};
-    $('tbEsc').innerHTML = escl.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(PAC[c.pacote] || '')}</td><td>${esc(c.mensagem || '')}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Ninguém ainda.</td></tr>';
+    escl = data; desenharEsc();
+  }
+  const PAC = {experiencia:'Experiência (pacote antigo)', 'curso-chevette':'Curso · Chevette (pacote antigo)', 'curso-nissan':'Curso · Nissan Z (pacote antigo)', 'nao-sei':''};
+  function desenharEsc(){
+    if (!escl.length && subAtual !== 'escolinha') return;
+    const lista = escl.filter(casaBusca);
+    if (subAtual === 'escolinha') $('resumoLeads').textContent = `${lista.length} de ${escl.length}`;
+    $('tbEsc').innerHTML = lista.map(c => `<tr><td class="nome">${esc(c.nome)}</td><td class="num" data-r="Telefone"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td class="num" data-r="Data">${fmtQuando(c.criado_em)}</td><td data-r="Origem">Site · Escolinha</td><td data-r="Mensagem">${esc([PAC[c.pacote] || '', c.mensagem || ''].filter(Boolean).join(' · '))}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Ninguém ainda.</td></tr>';
   }
   $('tbEsc').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar esse interessado?')) return; await sb.from('interessados_escolinha').delete().eq('id', +b.dataset.del); await carregarEsc(); });
-  $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','pacote','mensagem','quando'], ...escl.map(c => [c.nome, c.telefone, c.pacote, c.mensagem, c.criado_em])]));
+  $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','origem','pacote','mensagem','quando'], ...escl.filter(casaBusca).map(c => [c.nome, c.telefone, 'site-escolinha', c.pacote || '', c.mensagem || '', c.criado_em])]));
 })();
 </script>
-<div class="zebra" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
-    <a class="marca" href="/">
-      <span class="logo"><img src="/assets/logo.jpg" alt=""></span>
-      <span><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
-    </a>
+    <div class="marca-rodape">
+      <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254" loading="lazy"></a>
+      <b>Carioca Drift Culture<small>More than drift. It's a culture.</small></b>
+      <p>Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift e a cena carioca crescendo junto.</p>
+    </div>
     <nav aria-label="Rodapé">
+      <span class="rotulo">Site</span>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/treinos/">Treinos</a></li>
-        <li><a href="/escolinha/">Escolinha</a></li>
+        <li><a href="/caronas/">Caronas</a></li>
+        <li><a href="/escolinha/">Escolinha de Drift</a></li>
         <li><a href="/sobre/">Sobre</a></li>
       </ul>
     </nav>
-    <p><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></p>
+    <div>
+      <span class="rotulo">Contato</span>
+      <ul>
+        <li><a class="insta" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a></li>
+        <li>Direct no Instagram pra parcerias e dúvidas</li>
+        <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
+      </ul>
+    </div>
+    <div class="rodape-base">
+      <span>© 2026 Carioca Drift Culture · Rio de Janeiro · Fotografias: Sergio Photos RJ</span>
+      <a href="/admin/">Painel</a>
+    </div>
   </div>
 </footer>
 </body>

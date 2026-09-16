@@ -1,17 +1,33 @@
-<div class="barra-contagem" id="barraContagem" hidden></div>
-<header class="nav">
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="top" id="topo">
   <div class="wrap">
-    <a class="marca" href="{{root}}">
-      <span class="logo"><img src="{{root}}assets/logo.jpg" alt="Carioca Drift Culture"></span>
-      <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
-    </a>
+    <span class="rotulo-top" aria-hidden="true">Carioca Drift Culture</span>
+    <a class="logo" href="{{root}}" aria-label="Carioca Drift Culture, início"><img src="{{root}}assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
     <nav aria-label="Principal">
-      <ul class="menu">
+      <ul>
         <li><a href="{{root}}" {{cur:home}}>Home</a></li>
         <li><a href="{{root}}treinos/" {{cur:treinos}}>Treinos</a></li>
+        <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+        <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
         <li><a href="{{root}}escolinha/" {{cur:escolinha}}>Escolinha</a></li>
         <li><a href="{{root}}sobre/" {{cur:sobre}}>Sobre</a></li>
       </ul>
     </nav>
+    <a class="cta" id="navCta" href="{{root}}treinos/">Próximo treino</a>
+    <button class="menu-btn" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
   </div>
 </header>
+<div class="mm" id="menuMobile" hidden>
+  <a class="logo" href="{{root}}" aria-label="Carioca Drift Culture, início"><img src="{{root}}assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="{{root}}" {{cur:home}}>Home</a></li>
+      <li><a href="{{root}}treinos/" {{cur:treinos}}>Treinos</a></li>
+      <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+      <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
+      <li><a href="{{root}}escolinha/" {{cur:escolinha}}>Escolinha</a></li>
+      <li><a href="{{root}}sobre/" {{cur:sobre}}>Sobre</a></li>
+    </ul>
+    <a class="ig" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture →</a>
+  </nav>
+</div>

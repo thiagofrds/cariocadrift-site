@@ -7,6 +7,28 @@ window.CD = (() => {
   const DIAS = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
   const DIAS_CURTO = ["dom","seg","ter","qua","qui","sex","sáb"];
 
+  // Regras de participação por evento (informadas pela organização). Sem campo no banco nesta fase:
+  // vale só para os slugs listados; outros treinos não exibem estes blocos.
+  const PARTICIPACAO = {
+    "open-drift-session": {
+      publico: "Confirme seu interesse em participar do evento. Ingressos disponíveis no local.",
+      pilotos: "Participação na pista exclusiva para pilotos convidados.",
+      caronas: "Caronas pagas. Valor e disponibilidade sob consulta com a organização.",
+      // Valores informados pela organização em 16/09/2026. Venda só no local; sem checkout online.
+      valores: [
+        { rotulo: "Público", nome: "Assistir", valor: "R$ 30", nota: "Ingresso vendido no local, no dia." },
+        { rotulo: "Estacionamento", nome: "Estacionamento", valor: "R$ 15", nota: "Por carro." },
+        { rotulo: "Pilotos", nome: "Piloto convidado", valor: "R$ 80", nota: "Pista exclusiva para pilotos convidados. Não há inscrição pública." },
+        { rotulo: "Caronas", nome: "Carona", valor: "Sob consulta", nota: "Valor e disponibilidade com a organização.", link: "/caronas/" }
+      ]
+    }
+  };
+  const participacao = slug => PARTICIPACAO[slug] || null;
+  // Lista de interesse da Carona Radical: só liga depois que a tabela interessados_carona existir e os testes passarem.
+  const CARONA_LISTA_ATIVA = true;   // tabela interessados_carona aplicada em produção em 16/09/2026 (commit 332537a), validada pela API
+  // Arquivos conceituais (renders) que não podem ser exibidos como fotografia real em nenhuma página.
+  const RENDERS_CONCEITUAIS = ["/assets/carro.jpg", "https://cariocadrift.com.br/assets/carro.jpg"];
+
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const paragrafos = s => esc(s).split(/\n{2,}|\n/).filter(Boolean).map(p => `<p>${p}</p>`).join("");
 
@@ -44,8 +66,29 @@ window.CD = (() => {
     </a>`;
   }
 
-  async function treinosPublicados() {
-    return rest("treinos?select=*&publicado=eq.true&order=data.asc");
+  let _treinos = null;
+  function treinosPublicados() {
+    if (!_treinos) _treinos = rest("treinos?select=*&publicado=eq.true&order=data.asc").catch(e => { _treinos = null; throw e; });
+    return _treinos;
+  }
+
+  // Menu mobile
+  function menuMobile(){
+    const btn = document.getElementById('abrirMenu'), menu = document.getElementById('menuMobile'); if (!btn || !menu) return;
+    const abrir = on => { menu.hidden = !on; btn.setAttribute('aria-expanded', String(on)); btn.setAttribute('aria-label', on ? 'Fechar menu' : 'Abrir menu'); document.body.classList.toggle('menu-aberto', on); if (on) menu.querySelector('a').focus(); };
+    btn.addEventListener('click', () => abrir(menu.hidden));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { abrir(false); btn.focus(); } });
+    matchMedia('(min-width:900px)').addEventListener('change', e => { if (e.matches) abrir(false); });
+  }
+
+  // Botão "Próximo treino" no header (todas as páginas)
+  async function ctaProximo(){
+    try {
+      const t = (await treinosPublicados()).find(x => fim(x) >= new Date());
+      const b = document.getElementById('navCta'); if (!b) return;
+      if (!t) { b.textContent = 'Ver treinos'; b.href = '/treinos/'; return; }
+      b.href = `/treinos/${esc(t.slug)}/`; b.textContent = `Treino ${dataCurta(t.data)}`;
+    } catch (e) {}
   }
 
   // Barra fixa no topo com o próximo treino (todas as páginas, menos onde window.SEM_BARRA = true)
@@ -69,7 +112,21 @@ window.CD = (() => {
       })();
     } catch (e) {}
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', barraProximo); else barraProximo();
+  // Cabeçalho no mobile: esconde a logo do topo enquanto a logo grande do hero está na tela (evita duas logos na primeira dobra)
+  function topoMarca(){
+    const topo = document.getElementById('topo'), alvo = document.querySelector('[data-marca-hero]'); if (!topo || !alvo) return;
+    new IntersectionObserver(([e]) => topo.classList.toggle('marca-oculta', e.isIntersecting), { threshold: 0 }).observe(alvo);
+  }
+  // Barra fixa inferior (mobile): aparece quando o bloco de ação (data-dock-alvo) sai da tela; some no rodapé
+  function dock(){
+    const el = document.getElementById('dock'), alvo = document.querySelector('[data-dock-alvo]'), rodape = document.querySelector('footer'); if (!el || !alvo) return;
+    let alvoVisivel = true, rodapeVisivel = false;
+    const atualiza = () => el.classList.toggle('on', !alvoVisivel && !rodapeVisivel);
+    new IntersectionObserver(([e]) => { alvoVisivel = e.isIntersecting || e.boundingClientRect.top > 0; atualiza(); }).observe(alvo);
+    if (rodape) new IntersectionObserver(([e]) => { rodapeVisivel = e.isIntersecting; atualiza(); }).observe(rodape);
+  }
+  const init = () => { menuMobile(); ctaProximo(); barraProximo(); topoMarca(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  return { SB_URL, SB_KEY, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
+  return { SB_URL, SB_KEY, participacao, RENDERS_CONCEITUAIS, CARONA_LISTA_ATIVA, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();

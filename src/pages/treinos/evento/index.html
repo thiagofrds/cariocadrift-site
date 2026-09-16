@@ -5,108 +5,119 @@ og_title: Treino · Carioca Drift
 nav: treinos
 ---
 <style>
-/* ===== HERO ===== */
-.hero{position:relative;isolation:isolate;padding:56px 0 44px;min-height:520px;display:flex;align-items:flex-end;overflow:hidden}
-.hero .fundo{position:absolute;inset:0;z-index:-2;background:var(--pneu)}
-.hero .fundo img{width:100%;height:100%;object-fit:cover;object-position:62% 50%;filter:saturate(.9) contrast(1.05)}
-.hero .veu{position:absolute;inset:0;z-index:-1;background:
-  linear-gradient(90deg, rgba(27,26,31,.94) 0%, rgba(27,26,31,.72) 45%, rgba(27,26,31,.35) 100%),
-  linear-gradient(180deg, rgba(27,26,31,.75) 0%, rgba(27,26,31,.15) 35%, rgba(27,26,31,.92) 100%)}
-.hero .grao{position:absolute;inset:0;z-index:-1;opacity:.18;mix-blend-mode:overlay;pointer-events:none}
-.hero .conteudo{position:relative}
-.titulo{font-family:var(--display);font-style:italic;font-weight:900;line-height:.82;letter-spacing:-.01em;text-transform:uppercase;margin-top:16px}
-.titulo .dia{display:block;font-size:clamp(132px,36vw,300px);color:var(--faisca);text-shadow:.04em .04em 0 var(--fogo);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.titulo .nome{display:block;font-size:clamp(48px,11vw,116px);margin-top:.08em;color:var(--fumaca)}
-.lead{margin-top:18px;font-size:clamp(17px,2.2vw,21px);max-width:34ch}
-.hero .acoes{margin-top:26px}
-.contagem{display:flex;gap:10px;margin-top:34px;align-items:stretch;flex-wrap:wrap}
-.contagem .rotulo{flex-basis:100%;font-family:var(--rotulo);font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
-.contagem .bloco{min-width:72px;padding:10px 12px 8px;border-radius:var(--raio);background:rgba(38,37,44,.8);border:1px solid rgba(239,237,232,.12);text-align:center;backdrop-filter:blur(6px)}
-.contagem .bloco b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:40px;line-height:1;color:var(--faisca);font-variant-numeric:tabular-nums}
-.contagem .bloco small{display:block;font-family:var(--rotulo);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);margin-top:4px}
-.contagem .estado{align-self:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:34px;color:var(--faisca);text-transform:uppercase}
+/* ===== HERO: data, título e ações à esquerda; capa inteira (sem véu) à direita quando existir ===== */
+.hero{padding:24px 0 32px}
+.hero .hg{display:grid;gap:18px}
+.hero .conteudo{display:grid;gap:10px;align-content:center}
+.hero .data{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.hero .data b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(72px,20vw,120px);line-height:.8;color:var(--amarelo);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hero .data span{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.hero .data span em{font-style:normal;color:var(--gelo);margin-left:8px}
+.hero h1{font-size:clamp(40px,10vw,84px)}
+.hero .meta{font-family:var(--ui);font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--gelo)}
+.hero .meta i{font-style:normal;color:var(--amarelo);margin:0 6px}
+.lead{font-size:clamp(16px,2vw,19px);max-width:38ch;color:var(--cinza)}
+.hero .acoes{margin-top:8px}
+.hero .foto .quadro{aspect-ratio:3/2;background:#000;overflow:hidden}
+.hero .foto .quadro img{width:100%;height:100%;object-fit:cover;object-position:center bottom}
+.contagem{display:flex;gap:8px;margin-top:18px;align-items:stretch;flex-wrap:wrap}
+.contagem .rotulo{flex-basis:100%;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.contagem .bloco{min-width:66px;padding:8px 10px 6px;border:1px solid var(--linha-forte);text-align:center}
+.contagem .bloco b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;line-height:1;color:var(--amarelo);font-variant-numeric:tabular-nums}
+.contagem .bloco small{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza);margin-top:4px}
+.contagem .estado{align-self:center;font-family:var(--display);font-weight:800;font-size:30px;color:var(--amarelo);text-transform:uppercase}
 @media (min-width:900px){
-  .hero{padding:96px 0 72px;min-height:min(88vh,820px)}
-  .hero .fundo img{object-position:70% 50%}
-  .hero .veu{background:
-    linear-gradient(90deg, rgba(27,26,31,.96) 0%, rgba(27,26,31,.82) 38%, rgba(27,26,31,.18) 75%, rgba(27,26,31,.05) 100%),
-    linear-gradient(180deg, rgba(27,26,31,.6) 0%, rgba(27,26,31,0) 30%, rgba(27,26,31,.9) 100%)}
+  .hero{padding:56px 0 56px}
+  .hero .hg{grid-template-columns:5fr 7fr;gap:56px;align-items:center}
+  .hero .hg.sem-capa{grid-template-columns:1fr}
+  .hero .data b{font-size:clamp(96px,10vw,140px)}
 }
-@media (prefers-reduced-motion:no-preference){
-  .titulo .dia{animation:derrapa .7s cubic-bezier(.2,.9,.2,1) both}
-  .titulo .nome,.lead,.hero .acoes{animation:sobe .6s .15s ease both}
-  @keyframes derrapa{from{transform:translateX(-40px) skewX(-12deg);opacity:0}to{transform:none;opacity:1}}
-}
+@media (prefers-reduced-motion:no-preference){.hero .data b{animation:entra .5s cubic-bezier(.2,.9,.2,1) both}@keyframes entra{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}}
 /* ===== FICHA ===== */
-.ficha .cabeca{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
-.agenda{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--faisca);border-bottom:2px solid transparent;padding-bottom:2px}
-.agenda:hover{border-color:var(--faisca)}
-.agenda svg{width:18px;height:18px}
-.ficha .grade{display:grid;border:1px solid var(--borracha);border-radius:8px;overflow:hidden;background:var(--pneu)}
-.item{padding:22px 22px 24px;border-top:1px solid var(--borracha);display:grid;gap:8px;align-content:start}
-.item:first-child{border-top:0}
-.item dt{font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
-.item dd .g{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;line-height:1;text-transform:uppercase}
-.item dd .p{display:block;margin-top:6px;color:var(--cinza);font-size:16px}
-.rotas{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-.rota{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--asfalto);border:1px solid var(--borracha);text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
-.rota:hover{border-color:var(--faisca)}
-.rota svg{width:16px;height:16px;color:var(--faisca)}
-.item.alerta{background:repeating-linear-gradient(135deg,var(--faisca) 0 14px,var(--asfalto) 14px 28px) left/12px 100% no-repeat,var(--pneu);padding-left:34px}
-.item.alerta dt{color:var(--faisca)}
-@media (min-width:700px){.ficha .grade{grid-template-columns:1fr 1fr}.item{border-top:0;border-left:1px solid var(--borracha)}.item:nth-child(odd){border-left:0}.item:nth-child(n+3){border-top:1px solid var(--borracha)}}
+.ficha{background:var(--grafite)}
+.agenda{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);border-bottom:1px solid var(--amarelo);padding-bottom:2px}
+.agenda svg{width:16px;height:16px}
+.ficha .grade{display:grid;gap:22px;margin:0}
+.item{display:grid;gap:8px;align-content:start;padding-top:12px;border-top:1px solid var(--linha-forte)}
+.item dt{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--vermelho)}
+.item dd{margin:0}
+.item dd .g{display:block;font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase}
+.item dd .p{display:block;margin-top:6px;color:var(--cinza);font-size:15px}
+.rotas{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.rota{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:1px solid var(--linha-forte);text-decoration:none;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.rota:hover{border-color:var(--gelo)}
+.rota svg{width:14px;height:14px;color:var(--amarelo)}
+.item.alerta dt{color:var(--amarelo)}
+@media (min-width:700px){.ficha .grade{grid-template-columns:1fr 1fr;gap:28px 48px}}
 /* ===== O QUE ROLA ===== */
-.rola{background:var(--pneu)}
-.rola .lista{list-style:none;padding:0;margin-top:26px;display:grid}
-.rola li{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding:22px 0;border-top:1px solid var(--borracha)}
-.rola li:last-child{border-bottom:1px solid var(--borracha)}
-.rola .icone{width:46px;height:46px;border-radius:var(--raio);background:var(--asfalto);display:grid;place-items:center;color:var(--faisca);font-family:var(--display);font-style:italic;font-weight:900;font-size:26px}
-.rola b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1;text-transform:uppercase}
-.rola p{color:var(--cinza);margin-top:6px;max-width:50ch}
-@media (min-width:900px){.rola .lista{grid-template-columns:repeat(3,1fr);gap:0 40px}.rola li{grid-template-columns:1fr;border-top:2px solid var(--faisca);padding-top:20px}.rola li:last-child{border-bottom:0}}
+.rola .lista{list-style:none;padding:0;margin-top:26px;display:grid;gap:18px}
+.rola li{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding-top:14px;border-top:1px solid var(--linha-forte)}
+.rola .icone{font-family:var(--display);font-style:italic;font-weight:900;font-size:40px;line-height:.8;color:var(--amarelo);letter-spacing:-.03em;min-width:48px}
+.rola b{display:block;font-family:var(--display);font-weight:800;font-size:28px;line-height:1;text-transform:uppercase}
+.rola p{color:var(--cinza);margin-top:6px;max-width:44ch;font-size:15px}
+@media (min-width:900px){.rola .lista{grid-template-columns:repeat(3,1fr);gap:28px 40px}}
 /* ===== PISTA ===== */
+.pista{background:var(--grafite)}
 .pista .duas{display:grid;gap:26px;margin-top:26px}
-.mapa{border-radius:8px;overflow:hidden;border:1px solid var(--borracha);background:#000}
-.pista .legenda{display:grid;gap:14px;align-content:start}
-.pista .legenda p{color:var(--cinza);max-width:48ch}
-.video{display:flex;align-items:center;gap:14px;margin-top:6px;padding:16px 18px;border-radius:8px;background:var(--pneu);border:1px solid var(--borracha);text-decoration:none;font-weight:600}
-.video:hover{border-color:var(--faisca)}
-.video i{font-style:normal;width:44px;height:44px;border-radius:50%;background:var(--fogo);display:grid;place-items:center;flex:none;color:#fff}
+.mapa{margin:0;border:1px solid var(--linha-forte);background:#000}
+.mapa img{width:100%;display:block}
+.pista .legenda{display:grid;gap:14px;align-content:start;color:var(--cinza)}
+.pista .legenda p{max-width:48ch}
+.video{display:flex;align-items:center;gap:14px;margin-top:6px;padding:14px 16px;border:1px solid var(--linha-forte);text-decoration:none;font-weight:600;color:var(--gelo)}
+.video:hover{border-color:var(--gelo)}
+.video i{font-style:normal;width:44px;height:44px;background:var(--amarelo);display:grid;place-items:center;flex:none;color:var(--preto)}
 .video i svg{width:18px;height:18px;margin-left:2px}
 .video small{display:block;color:var(--cinza);font-weight:400;font-size:14px}
 @media (min-width:900px){.pista .duas{grid-template-columns:1.25fr 1fr;gap:44px;align-items:start}}
+/* ===== VALORES ===== */
+.valores .grade{display:grid;gap:18px;margin-top:26px}
+.valores .v{display:grid;gap:4px;padding-top:12px;border-top:1px solid var(--linha-forte)}
+.valores .v .rot{color:var(--vermelho)}
+.valores .v b{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;text-transform:uppercase}
+.valores .v .preco{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(34px,4.5vw,44px);line-height:1;color:var(--amarelo);font-variant-numeric:tabular-nums;margin-top:4px}
+.valores .v .preco.sc{font-size:clamp(24px,3vw,30px);color:var(--gelo);font-style:normal;font-weight:800}
+.valores .v p{color:var(--cinza);font-size:14px;max-width:30ch}
+.valores .v a{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo);justify-self:start;margin-top:4px}
+.valores .aviso{margin-top:22px;padding-top:12px;border-top:1px solid var(--linha-forte);font-size:14px;color:var(--cinza);max-width:60ch}
+.valores .aviso b{color:var(--gelo);font-weight:600}
+@media (min-width:800px){.valores .grade{grid-template-columns:repeat(4,1fr);gap:32px}}
+/* ===== PARTICIPAR ===== */
+.participar .grade{display:grid;gap:18px;margin-top:26px}
+.participar .bloco{display:grid;gap:8px;align-content:start;padding-top:12px;border-top:1px solid var(--linha-forte)}
+.participar .rotulo{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--vermelho)}
+.participar .bloco b{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
+.participar .bloco p{color:var(--cinza);font-size:15px;max-width:34ch}
+.participar .bloco .acoes{margin-top:4px}
+.participar .seguranca{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-size:14px;color:var(--gelo)}
+.participar .seguranca b{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--amarelo)}
+@media (min-width:800px){.participar .grade{grid-template-columns:repeat(3,1fr);gap:36px}}
 /* ===== CONFIRMAR ===== */
-.confirmar{padding-block:20px 64px}
+.confirmar{padding-block:20px 64px;background:var(--grafite)}
 .confirmar .chamada{display:none}
-@media (min-width:900px){.confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.confirmar .chamada{display:block}.confirmar .chamada h2{font-size:80px}.confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}.cartao{justify-self:end}}
-/* ===== CTA FIXA ===== */
-.cta-fixa{position:fixed;inset:auto 0 0;z-index:20;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(27,26,31,.9) 30%);transform:translateY(110%);transition:transform .25s ease}
-.cta-fixa.on{transform:none}
-.cta-fixa .btn{width:100%;padding-block:16px;box-shadow:0 5px 0 var(--fogo-escuro),0 10px 30px rgba(0,0,0,.5)}
-@media (min-width:900px){.cta-fixa{display:none}}
+@media (min-width:900px){.confirmar{padding-block:64px 80px}.confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.confirmar .chamada{display:block}.confirmar .chamada h2{font-size:72px}.confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:18px}.confirmar .chamada .mini{font-size:14px;margin-top:8px}.cartao{justify-self:end}}
+/* ===== CTA FIXA (mobile) ===== */
 footer{padding-bottom:110px}
-@media (min-width:900px){footer{padding-bottom:40px}}
+@media (min-width:900px){footer{padding-bottom:28px}}
 /* ===== estados ===== */
 .carregando,.nao-achado{padding:80px 0;text-align:center}
 .nao-achado h1{font-size:clamp(48px,10vw,96px)}
 .nao-achado p{color:var(--cinza);margin-top:12px}
 .nao-achado .acoes{justify-content:center;margin-top:24px}
-[hidden]{display:none!important}
 </style>
 
 <script>window.SEM_BARRA = true;</script>
-<main id="pagina">
-  <div class="carregando wrap" id="carregando"><p class="eyebrow">Carregando treino…</p></div>
+<main id="conteudo">
+  <div class="carregando wrap" id="carregando"><span class="rot am">Carregando treino…</span></div>
   <div class="nao-achado wrap" id="naoAchado" hidden>
-    <p class="eyebrow">Ops</p>
+    <span class="rot am">Ops</span>
     <h1>Treino não encontrado</h1>
     <p>Esse link não existe ou o treino ainda não foi publicado.</p>
-    <div class="acoes"><a class="btn btn-fogo" href="/treinos/">Ver os treinos</a></div>
+    <div class="acoes"><a class="btn am" href="/treinos/">Ver os treinos</a></div>
   </div>
   <div id="treino" hidden></div>
 </main>
 
-<div class="cta-fixa" id="ctaFixa" hidden><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div>
+<div class="dock" id="ctaFixa" hidden><a href="#confirmar"><span>Confirmar presença</span><b id="dockData">→</b></a></div>
 
 <script>
 (async () => {
@@ -124,37 +135,41 @@ footer{padding-bottom:110px}
   document.querySelector('meta[name="description"]').content = t.chamada || `${t.titulo}, ${dataExtenso(t.data)}, no ${t.local_nome}.`;
   const [dd, mm] = dataCurta(t.data).split(".");
   const atracoes = Array.isArray(t.atracoes) ? t.atracoes : [];
-  const ticker = [t.titulo, `${dataExtenso(t.data).split(",")[0]} ${dataCurta(t.data)}`, `${hora(t.hora_inicio)} às ${hora(t.hora_fim)}`, t.local_nome, t.entrada_titulo, t.regra_titulo, ...atracoes.map(a => a.titulo)].filter(Boolean);
+  const part = CD.participacao(t.slug);
+  // Renders conceituais nunca aparecem como fotografia real. A capa só entra se for foto do acervo ou upload do painel.
+  if (CD.RENDERS_CONCEITUAIS.includes(t.capa_url)) t.capa_url = null;
 
   document.getElementById('treino').innerHTML = `
 <section class="hero">
-  <div class="fundo">${t.capa_url ? `<img src="${esc(foto(t.capa_url))}" alt="" fetchpriority="high">` : ""}</div>
-  <div class="veu"></div>
-  <svg class="grao" aria-hidden="true"><filter id="ruido"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#ruido)"/></svg>
-  <div class="wrap conteudo">
-    <p class="eyebrow">${esc(dataExtenso(t.data).split(",")[0])} · ${esc(t.local_nome)}</p>
-    <h1 class="titulo"><span class="dia">${dd}.${mm}</span><span class="nome">${esc(t.titulo)}</span></h1>
-    ${t.chamada ? `<p class="lead">${esc(t.chamada)}</p>` : ""}
-    <div class="acoes">
-      <a class="btn btn-fogo" href="#confirmar">Confirmar presença</a>
-      <a class="btn btn-linha" href="#onde">Como chegar</a>
-      <button class="btn btn-linha" id="compartilhar" type="button">Chamar a galera</button>
+  <div class="wrap hg${t.capa_url ? '' : ' sem-capa'}">
+    <div class="conteudo num">
+      <span class="rot am">${esc(t.tipo || 'Treino')} · ${esc(t.local_nome)}</span>
+      <div class="data"><b>${dd}.${mm}</b><span>${esc(dataExtenso(t.data).split(",")[0])}<em>${esc(dataExtenso(t.data).split(", ")[1] || '')}</em></span></div>
+      <h1>${esc(t.titulo)}</h1>
+      <p class="meta">${hora(t.hora_inicio)} às ${hora(t.hora_fim)}<i>//</i>${esc(t.local_nome)}${t.entrada_titulo ? `<i>//</i>${esc(t.entrada_titulo)}` : ''}</p>
+      ${t.chamada ? `<p class="lead">${esc(t.chamada)}</p>` : ""}
+      <div class="acoes" data-dock-alvo>
+        <a class="btn am" href="#confirmar">Confirmar presença</a>
+        <a class="btn btn-linha" href="#onde">Como chegar</a>
+        <button class="btn btn-linha" id="compartilhar" type="button">Chamar a galera</button>
+      </div>
+      <div class="contagem" id="contagem" aria-live="polite">
+        <span class="rotulo">Faltam</span>
+        <div class="bloco"><b id="cd-d">--</b><small>dias</small></div>
+        <div class="bloco"><b id="cd-h">--</b><small>horas</small></div>
+        <div class="bloco"><b id="cd-m">--</b><small>min</small></div>
+        <div class="bloco"><b id="cd-s">--</b><small>seg</small></div>
+      </div>
     </div>
-    <div class="contagem" id="contagem" aria-live="polite">
-      <span class="rotulo">Faltam</span>
-      <div class="bloco"><b id="cd-d">--</b><small>dias</small></div>
-      <div class="bloco"><b id="cd-h">--</b><small>horas</small></div>
-      <div class="bloco"><b id="cd-m">--</b><small>min</small></div>
-      <div class="bloco"><b id="cd-s">--</b><small>seg</small></div>
-    </div>
+    ${t.capa_url ? `<figure class="foto"><div class="quadro"><img src="${esc(foto(t.capa_url))}" alt="" width="1320" height="880" fetchpriority="high"></div><figcaption>${/^\/assets\/fotos\//.test(t.capa_url) ? `<span><b>Foto</b> Sergio Photos RJ</span><span>Registro de treino anterior</span>` : `<span><b>Capa</b> ${esc(t.titulo)}</span><span>${esc(t.local_nome)}</span>`}</figcaption></figure>` : ''}
   </div>
+  <div class="largada"></div>
 </section>
-<div class="ticker-caixa" aria-hidden="true"><div class="ticker"><div class="faixa">${ticker.map(x => `<span>${esc(x)}</span>`).join("").repeat(4)}</div></div></div>
 
 <section class="secao ficha" id="info">
   <div class="wrap">
-    <div class="cabeca">
-      <div><p class="eyebrow">Ficha do treino</p><h2>O essencial</h2></div>
+    <div class="cab">
+      <div><span class="rot am">Ficha do treino</span><h2>O essencial</h2></div>
       <a class="agenda" id="calendario" href="#" download="${esc(t.slug)}.ics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Salvar no calendário</a>
     </div>
     <dl class="grade">
@@ -170,34 +185,50 @@ footer{padding-bottom:110px}
   </div>
 </section>
 
-${atracoes.length ? `<section class="secao rola"><div class="wrap"><p class="eyebrow">Programação</p><h2>O que rola</h2><ul class="lista">
+${atracoes.length ? `<section class="secao rola"><div class="wrap"><span class="rot am">Programação</span><h2>O que rola</h2><ul class="lista">
   ${atracoes.map((a, i) => `<li><span class="icone">${String(i+1).padStart(2,"0")}</span><div><b>${esc(a.titulo)}</b>${a.texto ? `<p>${esc(a.texto)}</p>` : ""}</div></li>`).join("")}
 </ul></div></section>` : ""}
 
-${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pista"><div class="wrap"><p class="eyebrow">${esc(t.local_nome)}</p><h2>A pista</h2><div class="duas">
+${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pista"><div class="wrap"><span class="rot am">${esc(t.local_nome)}</span><h2>A pista</h2><div class="duas">
   ${t.pista_foto_url ? `<figure class="mapa"><img src="${esc(foto(t.pista_foto_url))}" alt="Traçado da pista" loading="lazy"></figure>` : "<div></div>"}
   <div class="legenda">${t.pista_texto ? paragrafos(t.pista_texto) : ""}
     ${t.reel_url ? `<a class="video" href="${esc(t.reel_url)}" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></i><span>Assista ao vídeo<small>No Instagram da Carioca Drift</small></span></a>` : ""}
   </div></div></div></section>` : ""}
 
+${part && part.valores ? `<section class="secao valores" id="valores"><div class="wrap">
+  <span class="rot am">Valores</span><h2>Quanto custa</h2>
+  <div class="grade">${part.valores.map(v => `<div class="v"><span class="rot">${esc(v.rotulo)}</span><b>${esc(v.nome)}</b><span class="preco${/^R\$/.test(v.valor) ? '' : ' sc'}">${esc(v.valor)}</span><p>${esc(v.nota)}</p>${v.link ? `<a href="${esc(v.link)}?treino=${esc(t.slug)}">Como funciona →</a>` : ''}</div>`).join('')}</div>
+  <p class="aviso"><b>Ingressos do público vendidos somente no local, no dia.</b> Não há venda online. A pista é exclusiva para pilotos convidados; não há inscrição pública de pilotos.</p>
+</div></section>` : ''}
+
+${part ? `<section class="secao participar" id="participar"><div class="wrap">
+  <span class="rot am">Como participar</span><h2>Público, pilotos e caronas</h2>
+  <div class="grade">
+    <div class="bloco"><span class="rotulo">Público</span><b>Vem assistir</b><p>${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}${t.entrada_texto ? `: ${esc(t.entrada_texto)}` : '.'}` : ''}</p><p>${esc(part.publico)}</p><div class="acoes"><a class="btn am" href="#confirmar">Confirmar presença</a></div></div>
+    <div class="bloco pilotos"><span class="rotulo">Pilotos</span><b>Pista só pra convidados</b><p>${esc(part.pilotos)}</p><p>Não há inscrição pública para pilotos.</p></div>
+    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="/caronas/?treino=${esc(t.slug)}">Consultar caronas</a></div></div>
+  </div>
+  ${t.regra_titulo ? `<div class="seguranca"><b>Segurança</b><span>${esc(t.regra_titulo)}${t.regra_texto ? ` · ${esc(t.regra_texto)}` : ''}</span></div>` : ''}
+</div></section>` : ''}
+
 <section class="secao confirmar" id="confirmar">
   <div class="wrap">
-    <div class="chamada"><p class="eyebrow">Lista de presença</p><h2>Vai colar?</h2><p>Confirma aqui pra gente dimensionar pista, carona e estrutura. Leva 10 segundos.</p></div>
+    <div class="chamada"><span class="rot am">Lista de presença</span><h2>Vai colar?</h2><p>${part ? esc(part.publico) : 'Confirma aqui pra gente se organizar. Leva 10 segundos.'}</p><p class="mini">Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona.</p></div>
     <div class="cartao">
       <div id="formulario">
         <h2>Vai colar?</h2>
-        <p class="sub">Confirme sua presença pra gente se organizar. Leva 10 segundos.</p>
+        <p class="sub">${part ? esc(part.publico) : 'Confirme sua presença pra gente se organizar. Leva 10 segundos.'}</p>
         <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
         <div class="erro" id="erroNome"></div>
         <label class="campo" for="tel"><span>Seu telefone</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
         <div class="erro" id="erroTel"></div>
-        <button class="btn btn-fogo" id="enviar" type="button">Confirmar presença</button>
-        <p class="nota">Seus dados ficam só com a organização do evento.</p>
+        <button class="btn am" id="enviar" type="button">Confirmar presença</button>
+        <p class="nota">Isso registra seu interesse. Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona. Seus dados ficam só com a organização.</p>
       </div>
       <div class="ok" id="ok">
         <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
-        <h3 id="okTitulo">Presença confirmada!</h3>
-        <p>Te esperamos ${esc(dataExtenso(t.data))}, no ${esc(t.local_nome)}.${t.regra_titulo ? " " + esc(t.regra_titulo) + " pra pista e carona." : ""}</p>
+        <h3 id="okTitulo">Interesse registrado!</h3>
+        <p>Te esperamos ${esc(dataExtenso(t.data))}, no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}.` : ''}${t.regra_titulo ? " " + esc(t.regra_titulo) + " pra pista e carona." : ""}</p>
         <div class="acoes">
           <a class="btn btn-linha" id="calendario2" href="#" download="${esc(t.slug)}.ics">Salvar no calendário</a>
           <button class="btn btn-linha" id="compartilhar2" type="button">Chamar a galera</button>
@@ -243,10 +274,10 @@ ${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pis
   document.getElementById('compartilhar2').addEventListener('click', compartilhar);
 
   // ----- CTA fixa -----
-  const ctaFixa = document.getElementById('ctaFixa');
-  let heroVisivel = true, confirmarVisivel = false;
-  const atualizaCta = () => ctaFixa.classList.toggle('on', !heroVisivel && !confirmarVisivel);
-  new IntersectionObserver(([e]) => { heroVisivel = e.isIntersecting; atualizaCta(); }).observe(document.querySelector('.hero .acoes'));
+  const ctaFixa = document.getElementById('ctaFixa'); ctaFixa.id = 'dock'; document.getElementById('dockData').textContent = `${dd}.${mm} →`;
+  let alvoVisivel = true, confirmarVisivel = false;
+  const atualizaCta = () => ctaFixa.classList.toggle('on', !alvoVisivel && !confirmarVisivel);
+  new IntersectionObserver(([e]) => { alvoVisivel = e.isIntersecting || e.boundingClientRect.top > 0; atualizaCta(); }).observe(document.querySelector('.hero .acoes'));
   new IntersectionObserver(([e]) => { confirmarVisivel = e.isIntersecting; atualizaCta(); }, {threshold:.2}).observe(document.getElementById('confirmar'));
 
   // ----- Formulário -----

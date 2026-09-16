@@ -1,0 +1,91 @@
+psql:supabase/tests/interessados_carona.sql:32: ERROR:  permission denied for table interessados_carona
+psql:supabase/tests/interessados_carona.sql:37: ERROR:  permission denied for table interessados_carona
+
+
+
+
+
+
+DELETE 2
+
+
+DELETE 2
+
+
+DELETE 1
+
+
+
+
+
+
+
+
+DELETE 1
+
+
+DELETE 6
+
+
+
+
+
+
+
+ n |                                         teste                                          |                      esperado                      |                                 obtido                                 | resultado 
+---+----------------------------------------------------------------------------------------+----------------------------------------------------+------------------------------------------------------------------------+-----------
+ 1 | anon enviando criado_em antigo → sem privilégio na coluna                              | 42501                                              | 42501 permission denied for table interessados_carona                  | PASSOU
+ 1 | anon enviando criado_em futuro → sem privilégio na coluna                              | 42501                                              | 42501 permission denied for table interessados_carona                  | PASSOU
+ 1 | anon enviando id escolhido → sem privilégio na coluna                                  | 42501                                              | 42501 permission denied for table interessados_carona                  | PASSOU
+ 1 | anon insert válido                                                                     | ok                                                 | ok                                                                     | PASSOU
+ 1 | anon não lê nem escreve tentativas_carona                                              | 42501|42501                                        | 42501 permission denied for table tentativas_carona|42501 permission d | PASSOU
+ 1 | anon select → sem privilégio (nem lista vazia)                                         | 42501                                              | 42501 permission denied for table interessados_carona                  | PASSOU
+ 1 | nenhuma linha gravada pelas tentativas de manipular id/data                            | 1                                                  | 1                                                                      | PASSOU
+ 2 | apagar treino-b (com interessado que também está na lista geral) → sucesso             | ok                                                 | ok                                                                     | PASSOU
+ 2 | após apagar: nenhum registro perdido; o do treino-b virou geral (3 no total, 2 gerais) | 3 total, 2 gerais                                  | 3 total, 2 gerais                                                      | PASSOU
+ 2 | cadastro no treino-b para telefone que já está na lista geral                          | ok                                                 | ok                                                                     | PASSOU
+ 2 | evento em rascunho (não publicado) → recusado                                          | 23503                                              | 23503 treino inválido                                                  | PASSOU
+ 2 | evento inexistente → recusado (chave estrangeira / gatilho)                            | 23503                                              | 23503 treino inválido                                                  | PASSOU
+ 2 | mesmo telefone no mesmo treino → aceito em silêncio (mesma resposta de envio novo)     | ok                                                 | ok                                                                     | PASSOU
+ 2 | mesmo telefone, interesse geral (sem treino) → permitido                               | ok                                                 | ok                                                                     | PASSOU
+ 2 | mesmo telefone, interesse geral repetido → aceito em silêncio, sem linha nova          | ok                                                 | ok                                                                     | PASSOU
+ 2 | nome de 1 caractere → check                                                            | 23514                                              | 23514 new row for relation "interessados_carona" violates check constr | PASSOU
+ 2 | origem diferente de site → recusado                                                    | 23514|42501                                        | 42501 new row violates row-level security policy for table "interessad | PASSOU
+ 2 | sem consentimento → recusado                                                           | 23514|42501                                        | 42501 new row violates row-level security policy for table "interessad | PASSOU
+ 2 | telefone com 9 dígitos → check                                                         | 23514                                              | 23514 new row for relation "interessados_carona" violates check constr | PASSOU
+ 2 | telefone com letras → check                                                            | 23514                                              | 23514 new row for relation "interessados_carona" violates check constr | PASSOU
+ 3 | anon delete → sem privilégio ou 0 linhas                                               | 42501|0                                            | 42501 permission denied for table interessados_carona                  | PASSOU
+ 3 | anon update → sem privilégio ou 0 linhas                                               | 42501|0                                            | 42501 permission denied for table interessados_carona                  | PASSOU
+ 3 | registros intactos após tentativas do anon                                             | 2                                                  | 2                                                                      | PASSOU
+ 4 | admin: apaga o interesse geral                                                         | ok                                                 | ok                                                                     | PASSOU
+ 4 | admin: nome não mudou                                                                  | 0                                                  | 0                                                                      | PASSOU
+ 4 | admin: restou 1                                                                        | 1                                                  | 1                                                                      | PASSOU
+ 4 | admin: select vê os registros                                                          | 2                                                  | 2                                                                      | PASSOU
+ 4 | admin: update recusado (sem policy)                                                    | 42501|ok-0                                         | 42501 permission denied for table interessados_carona                  | PASSOU
+ 4 | logado sem ser admin: delete 0 linhas                                                  | ok                                                 | ok                                                                     | PASSOU
+ 4 | logado sem ser admin: select zero linhas                                               | 0                                                  | 0                                                                      | PASSOU
+ 4 | registros intactos após não admin                                                      | 2                                                  | 2                                                                      | PASSOU
+ 5 | anon não executa a função do gatilho diretamente                                       | 42501                                              | 42501 permission denied for function limita_envios_carona              | PASSOU
+ 5 | janela cheia: telefone JÁ CADASTRADO → mesma resposta                                  | P0001 limite de envios atingido, tente mais tarde  | P0001 limite de envios atingido, tente mais tarde                      | PASSOU
+ 5 | janela cheia: telefone NOVO → gatilho                                                  | P0001 limite de envios atingido, tente mais tarde  | P0001 limite de envios atingido, tente mais tarde                      | PASSOU
+ 5 | janela de 10 min preenchida com exatamente 60 tentativas                               | 60                                                 | 60                                                                     | PASSOU
+ 5 | registros antigos não contam para a janela de 10 min                                   | ok                                                 | ok                                                                     | PASSOU
+ 5 | telefone cadastrado: 3 tentativas (duplicatas) → ok                                    | ok|ok|ok                                           | ok|ok|ok                                                               | PASSOU
+ 5 | telefone cadastrado: 4ª tentativa → gatilho                                            | P0001 limite de envios atingido para este telefone | P0001 limite de envios atingido para este telefone                     | PASSOU
+ 5 | telefone novo: 3 tentativas → ok                                                       | ok|ok|ok                                           | ok|ok|ok                                                               | PASSOU
+ 5 | telefone novo: 4ª tentativa → mesma resposta do cadastrado                             | P0001 limite de envios atingido para este telefone | P0001 limite de envios atingido para este telefone                     | PASSOU
+ 5 | tentativas barradas não gravaram registro                                              | 0                                                  | 0                                                                      | PASSOU
+ 6 | anon ainda insere confirmação de presença                                              | ok                                                 | ok                                                                     | PASSOU
+ 6 | anon ainda insere interesse na escolinha                                               | ok                                                 | ok                                                                     | PASSOU
+ 6 | anon lê só treinos publicados (6 publicados, 1 rascunho)                               | 6                                                  | 6                                                                      | PASSOU
+ 6 | anon não lê confirmações                                                               | 0                                                  | 0                                                                      | PASSOU
+ 6 | carona não gravou em confirmacoes nem escolinha                                        | 1|1                                                | 1|1                                                                    | PASSOU
+(46 rows)
+
+ passaram | falharam 
+----------+----------
+       46 |        0
+
+=== CONCORRÊNCIA
+simultâneos: 10 entraram, 30 barrados (30 pelo gatilho) | total na janela: 60 (esperado 60)
+mesmo telefone em paralelo: 3 entraram (esperado 3), 3 barrados (esperado 3)
