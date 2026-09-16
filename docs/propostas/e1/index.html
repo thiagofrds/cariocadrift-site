@@ -73,7 +73,8 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 .hero .hg{display:grid;gap:12px;padding:12px 0 24px}
 .hero .marca{display:flex;align-items:end;justify-content:space-between;gap:12px}
 .hero .logo{width:128px}
-.hero .marca .rot{font-size:10px;letter-spacing:.14em;text-align:right;line-height:1.4;max-width:16ch}
+.hero .marca .rot{font-size:11px;letter-spacing:.16em;text-align:right;white-space:nowrap}
+.hero .marca .rot .longo{display:none}
 .hero .frase{display:none;max-width:34ch;color:var(--gelo);font-size:17px;line-height:1.45}
 .hero .frase b{color:var(--amarelo);font-weight:600}
 .hero .foto{order:2}
@@ -100,7 +101,7 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 @media (min-width:900px){
   .hero .hg{grid-template-columns:5fr 7fr;gap:56px;padding:56px 0 64px;align-items:center}
   .hero .marca{order:1;display:grid;gap:16px;justify-content:start}
-  .hero .marca .rot{text-align:left;max-width:none}
+  .hero .marca .rot{text-align:left}.hero .marca .rot .curto{display:none}.hero .marca .rot .longo{display:inline}
   .hero .foto .quadro{aspect-ratio:3/2}
   .hero .logo{width:min(100%,380px);filter:drop-shadow(0 6px 20px rgba(0,0,0,.5))}
   .hero .marca .rot{font-size:12px;letter-spacing:.2em}
@@ -117,19 +118,19 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 @media (prefers-reduced-motion:reduce){.hero .foto .quadro video{display:none!important}.hero.video-hero .foto .quadro img{display:block}}
 
 /* ===== como participar: resumo, sem repetir data e horário ===== */
-.part{background:var(--grafite);padding:44px 0 48px}
-.part .cab{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
-.part h2{font-size:clamp(34px,5vw,52px)}
-.part .tres{display:grid;gap:18px}
-.part .item{display:grid;gap:6px;padding-top:12px;border-top:1px solid var(--linha-forte)}
-.part .item .rot{color:var(--vermelho)}
-.part .item b{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
-.part .item p{color:var(--cinza);font-size:15px;max-width:34ch}
-.part .item a{display:inline-block;margin-top:4px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo)}
-.part .seg{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-size:14px;color:var(--gelo)}
-.part .seg .rot{color:var(--amarelo)}
-.part .seg a{color:var(--cinza);text-decoration:none;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-left:auto}
-@media (min-width:800px){.part .tres{grid-template-columns:repeat(3,1fr);gap:36px}}
+.participar{background:var(--grafite);padding:44px 0 48px}
+.participar .cab{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.participar h2{font-size:clamp(34px,5vw,52px)}
+.participar .tres{display:grid;gap:18px}
+.participar .item{display:grid;gap:6px;padding-top:12px;border-top:1px solid var(--linha-forte)}
+.participar .item .rot{color:var(--vermelho)}
+.participar .item b{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
+.participar .item p{color:var(--cinza);font-size:15px;max-width:34ch}
+.participar .item a{display:inline-block;margin-top:4px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);text-decoration:none;border-bottom:1px solid var(--amarelo)}
+.participar .seg{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;font-size:14px;color:var(--gelo)}
+.participar .seg .rot{color:var(--amarelo)}
+.participar .seg a{color:var(--cinza);text-decoration:none;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-left:auto}
+@media (min-width:800px){.participar .tres{grid-template-columns:repeat(3,1fr);gap:36px}}
 
 /* ===== experiência: ensaio fotográfico editorial ===== */
 .exp{padding:72px 0 56px}
@@ -225,7 +226,7 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
   <div class="wrap hg">
     <div class="marca">
       <a class="logo" href="#"><img src="../../../assets/marca/logos/logo-carioca-drift-transparente.png" alt="Carioca Drift Culture"></a>
-      <span class="rot am">Rio de Janeiro · treinos abertos ao público</span>
+      <span class="rot am"><span class="curto">Rio de Janeiro</span><span class="longo">Rio de Janeiro · treinos abertos ao público</span></span>
       <p class="frase">Treinos de drift abertos ao público no RJ Race Park, com pista exclusiva para pilotos convidados, e escolinha com instrutor. <b>More than drift. It's a culture.</b></p>
     </div>
     <figure class="foto">
@@ -233,7 +234,7 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
         <img id="fotoHero" src="../../../assets/fotos/foto-3126.jpg" alt="Dois BMW andando em tandem, um branco e um roxo, com fumaça dos pneus" width="1320" height="857" fetchpriority="high">
         <video class="v-desk" muted loop playsinline preload="none" poster="../../../assets/video/01-poster-hero.jpg" aria-hidden="true"><source src="../../../assets/video/01-hero-noite-drift-23s-a-28s.mp4" type="video/mp4"></video>
       </div>
-      <figcaption><span id="creditoHero"><b>Foto</b> Sergio Photos RJ</span><span>Registro de treino anterior</span></figcaption>
+      <figcaption><span id="creditoHero"><b>Foto</b> Sergio Photos RJ</span><span id="registroHero">Registro de treino anterior</span></figcaption>
     </figure>
     <div class="evento num" id="treino">
       <span class="rot am">Próximo treino</span>
@@ -251,7 +252,7 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
   <div class="largada"></div>
 </section>
 
-<section class="part">
+<section class="participar">
   <div class="wrap">
     <div class="cab"><h2>Como participar</h2><span class="rot">Open Drift Session · 20.09</span></div>
     <div class="tres">
@@ -338,7 +339,7 @@ new IntersectionObserver(([e]) => { heroVisivel = e.isIntersecting || e.bounding
 new IntersectionObserver(([e]) => { rodapeVisivel = e.isIntersecting; atualiza(); }).observe(document.querySelector('footer'));
 // variantes de hero pra avaliação: ?hero=3129 ou ?hero=3126 trocam o vídeo pela foto
 const q = new URLSearchParams(location.search).get('hero');
-if (q === 'video' && matchMedia('(min-width:900px)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) { const h = document.getElementById('hero'); h.classList.add('video-hero'); const v = h.querySelector('video'); document.getElementById('creditoHero').innerHTML = '<b>Vídeo</b> registro de treino anterior'; v.preload = 'auto'; v.autoplay = true; v.load(); v.play().catch(() => {}); }
+if (q === 'video' && matchMedia('(min-width:900px)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) { const h = document.getElementById('hero'); h.classList.add('video-hero'); const v = h.querySelector('video'); document.getElementById('creditoHero').innerHTML = '<b>Vídeo</b> Registro de treino anterior'; document.getElementById('registroHero').textContent = 'Sem áudio · toca em loop'; v.preload = 'auto'; v.autoplay = true; v.load(); v.play().catch(() => {}); }
 </script>
 </body>
 </html>
