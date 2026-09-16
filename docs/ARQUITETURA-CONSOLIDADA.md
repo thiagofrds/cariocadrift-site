@@ -1,6 +1,8 @@
-# Carioca Drift — Arquitetura consolidada (v2)
+# Carioca Drift — Arquitetura consolidada (versão final para aprovação)
 
-Documento único e fonte de verdade para aprovação. Prevalece sobre `CARIOCA-PILOTOS-ARQUITETURA.md` e `TICKETING-E-CARIOCA-MEDIA.md`, que ficam como anexos com o detalhe das auditorias do NMI. Nada implementado, nenhuma migration executada, nenhum banco alterado, nada publicado. Data: 16/09/2026.
+Documento único e fonte de verdade. Prevalece sobre `CARIOCA-PILOTOS-ARQUITETURA.md` e `TICKETING-E-CARIOCA-MEDIA.md`, que ficam como anexos com o detalhe das auditorias do NMI. Nada implementado, nenhuma migration executada, nenhum banco alterado, nada publicado. Data: 16/09/2026.
+
+Incorpora o fechamento de 16/09: decisões definitivas registradas como tais, rota `/u/<handle>/`, migração administrativa formal, lista de espera por modalidade, segurança de perfis e arquivos, pagamentos e reembolsos, etapas com critérios de aceitação.
 
 **Prioridade inegociável:** o lançamento do site (Home, agenda, páginas dos treinos, escolinha) para o Open Drift Session de 20/09, com ingressos no local e pilotos convidados, não depende de nada aqui e não é alterado por nada aqui.
 
@@ -195,10 +197,59 @@ Adicionar, editar, remover, marcar público, trocar foto. Só o dono. Foto sobe 
 3. Formulário: (a) "Ainda não tenho carro cadastrado", (b) "Vou informar meu carro depois", (c) selecionar um veículo cadastrado; telefone se ainda não houver; mensagem; aceite das `regras_pista` e dos `requisitos` do treino.
 4. `inscrever_na_pista` trava a linha do treino, valida janela e modalidade, calcula `requisitos_pendentes` (ex.: `veiculo` quando `exige_veiculo_para_autorizar` e a opção foi a ou b) e decide: `aprovacao` → `pendente`; `publica` sem requisitos pendentes e com vaga → `aprovada`; `publica` sem vaga → `lista_espera` com `posicao_lista` = próximo; `publica` com requisitos pendentes → `pendente` (fica para a organização, nunca aprova sozinha).
 5. Piloto acompanha em "Minha conta", pode completar o carro depois (o que reavalia `requisitos_pendentes`) e pode cancelar.
-6. Cancelamento libera a vaga e chama `promover_lista(treino)`: promove, em ordem de `posicao_lista`, apenas inscrições em `publica`, dentro da janela, **sem requisitos pendentes**; qualquer uma que dependa de avaliação permanece onde está. Tudo sob o mesmo lock do treino, gravado em `decisoes_inscricao` com `decidida_por = null` (sistema).
+6. Cancelamento libera a vaga e chama `promover_lista(treino)`, cujo comportamento depende da modalidade (4.4.1).
+
+#### 4.4.1 Lista de espera por modalidade
+
+| | `publica` | `aprovacao` |
+|---|---|---|
+| Entra na lista quando | não há vaga e não há requisito pendente | a organização decide mover para a lista (inscrição continua `pendente` até isso) |
+| Ordem | `posicao_lista` pela hora de entrada | `posicao_lista` definida pela organização, reordenável |
+| Vaga liberada por cancelamento | o sistema promove o primeiro da lista **sem requisito pendente** e **dentro da janela**; quem tem requisito pendente é pulado e mantém a posição | o sistema **não promove ninguém**. Marca a vaga como disponível e o painel mostra "1 vaga liberada" com a lista na ordem; um admin promove |
+| Quem grava a decisão | sistema (`decidida_por = null`) | admin, com motivo |
+| Capacidade | verificada sob lock do treino em toda transição para `aprovada`, humana ou automática | idem |
+
+Regra que vale nas duas: **nenhuma inscrição vira `aprovada` por efeito de um cancelamento se ainda depende de avaliação administrativa ou tem requisito pendente.** Uma inscrição `pendente` nunca é promovida pelo sistema.
+
+#### 4.4.2 Transições permitidas
+
+| De → Para | Quem | Condições verificadas na função |
+|---|---|---|
+| (nova) → `pendente` | piloto | janela aberta; modalidade `aprovacao`, ou `publica` com requisito pendente |
+| (nova) → `aprovada` | sistema | modalidade `publica`, sem requisito pendente, vaga sob lock |
+| (nova) → `lista_espera` | sistema | modalidade `publica`, sem requisito pendente, sem vaga |
+| `pendente` → `aprovada` | admin | vaga sob lock; alvo não é o próprio admin |
+| `pendente` → `lista_espera` / `recusada` | admin | motivo obrigatório na recusa |
+| `lista_espera` → `aprovada` | sistema (só `publica`) ou admin | vaga sob lock; sem requisito pendente; dentro da janela |
+| `lista_espera` → `recusada` | admin | motivo |
+| qualquer viva → `cancelada_pelo_piloto` | piloto | libera vaga; dispara `promover_lista` |
+| qualquer viva → `cancelada_pela_organizacao` | admin | motivo; libera vaga; dispara `promover_lista` |
+| `aprovada` → `pendente` | admin | quando um requisito deixa de valer (ex.: carro removido antes do treino); motivo |
+
+Toda linha acima gera um registro em `decisoes_inscricao`; as feitas por admin também em `acoes_admin`. Não existe UPDATE direto na tabela por nenhum papel: só as funções mudam `status`.
 
 ### 4.5 Aprovação administrativa
 Painel, aba Pista do treino: filas por status, contador aprovadas/capacidade, dados do piloto e do carro, mensagem, requisitos pendentes. Ações: aprovar, recusar com motivo, mover para lista, promover, marcar requisito como atendido. `decidir_inscricao` trava o treino, recusa aprovar acima da capacidade, recusa se o alvo é o próprio admin, grava em `decisoes_inscricao` e em `acoes_admin`.
+
+### 4.5.1 Segurança dos perfis e dos arquivos
+
+**Consultas públicas.** A única função com EXECUTE para `anon` e `authenticated` no módulo de contas é `perfil_publico(handle text)`. Ela é `security definer` com `search_path` vazio, lê `usuarios` e `veiculos` por dentro e devolve uma linha só quando `perfil_publico = true`; caso contrário devolve nulo, sem diferenciar "não existe", "reservado" e "privado". Toda outra função (`inscrever_na_pista`, `decidir_inscricao`, `conceder_capacidade`, `promover_lista`, etc.) tem EXECUTE revogado de PUBLIC e anon e concedido só a `authenticated`, com a verificação de capacidade dentro da função. `handle_disponivel` não é exposta ao anon diretamente: é chamada por uma Edge Function com rate limit, que devolve só o booleano e as sugestões.
+
+**URLs antigas e caches.** Como a tabela não é legível, a única porta é a função, e a função respeita o interruptor na hora da chamada. Páginas estáticas geradas (seção 6) não carregam dado nenhum e consultam a função ao abrir.
+
+**Veículos.** `perfil_publico` só inclui veículos com `publico = true` e só se o perfil estiver público; a policy de SELECT de `veiculos` para terceiros não existe (só dono e admin), então não há caminho que mostre um veículo público de perfil privado.
+
+**Arquivos (avatares e fotos de veículos).** Dois buckets privados, `avatares` e `veiculos`, com caminho `{uid}/…` e `{uid}/{veiculo_id}/…`. Não há URL pública nem leitura direta. A entrega é por URL assinada de curta duração (10 minutos), pedida pelo navegador à API de storage; a API só assina se a policy de SELECT em `storage.objects` passar, e a policy é:
+
+| Bucket | SELECT permitido quando |
+|---|---|
+| `avatares` | pasta = `auth.uid()`, ou `eh_admin()`, ou o dono da pasta tem `perfil_publico = true` |
+| `veiculos` | pasta = `auth.uid()`, ou `eh_admin()`, ou (dono tem `perfil_publico = true` **e** o veículo do segundo segmento tem `publico = true`) |
+| INSERT/UPDATE/DELETE | só pasta = `auth.uid()` |
+
+Assim a decisão de assinar é tomada no banco, não no site, e `perfil_publico` devolve só caminhos, nunca URLs. Consequência a aceitar: uma URL assinada emitida continua válida até expirar, então desligar o perfil deixa uma janela máxima de 10 minutos para arquivos já entregues. Se essa janela for inaceitável, a alternativa é uma Edge Function que faz proxy do arquivo checando o interruptor a cada download, ao custo de mais latência e mais processamento. Proposta: aceitar os 10 minutos.
+
+**Mídia à venda** (Carioca Media) segue outro caminho: originais em bucket sem nenhuma policy de SELECT, entregues só pela Edge Function `media-download`, que checa a licença e assina com a chave de serviço por 5 minutos.
 
 ### 4.6 Credencial de fotógrafo
 "Quero fotografar" em "Minha conta": portfólio, Instagram, mensagem. Cria pedido `pendente`. Painel, aba Fotógrafos: aprovar (cria `capacidades = fotografo` e a linha em `fotografos` para dados de recebimento, que o próprio fotógrafo preenche depois) ou recusar com motivo. Revogar seta `revogada_em`; galerias existentes ficam ocultas até nova concessão.
@@ -207,17 +258,38 @@ Painel, aba Pista do treino: filas por status, contador aprovadas/capacidade, da
 
 ## 5. Estratégia de migração administrativa
 
-Hoje: `admins(email)` e `eh_admin()` lendo por e-mail do JWT; painel `/admin/` e policies dependem de `eh_admin()`.
+**Situação atual.** `admins(email)` com um e-mail; `eh_admin()` `security definer` compara `auth.jwt() ->> 'email'` com a tabela; todas as policies de escrita em `treinos`, de leitura em `confirmacoes` e `interessados_escolinha`, e de escrita no bucket `fotos` chamam `eh_admin()`. O painel `/admin/` entra com e-mail e senha e só depende dessas policies.
 
-| Passo | O que muda | Reversível? |
-|---|---|---|
-| 1 | Criar `usuarios`, `capacidades`, `acoes_admin`. Script único, executado com chave de serviço, cria `usuarios` para cada e-mail em `admins` que já tenha conta em `auth.users` e insere `capacidades = admin`. `admins` **não** é apagada | Sim: apagar as tabelas novas |
-| 2 | `eh_admin()` passa a devolver verdadeiro se **qualquer** das duas fontes confirmar: `capacidades` ativa **ou** e-mail em `admins`. Nenhuma policy muda de texto | Sim: voltar a função à versão anterior |
-| 3 | Sondas de permissão rodam contra o ambiente de desenvolvimento: admin atual continua entrando no painel; anônimo continua sem ler nada privado; usuário comum não vira admin; ninguém consegue inserir em `capacidades` pela API (teste tenta e falha) | — |
-| 4 | Período de compatibilidade de pelo menos um treino operado com o painel. Painel exibe de onde veio a permissão | — |
-| 5 | Depois de validado: `eh_admin()` lê só `capacidades`; `admins` é renomeada para `admins_legado` e mantida uma versão; só então removida | Sim, enquanto `admins_legado` existir |
+**Princípio.** O modelo atual não é alterado enquanto o substituto não estiver validado. A troca acontece dentro de `eh_admin()`, que é o único ponto que todas as policies compartilham; nenhuma policy é reescrita durante a transição.
 
-**Nunca**: um endpoint que crie admin. Novos admins entram pelo mesmo script com chave de serviço ou por `conceder_capacidade` chamada por outro admin, nunca pelo próprio.
+| Passo | O que muda | Como se valida | Reversão |
+|---|---|---|---|
+| 1. Estrutura nova ao lado | Migration cria `usuarios`, `capacidades`, `acoes_admin`, `handles_reservados`. Nada existente é tocado | Migration aplicada em desenvolvimento; painel atual testado igual antes | Migration de reversão apaga as quatro tabelas |
+| 2. Semear os admins atuais | Script com chave de serviço, executado uma vez: para cada e-mail em `admins`, localiza a conta em `auth.users`, cria `usuarios` (handle provisório reservado, ex.: `admin_1`, a ser trocado pelo próprio admin no primeiro acesso) e insere `capacidades = admin` com `concedida_por = null` e `motivo = 'migração'`. E-mail sem conta em `auth.users` é listado no relatório e não migra. `admins` continua intacta | Relatório do script: N e-mails, N migrados, lista dos não migrados | Apagar as linhas semeadas (marcadas pelo motivo) |
+| 3. Função em modo duplo | `eh_admin()` devolve verdadeiro se `capacidades` tem `admin` ativo para `auth.uid()` **ou** e-mail em `admins`. Nova função `origem_admin()` devolve `capacidades`, `legado` ou ambas, para o painel exibir | Suíte de testes de 5.1 e verificação do painel de 5.2 | Restaurar o corpo anterior de `eh_admin()` (uma migration de uma linha) |
+| 4. Compatibilidade | Pelo menos um treino inteiro operado pelo painel (criar, publicar, ler confirmações, exportar) com o modo duplo. Painel mostra "permissão via: capacidades" ou "via: legado". Meta: todo admin real aparece como `capacidades` | Nenhum admin com origem só `legado` ao fim do período; nenhum incidente de acesso | Igual ao passo 3 |
+| 5. Cortar o legado | `eh_admin()` lê só `capacidades`. `admins` é renomeada para `admins_legado` (sem policy, sem função que a leia) | Suíte de 5.1 repetida; painel verificado de novo | Renomear de volta e restaurar o modo duplo |
+| 6. Remover | `admins_legado` é apagada | Só após critérios de 5.3 | Não há; por isso os critérios |
+
+#### 5.1 Testes de autenticação e autorização (rodam nos passos 3 e 5)
+
+- Login do admin atual com e-mail e senha continua funcionando; token traz o mesmo `sub`.
+- `eh_admin()` verdadeiro para o admin migrado; falso para usuário comum; falso para anon; falso para admin com `revogada_em` preenchido.
+- Usuário comum não consegue INSERT, UPDATE ou DELETE em `capacidades` pela API (erro, não 204 silencioso).
+- Admin não consegue conceder capacidade a si mesmo por `conceder_capacidade`; consegue a terceiro, e a ação aparece em `acoes_admin`.
+- Anon continua sem ler `confirmacoes`, `interessados_escolinha`, `treinos` não publicados, `usuarios`, `capacidades`.
+- Revogar `admin` de um usuário logado bloqueia a próxima operação dele no painel sem precisar de novo login.
+- Todo o schema `public`: nenhuma função nova com EXECUTE para PUBLIC ou anon além da lista explícita (`perfil_publico`).
+
+#### 5.2 Verificação das permissões do painel atual
+
+Roteiro executado com o admin migrado, em desenvolvimento, nos passos 3 e 5: entrar; listar treinos incluindo rascunhos; criar treino; editar; enviar capa e foto da pista ao bucket `fotos`; publicar e despublicar; ver a página pública refletir; listar confirmações e interessados; baixar os dois CSVs; sair. Cada item é conferido também pelo lado negativo com um usuário comum: deve falhar em todos.
+
+#### 5.3 Critérios para remover a estrutura antiga
+
+Todos obrigatórios: (a) todo e-mail de `admins` tem linha ativa em `capacidades` ou foi explicitamente descartado por você; (b) passo 4 concluído com pelo menos um treino operado; (c) suíte de 5.1 e roteiro de 5.2 passando no passo 5; (d) nenhuma policy, função, view ou script referencia `admins`/`admins_legado` (busca no schema e no repositório); (e) backup do conteúdo de `admins_legado` guardado fora do banco; (f) sua autorização escrita.
+
+**Nunca**: um endpoint que crie admin. Novos admins entram pelo script com chave de serviço ou por `conceder_capacidade` chamada por outro admin, nunca pelo próprio.
 
 ---
 
@@ -251,6 +323,26 @@ Tudo do `TICKETING-E-CARIOCA-MEDIA.md` continua válido com estas correções ob
 - **Media:** credencial pelo site com aprovação; galerias vinculadas a `treinos`; originais privados; prévias com marca d'água; venda; downloads por URL assinada após checar `licencas`; comissão por fotógrafo; repasse feito pela organização por PIX em ciclo fixo com relatório e comprovante; reembolso revoga licença e gera lançamento negativo.
 - **Gateway:** antes de escolher, verificar por escrito: PIX e cartão, estorno por API para cada meio, webhook com assinatura, sandbox, exigência de CPF do pagador, existência de split. Nada disso é presumido.
 
+### 7.1 Pagamentos e reembolsos
+
+Cada item abaixo diz o que é resolvido no nosso banco e o que depende de confirmação do gateway (marcado **[verificar no gateway]**).
+
+**Idempotência da solicitação de estorno.** `reembolsos` tem `chave_idempotencia` única (derivada de `pedido_id` + itens + valor) e estados `SOLICITADO → ENVIADO_AO_PROVEDOR → CONFIRMADO | FALHOU | MANUAL_PENDENTE`. Pedir o mesmo estorno duas vezes devolve o registro existente sem nova chamada ao provedor. A Edge Function que fala com o gateway só sai de `SOLICITADO` após gravar `ENVIADO_AO_PROVEDOR` com a referência devolvida; se cair no meio, a reconciliação consulta o provedor pela referência antes de tentar de novo. Se o gateway aceita chave de idempotência na chamada, ela é a nossa **[verificar no gateway]**; se não, a consulta prévia por referência é a proteção.
+
+**Webhook duplicado.** `eventos_pagamento` com `unique (provedor, id_evento_provedor)`; segunda entrega é registrada como duplicada e ignorada. Além disso cada transição é idempotente por estado: confirmar um pagamento já `CONFIRMADO` não emite ingresso de novo (emissão única por `(item_pedido_id, indice)`), e falhar um já falho não muda nada. Webhook sem assinatura válida é recusado antes de qualquer gravação **[verificar no gateway: método de assinatura]**.
+
+**Pagamento contestado (chargeback).** Novo estado `CONTESTADO` em `pagamentos`, entrado por webhook ou reconciliação. Efeito imediato: ingressos do pedido vão para `SUSPENSO` (portaria recusa com a mensagem "procure a organização"), licenças de mídia vão para `SUSPENSA` (download bloqueado). Nada é apagado. Resolução: `REVERTIDO` (dinheiro voltou ao cliente) leva ingressos a `REVOGADO` e licenças a `REVOGADA`; `MANTIDO` (ganhamos a disputa) restaura os estados anteriores. Admin é avisado no painel em todas as etapas. O gateway precisa comunicar contestação por webhook ou API **[verificar no gateway]**; se não comunicar, o estado só entra manualmente pelo painel, com motivo.
+
+**Reconciliação com o provedor.** Cron em Edge Function: a cada 10 minutos consulta no provedor todo pagamento `PENDENTE` com mais de 5 minutos e todo reembolso `ENVIADO_AO_PROVEDOR`; uma vez por dia varre os últimos 7 dias completos. Divergência entre o que o provedor diz e o que temos gera linha em `divergencias_reconciliacao` (pedido, nosso estado, estado do provedor, detectada_em) e o cron aplica só as transições seguras (pendente → confirmado, enviado → confirmado, pendente → falho); tudo que reduz direito do cliente (revogar) só é aplicado se veio do provedor com prova, senão fica para admin. Exige API de consulta por referência **[verificar no gateway]**.
+
+**Revogação de ingressos.** Reembolso total confirmado revoga todo ingresso não usado do pedido; reembolso parcial por item revoga só os daquele item. Ingresso com check-in feito não é revogado automaticamente: o pedido de reembolso de um pedido com uso exige admin com motivo e o check-in fica preservado no histórico. Revogação libera estoque do lote apenas se o treino ainda não começou.
+
+**Compras de mídia já baixadas.** `licencas` registra `primeiro_download_em` e `downloads`. Reembolso de item nunca baixado: automático dentro da política. Reembolso de item já baixado: só admin, com motivo; a licença é revogada, a URL assinada expira sozinha em minutos e o arquivo não pode ser baixado de novo. O que a política permite em cada caso é decisão sua (seção 10, item 3), não do sistema.
+
+**Ajustes nos valores devidos aos fotógrafos.** `lancamentos_repasse` é append-only com tipos `VENDA`, `ESTORNO`, `CONTESTACAO`, `AJUSTE_MANUAL`, cada um com sinal e referência ao pedido. Reembolso ou contestação gera lançamento negativo do mesmo valor líquido da venda. Um ciclo de repasse já fechado (`repasses.status = PAGO`) nunca é alterado: o lançamento negativo cai no ciclo aberto, e se o saldo do ciclo ficar negativo ele é transportado como saldo devedor para o próximo. O extrato do fotógrafo mostra cada linha com o motivo. Se a plataforma um dia usar split do gateway, esse desenho continua valendo como contabilidade paralela; sem split, ele é a única fonte.
+
+**O que não fazemos por não estar verificado:** estorno parcial automático (depende de suporte por meio de pagamento), reembolso de PIX sem chave de destino conhecida, repasse automático via split, e qualquer prazo de estorno prometido ao cliente.
+
 ---
 
 ## 8. Plano de execução por etapas
@@ -267,7 +359,49 @@ Cada etapa em branch próprio, migrations aplicadas primeiro em ambiente de dese
 | F | Piloto real: um treino em `aprovacao` e um `gratuito` com portaria, antes de vender | C, D |
 | G | Migração administrativa passos 4–5 | um treino operado após B |
 
-O que sai sozinho: B entrega cadastro e perfis; B+C entrega inscrições sem dinheiro; B+D entrega bilheteria com pista por convite; C e D não dependem entre si.
+O que sai sozinho: B entrega cadastro e perfis; B+C entrega inscrições sem dinheiro; B+D entrega bilheteria com pista por convite; C e D não dependem entre si e não são desenvolvidas juntas com B.
+
+### 8.1 Critérios de aceitação por etapa
+
+Uma etapa só é considerada pronta para produção quando todos os itens passam em desenvolvimento e você aprovou a demonstração.
+
+**A. Site principal**
+- Home, agenda, página do Open Drift Session, escolinha e sobre no ar em `cariocadrift.com.br` com HTTPS forçado.
+- Página do treino responde 200 com prévia própria no WhatsApp.
+- Formulários de interesse gravam e o painel exporta.
+- Roteiro `docs/capturas/qa-lancamento.js` verde.
+
+**B. Contas e perfis**
+- Cadastro em uma tela; código por e-mail; perfil criado por trigger; @ verificado antes de criar a conta; reservados bloqueados; sugestões sem vazamento.
+- Perfil nasce privado; interruptor liga e desliga; `perfil_publico` devolve nulo quando desligado e a projeção exata quando ligado.
+- `/u/<handle>/` abre por acesso direto para perfil recém-publicado (via `404.html`) e responde 200 após a Action; despublicar faz a página estática mostrar "não disponível" na mesma hora.
+- Migração administrativa nos passos 1 a 3 concluída; suíte 5.1 e roteiro 5.2 verdes; painel atual sem regressão.
+- Testes de privilégios: só `perfil_publico` com EXECUTE para anon.
+
+**C. Veículos e inscrições de pista**
+- Garagem com foto em bucket privado; policies de storage da seção 4.5.1 testadas nos dois sentidos.
+- Treino em `convidados` não mostra botão; em `aprovacao` e `publica` mostra e o fluxo com as três opções de carro funciona.
+- Concorrência: duas inscrições na última vaga, duas aprovações na última vaga, cancelamento com promoção correta em `publica` e sem promoção em `aprovacao`.
+- Todas as transições da tabela 4.4.2 cobertas por teste; nenhuma outra possível.
+- Painel de aprovação com contador, filas, motivo obrigatório e histórico visível.
+- Pedido de credencial de fotógrafo: criar, aprovar, recusar, revogar, com efeito imediato.
+
+**D. Bilheteria**
+- Gateway escolhido e itens **[verificar no gateway]** respondidos por escrito, em sandbox.
+- Pedido com preço congelado, expiração, estoque sob lock; cortesia e gratuito contando na capacidade.
+- Webhook assinado, deduplicado, reentregue 20 vezes sem efeito; reconciliação detectando pagamento confirmado sem webhook.
+- QR rotativo; portaria valida sob lock; dois scans simultâneos, um só passa; contingência com lista impressa e lançamento manual auditado.
+- Reembolso idempotente; contestação suspende e resolve; ingresso usado não revoga sozinho.
+- Um treino `gratuito` operado de ponta a ponta com portaria antes de qualquer venda.
+
+**E. Carioca Media**
+- Fotógrafo aprovado publica galeria ligada a um treino; prévias com marca d'água; originais inacessíveis fora de `media-download`.
+- Compra gera licença; download só com licença ativa; URL assinada expira.
+- Extrato do fotógrafo com lançamentos positivos e negativos; ciclo fechado imutável; saldo devedor transportado.
+- Fotógrafo A não vê nada de B em nenhuma tabela ou bucket.
+
+**G. Fechamento da migração administrativa**
+- Critérios 5.3 todos atendidos e `admins_legado` removida.
 
 ---
 
@@ -306,6 +440,8 @@ Suíte de banco (mesmo modelo do NMI, contra Postgres real em desenvolvimento) e
 ---
 
 ## 10. Dependências e decisões ainda pendentes
+
+Só o que ainda não foi decidido. Perfil privado por padrão, @ escolhido pelo usuário, inscrição sem veículo, ausência de CPF e nascimento no cadastro, credencial de fotógrafo pelo site, rota `/u/<handle>/` e ordem das etapas **não** estão aqui: são definitivas.
 
 **Comerciais (sua decisão)**
 1. Gateway de pagamento, titular da conta, e a verificação por escrito de estorno por API, split, sandbox e CPF.
