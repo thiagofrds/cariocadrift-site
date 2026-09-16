@@ -181,14 +181,17 @@ Tudo abaixo aconteceu só no branch `etapa-b-contas` e no projeto DEV. Nenhum me
 | QA visual (desktop 1440 e celular 390) | Cadastro, código, @ pendente, Minha Conta, perfil público (com foto e selo), Club (entrada, solicitar, pendente, recusada, membro, encerrada), painel Clube/Usuários. Corrigido: dica de disponibilidade do @ invisível (classe `.ok` global escondia), hero do Club no celular com o texto por cima da arte (agora arte inteira em cima, texto abaixo), ponto final duplicado no motivo, selo do cartão esticado, mensagem de limite no cadastro |
 | Jornada completa | entrar → solicitar (com mensagem) → painel aprova → Minha Conta "Membro" → área do membro com cartão → painel encerra (motivo) → usuário vê "Encerrada" com o motivo e pode pedir de novo. 12 passos × 2 tamanhos = 24/24, capturas `docs/capturas/dev/jornada-*.png` |
 
-### 10.2 Links locais para conferir (prévia do branch, porta 8766; no celular na mesma rede troque `localhost` por `192.168.68.51`)
+### 10.2 Links locais para conferir
+
+Demonstração da jornada completa do Club (capturas reais, desktop e celular): `http://localhost:8766/docs/capturas/dev/jornada.html`.
+ (prévia do branch, porta 8766; no celular na mesma rede troque `localhost` por `192.168.68.51`)
 
 Estados reais (DEV): `http://localhost:8766/conta/?env=dev` (entrar/criar; contas de QA em 9), `http://localhost:8766/clube/?env=dev`, `http://localhost:8766/u/?h=qapiloto&env=dev` (só aparece com o perfil público ligado), `http://localhost:8766/admin/?env=dev`.
 Estados visuais sem banco: `/conta/?demo=criar|codigo|pendente|conta|membro`, `/clube/?demo=entrada|logado|solicitar|pendente|recusada|membro`, `/u/?demo=membro|indisponivel`, `/admin/?demo=clube|usuarios`.
 
 ### 10.3 O que depende de você
 
-1. **Teste do código por e-mail** (única parte da etapa B não provada de ponta a ponta): em `http://localhost:8766/conta/?env=dev`, "Criar conta" com o seu e-mail da organização (`thiagofrds@yahoo.com.br`; ele já está em `admins` do DEV, então essa conta nasce admin lá) e uma senha nova só para o DEV. O código chega pelo SMTP padrão do Supabase; digite na tela. Aguarde ~1 h desde as 23:40 UTC de 16/09 (limite de 2 e-mails/hora já consumido). Alternativas: autorizar SMTP próprio no DEV (Resend/Brevo, plano gratuito) ou desligar "Confirm email" só no DEV, o que eu não fiz.
+1. **Teste do código por e-mail** (única parte da etapa B não provada de ponta a ponta). Verificado em 16/09 23:45 UTC nos logs do Auth do DEV, sem novos envios: as três tentativas barradas (23:03 e 23:38 UTC) têm `error_code = over_email_send_rate_limit`, e a primeira delas já foi barrada sem nenhum e-mail enviado antes; ou seja, o bloqueio é a restrição do SMTP padrão a endereços de membros da organização, não a cota de 2/hora consumida. Nenhum usuário órfão ficou no DEV (o Auth desfaz o cadastro quando o envio falha). Como testar: em `http://localhost:8766/conta/?env=dev`, "Criar conta" com o seu e-mail da organização (`thiagofrds@yahoo.com.br`; ele já está em `admins` do DEV, então essa conta nasce admin lá) e uma senha nova só para o DEV. O código chega pelo SMTP padrão do Supabase; digite na tela. Se a tela responder "Muitos cadastros agora…", espere até 00:40 UTC de 17/09 (21:40 em Brasília) e tente uma única vez de novo. Alternativas: autorizar SMTP próprio no DEV (Resend/Brevo, plano gratuito) ou desligar "Confirm email" só no DEV, o que eu não fiz.
 2. **Publicação por artefato** (para a produção, mais tarde, com sua autorização): trocar a fonte do GitHub Pages para "GitHub Actions", criar os segredos `BUILD_PERFIS_URL` e `BUILD_TOKEN` no ambiente `github-pages`, e publicar a Edge Function no projeto de produção quando a etapa B for para lá.
 3. **Decisões do Clube** (`docs/CLUBE-CARIOCA-DRIFT.md`): cobrança, benefícios, renovação, suspensão. Nada foi implementado.
 4. Logo do Club com fundo transparente (pacote visual).

@@ -1,0 +1,56 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jornada do Carioca Drift Club · demonstração</title>
+<style>
+body{margin:0;background:#0B0B0B;color:#EDEDED;font:15px/1.5 -apple-system,Barlow,Helvetica,Arial,sans-serif;padding:24px 16px 64px}
+.wrap{max-width:1500px;margin:0 auto}h1{font-size:34px;line-height:1;margin:0 0 6px;text-transform:uppercase}h2{font-size:22px;margin:0 0 4px;text-transform:uppercase}
+.sub{color:#9a9a9a;margin:0 0 28px}.legenda{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 32px}
+.tag{display:inline-block;padding:3px 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;border:1px solid}
+.tag.real{color:#3DBE5B;border-color:#3DBE5B}.tag.demo{color:#FFD100;border-color:#FFD100}.tag.pend{color:#FF6B6B;border-color:#FF6B6B}
+.passo{border-top:1px solid #2a2a2a;padding:28px 0}.passo p{color:#bdbdbd;max-width:70ch;margin:6px 0 14px}
+.passo a{color:#FFD100}.telas{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:16px;align-items:start}
+.tela{background:#141416;border:1px solid #2a2a2a;padding:8px}.tela small{display:block;color:#8a8a8a;margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase;font-size:11px}
+.tela img{width:100%;height:auto;display:block;max-height:760px;object-fit:cover;object-position:top}
+@media (max-width:800px){.telas{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<h1>Carioca Drift Club · jornada completa</h1>
+<p class="sub">Capturas geradas em 17/09/2026 pelo roteiro <code>docs/capturas/qa-jornada-dev.js</code> contra o Supabase DEV, na prévia local (desktop 1440 px e celular 390 px). Produção não participa.</p>
+<div class="legenda"><span class="tag real">Real · dados do DEV</span><span class="tag demo">Demo · estado visual sem banco</span><span class="tag pend">Pendente · depende do e-mail</span></div>
+
+<div class="passo"><h2>0. Criar conta</h2><span class="tag real">Formulário real</span> <span class="tag pend">Envio do código pendente</span>
+<p>Formulário real de cadastro em <a href="/conta/?env=dev">/conta/?env=dev</a>, com a verificação de disponibilidade do @ ao vivo. O envio do código de 6 dígitos depende do SMTP padrão do Supabase (2 e-mails por hora, só para membros da organização); a tela do código abaixo é a demonstração <a href="/conta/?demo=codigo">/conta/?demo=codigo</a>.</p>
+<div class="telas"><div class="tela"><small>Desktop · real</small><img src="cadastro-preenchido-d1440.png" alt=""></div><div class="tela"><small>Celular · real</small><img src="cadastro-preenchido-m390.png" alt=""></div></div>
+<div class="telas" style="margin-top:16px"><div class="tela"><small>Desktop · demo do código</small><img src="cadastro-codigo-demo-d1440.png" alt=""></div><div class="tela"><small>Celular · demo do código</small><img src="cadastro-codigo-demo-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>1. Entrada do Club (visitante)</h2><span class="tag real">Real</span>
+<p><a href="/clube/?env=dev">/clube/?env=dev</a> sem sessão: hero com a arte do Z azul, três passos e a regra de separação.</p>
+<div class="telas"><div class="tela"><small>Desktop</small><img src="jornada-1-club-visitante-d1440.png" alt=""></div><div class="tela"><small>Celular</small><img src="jornada-1-club-visitante-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>2. Entrar na conta</h2><span class="tag real">Real</span>
+<p>Login da conta de QA do DEV em <a href="/conta/?env=dev">/conta/?env=dev</a>.</p>
+<div class="telas"><div class="tela"><small>Desktop</small><img src="jornada-2-entrar-d1440.png" alt=""></div><div class="tela"><small>Celular</small><img src="jornada-2-entrar-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>3. Solicitar associação</h2><span class="tag real">Real</span>
+<p>Tela de pedido com a arte do M2, nome e @ do usuário e mensagem opcional. A função <code>solicitar_associacao</code> grava o pedido como pendente.</p>
+<div class="telas"><div class="tela"><small>Desktop</small><img src="jornada-3-solicitar-d1440.png" alt=""></div><div class="tela"><small>Celular</small><img src="jornada-3-solicitar-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>4. Acompanhar a solicitação</h2><span class="tag real">Real</span>
+<p>Status "Solicitação em análise", selo pendente, jornada em quatro passos com data real do pedido, opção de cancelar.</p>
+<div class="telas"><div class="tela"><small>Desktop</small><img src="jornada-4-pendente-d1440.png" alt=""></div><div class="tela"><small>Celular</small><img src="jornada-4-pendente-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>5. Aprovação pelo administrador</h2><span class="tag real">Real</span>
+<p>Painel <a href="/admin/?env=dev">/admin/?env=dev</a>, aba Clube: o pedido aparece com a mensagem; ao aprovar, o usuário passa para Membros.</p>
+<div class="telas"><div class="tela"><small>Desktop · pedido pendente</small><img src="jornada-5-admin-pendente-d1440.png" alt=""></div><div class="tela"><small>Celular · pedido pendente</small><img src="jornada-5-admin-pendente-m390.png" alt=""></div></div>
+<div class="telas" style="margin-top:16px"><div class="tela"><small>Desktop · após aprovar</small><img src="jornada-6-admin-membros-d1440.png" alt=""></div><div class="tela"><small>Celular · após aprovar</small><img src="jornada-6-admin-membros-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>6. Área de membro</h2><span class="tag real">Real</span>
+<p>Minha Conta mostra "Membro" com o link para a área; <a href="/clube/?env=dev">/clube/?env=dev</a> abre o cartão de membro sobre a logo com brilho e os três blocos vazios (comunicados, encontros, benefícios a definir).</p>
+<div class="telas"><div class="tela"><small>Desktop · Minha Conta</small><img src="jornada-7-conta-membro-d1440.png" alt=""></div><div class="tela"><small>Celular · Minha Conta</small><img src="jornada-7-conta-membro-m390.png" alt=""></div></div>
+<div class="telas" style="margin-top:16px"><div class="tela"><small>Desktop · área do membro</small><img src="jornada-8-club-membro-d1440.png" alt=""></div><div class="tela"><small>Celular · área do membro</small><img src="jornada-8-club-membro-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>7. Encerramento (extra)</h2><span class="tag real">Real</span>
+<p>O admin encerra com motivo obrigatório; o histórico registra aprovação e encerramento; o usuário vê "Associação encerrada" com o motivo e pode pedir de novo.</p>
+<div class="telas"><div class="tela"><small>Desktop · histórico do painel</small><img src="jornada-9-admin-historico-d1440.png" alt=""></div><div class="tela"><small>Celular · Club encerrada</small><img src="jornada-10-club-encerrada-m390.png" alt=""></div></div></div>
+
+<div class="passo"><h2>Estados visuais sem banco (demo)</h2><span class="tag demo">Demo</span>
+<p>Para clicar pelos estados sem login: <a href="/clube/?demo=entrada">entrada</a> · <a href="/clube/?demo=logado">logado</a> · <a href="/clube/?demo=solicitar">solicitar</a> · <a href="/clube/?demo=pendente">pendente</a> · <a href="/clube/?demo=recusada">recusada</a> · <a href="/clube/?demo=membro">membro</a> · <a href="/conta/?demo=criar">conta: criar</a> · <a href="/conta/?demo=codigo">código</a> · <a href="/conta/?demo=pendente">@ pendente</a> · <a href="/conta/?demo=membro">Minha Conta membro</a> · <a href="/u/?demo=membro">perfil público com selo</a> · <a href="/admin/?demo=clube">painel Clube</a> · <a href="/admin/?demo=usuarios">painel Usuários</a>.</p></div>
+</div></body></html>
