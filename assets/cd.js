@@ -17,7 +17,7 @@ window.CD = (() => {
       // Valores informados pela organização em 16/09/2026. Venda só no local; sem checkout online.
       valores: [
         { rotulo: "Público", nome: "Assistir", valor: "R$ 30", nota: "Ingresso vendido no local, no dia." },
-        { rotulo: "Estacionamento", nome: "Estacionamento", valor: "R$ 15", nota: "Condições a confirmar com a organização." },
+        { rotulo: "Estacionamento", nome: "Estacionamento", valor: "R$ 15", nota: "Por carro." },
         { rotulo: "Pilotos", nome: "Piloto convidado", valor: "R$ 80", nota: "Pista exclusiva para pilotos convidados. Não há inscrição pública." },
         { rotulo: "Caronas", nome: "Carona", valor: "Sob consulta", nota: "Valor e disponibilidade com a organização.", link: "/caronas/" }
       ]

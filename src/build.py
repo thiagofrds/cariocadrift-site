@@ -73,6 +73,8 @@ for t in treinos:
     path = f'treinos/{t["slug"]}/'
     html = "".join(render(PARTIALS[p], meta, "/", path) for p in ("head", "nav")) + render(corpo_ev, meta, "/", path) + render(PARTIALS["footer"], meta, "/", path)
     capa = t.get("capa_url") or ""
+    if capa.startswith("/assets/"):
+        capa = "https://cariocadrift.com.br" + capa
     if capa.startswith("http") and "/assets/carro.jpg" not in capa:   # render conceitual nunca vira prévia
         html = html.replace('content="https://cariocadrift.com.br/assets/og.jpg"', f'content="{capa}"')
     destino = RAIZ / "treinos" / t["slug"] / "index.html"

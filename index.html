@@ -314,7 +314,7 @@
       document.getElementById('participarRot').textContent = `${prox.titulo} · ${dd}.${mm}`;
       if (prox.entrada_titulo) document.getElementById('partPublicoTitulo').textContent = prox.entrada_titulo;
       const val = (part.valores || []).reduce((o, v) => (o[v.rotulo] = v, o), {});
-      document.getElementById('partPublico').textContent = val['Público'] ? `Ingresso ${val['Público'].valor}, vendido no local, no dia.${val['Estacionamento'] ? ` Estacionamento ${val['Estacionamento'].valor}.` : ''}` : part.publico;
+      document.getElementById('partPublico').textContent = val['Público'] ? `Ingresso ${val['Público'].valor}, vendido no local, no dia.${val['Estacionamento'] ? ` Estacionamento ${val['Estacionamento'].valor} por carro.` : ''}` : part.publico;
       document.getElementById('partPilotos').textContent = val['Pilotos'] ? `${part.pilotos} ${val['Pilotos'].valor} por piloto convidado. Não há inscrição pública.` : `${part.pilotos} Não há inscrição pública.`;
       document.getElementById('partCaronas').textContent = part.caronas;
       document.getElementById('partLink').href = url;

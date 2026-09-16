@@ -35,7 +35,7 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         m.titulo !== null && m.titulo <= vp.height ? ok(`${tag}: título do evento na primeira dobra`) : falha(`${tag}: título do evento fora da dobra (${m.titulo})`);
       }
       // créditos: toda figure.foto com "Sergio Photos RJ"
-      const cred = await p.evaluate(() => { const fs = [...document.querySelectorAll('figure.foto')]; return { total: fs.length, sem: fs.filter(f => !/Sergio Photos RJ/.test(f.textContent) && !f.closest('.hero') ).length, semHero: fs.filter(f => f.closest('.hero') && !/Sergio Photos RJ/.test(f.textContent) && !f.querySelector('.quadro img[src*="supabase"]')).length }; });
+      const cred = await p.evaluate(() => { const fs = [...document.querySelectorAll('figure.foto')].filter(f => f.querySelector('img[src*="/assets/fotos/"]'));  // só fotografias do acervo exigem crédito; peças da marca não return { total: fs.length, sem: fs.filter(f => !/Sergio Photos RJ/.test(f.textContent) && !f.closest('.hero') ).length, semHero: fs.filter(f => f.closest('.hero') && !/Sergio Photos RJ/.test(f.textContent) && !f.querySelector('.quadro img[src*="supabase"]')).length }; });
       if (cred.total) (cred.sem + cred.semHero) === 0 ? ok(`${tag}: ${cred.total} fotos com crédito Sergio Photos RJ`) : falha(`${tag}: ${cred.sem + cred.semHero} foto(s) sem crédito`);
       // marca d'água: nenhuma foto do acervo com object-position que corte a base (aceita "center bottom" ou auto)
       const corte = await p.evaluate(() => [...document.querySelectorAll('img[src*="/assets/fotos/"]')].filter(i => { const cs = getComputedStyle(i); return cs.objectFit === 'cover' && !/100%$|bottom/.test(cs.objectPosition); }).map(i => i.getAttribute('src')));
@@ -59,12 +59,14 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         !/R\$|10x|módulos|Chevette|Nissan/.test(esc) && /estruturação/.test(esc) && /sob consulta/i.test(esc) ? ok(`${tag}: escolinha na home sem preços, com "em estruturação" e "Valores sob consulta"`) : falha(`${tag}: bloco da escolinha na home ainda comercial`);
         (await p.locator('#participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas não aponta para /caronas/`);
         const part = await p.locator('#participar').textContent();
-        /R\$ 30/.test(part) && /R\$ 15/.test(part) && /R\$ 80/.test(part) && /sob consulta/i.test(part) && /no local/i.test(part) ? ok(`${tag}: resumo de valores (30/15/80, caronas sob consulta, venda no local)`) : falha(`${tag}: resumo de valores incompleto`);
+        /R\$ 30/.test(part) && /R\$ 15 por carro/.test(part) && /R\$ 80/.test(part) && /sob consulta/i.test(part) && /no local/i.test(part) ? ok(`${tag}: resumo de valores (30/15/80, caronas sob consulta, venda no local)`) : falha(`${tag}: resumo de valores incompleto`);
         await p.locator('.onde').screenshot({ path: path.join(out, `${tag}-mapa.png`) });
       }
       if (pn === 'evento') {
+        const capa = await p.evaluate(() => { const i = document.querySelector('.hero figure.foto img'); return i ? { src: i.getAttribute('src'), ok: i.complete && i.naturalWidth > 0, leg: i.closest('figure').querySelector('figcaption').textContent } : null; });
+        capa && /capa-marca-open-drift-session\.jpg$/.test(capa.src) && capa.ok && /Capa/.test(capa.leg) && !/Sergio/.test(capa.leg) ? ok(`${tag}: capa provisória com a marca oficial carregada, legenda "Capa" sem crédito de foto`) : falha(`${tag}: capa inesperada: ${JSON.stringify(capa)}`);
         const val = await p.locator('#valores').textContent().catch(() => '');
-        /R\$ 30/.test(val) && /R\$ 15/.test(val) && /R\$ 80/.test(val) && /Sob consulta/.test(val) && /somente no local/i.test(val) && /exclusiva para pilotos convidados/i.test(val) && !/por veículo|por pessoa|por período/i.test(val) ? ok(`${tag}: bloco de valores completo, estacionamento sem especificação`) : falha(`${tag}: bloco de valores incompleto`);
+        /R\$ 30/.test(val) && /R\$ 15/.test(val) && /R\$ 80/.test(val) && /Sob consulta/.test(val) && /somente no local/i.test(val) && /exclusiva para pilotos convidados/i.test(val) && /R\$ 15[\s\S]{0,40}Por carro/.test(val) ? ok(`${tag}: bloco de valores completo, estacionamento R$ 15 por carro`) : falha(`${tag}: bloco de valores incompleto`);
         (await p.locator('.participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas do evento errado`);
       }
       if (pn === 'caronas') {
