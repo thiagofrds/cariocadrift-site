@@ -16,6 +16,13 @@ begin execute sql; return 'ok'; exception when others then return sqlstate || ' 
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 1, 'anon insert válido', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um','21999990001',true)$$), null;
 insert into _resultado select 1, 'anon select → sem privilégio (nem lista vazia)', '42501', _tenta($$select count(*) from interessados_carona$$), null;
+insert into _resultado select 1, 'anon enviando criado_em antigo → sem privilégio na coluna', '42501', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento,criado_em) values ('open-drift-session','Teste Data','21999990021',true,'2020-01-01')$$), null;
+insert into _resultado select 1, 'anon enviando criado_em futuro → sem privilégio na coluna', '42501', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento,criado_em) values ('open-drift-session','Teste Data','21999990022',true,now() + interval '30 days')$$), null;
+insert into _resultado select 1, 'anon enviando id escolhido → sem privilégio na coluna', '42501', _tenta($$insert into interessados_carona (id,evento,nome,telefone,consentimento) values (999999,'open-drift-session','Teste Id','21999990023',true)$$), null;
+insert into _resultado select 1, 'anon não lê nem escreve tentativas_carona', '42501|42501', (select _tenta($$select count(*) from tentativas_carona$$) || '|' || _tenta($$insert into tentativas_carona (telefone) values ('21900000000')$$)), null;
+select _reset();
+insert into _resultado select 1, 'nenhuma linha gravada pelas tentativas de manipular id/data', '1', (select count(*)::text from interessados_carona), null;
+select _como('anon', '{"role":"anon"}');
 select _reset();
 
 insert into treinos (slug,titulo,data,hora_inicio,hora_fim,local_nome,endereco,publicado) values ('treino-rascunho','Rascunho','2026-12-01','09:00','18:00','RJ Race Park','x',false), ('treino-b','B','2026-12-02','09:00','18:00','RJ Race Park','x',true), ('treino-c','C','2026-12-03','09:00','18:00','RJ Race Park','x',true), ('treino-d','D','2026-12-04','09:00','18:00','RJ Race Park','x',true), ('antigo','Antigo','2026-12-05','09:00','18:00','RJ Race Park','x',true), ('lote','Lote','2026-12-06','09:00','18:00','RJ Race Park','x',true);
@@ -24,6 +31,7 @@ select _como('anon', '{"role":"anon"}');
 insert into _resultado select 2, 'mesmo telefone no mesmo treino → aceito em silêncio (mesma resposta de envio novo)', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$), null;
 insert into _resultado select 2, 'duplicata não gravou linha nova nem alterou a original', 'Teste Um', (select string_agg(nome, ',') from interessados_carona where telefone = '21999990001'), null;
 insert into _resultado select 2, 'evento inexistente → recusado (chave estrangeira / gatilho)', '23503', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-inventado','Teste Ev','21999990009',true)$$), null;
+select _reset(); delete from tentativas_carona; select _como('anon', '{"role":"anon"}');
 insert into _resultado select 2, 'mesmo telefone, interesse geral (sem treino) → permitido', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral','21999990001',true)$$), null;
 insert into _resultado select 2, 'mesmo telefone, interesse geral repetido → aceito em silêncio, sem linha nova', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral 2','21999990001',true)$$), null;
 insert into _resultado select 2, 'lista geral continua com um registro do telefone', '1', (select count(*)::text from interessados_carona where telefone = '21999990001' and evento is null), null;
@@ -36,6 +44,7 @@ insert into _resultado select 2, 'origem diferente de site → recusado', '23514
 select _reset();
 
 -- ===== 2b. apagar treino com interessado presente também na lista geral → não pode falhar
+delete from tentativas_carona;
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 2, 'cadastro no treino-b para telefone que já está na lista geral', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-b','Teste Um','21999990001',true)$$), null;
 select _reset();
@@ -66,19 +75,29 @@ select _reset();
 
 -- ===== 5. gatilho anti-abuso: 3 por telefone por hora; 60 por 10 minutos no total
 select _como('anon', '{"role":"anon"}');
-insert into _resultado select 5, '2º e 3º envio do mesmo telefone em treinos diferentes → ok', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-b','Teste Um','21999990001',true),('treino-c','Teste Um','21999990001',true)$$), null;
-insert into _resultado select 5, '4º envio do mesmo telefone em 1 hora → gatilho', 'P0001', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-d','Teste Um','21999990001',true)$$), null;
 select _reset();
--- 27 registros antigos (fora da janela) não contam; 27 novos + 3 já feitos = 30 → o 31º cai
-insert into interessados_carona (evento,nome,telefone,consentimento,criado_em) select 'antigo', 'Antigo', (21900000000 + g)::text, true, now() - interval '2 hours' from generate_series(1,40) g;
+delete from tentativas_carona;   -- zera as tentativas acumuladas pelos blocos anteriores
+-- telefone JÁ cadastrado (21999990001, no open-drift-session): 3 tentativas duplicadas → ok em silêncio; 4ª → P0001
+select _como('anon', '{"role":"anon"}');
+insert into _resultado select 5, 'telefone cadastrado: 3 tentativas (duplicatas) → ok', 'ok|ok|ok', (select _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','X Y','21999990001',true)$$) || '|' || _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','X Y','21999990001',true)$$) || '|' || _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','X Y','21999990001',true)$$)), null;
+insert into _resultado select 5, 'telefone cadastrado: 4ª tentativa → gatilho', 'P0001 limite de envios atingido para este telefone', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','X Y','21999990001',true)$$), null;
+-- telefone NOVO: 3 tentativas → ok; 4ª → exatamente a mesma resposta
+insert into _resultado select 5, 'telefone novo: 3 tentativas → ok', 'ok|ok|ok', (select _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-b','Novo','21999990031',true)$$) || '|' || _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-c','Novo','21999990031',true)$$) || '|' || _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-d','Novo','21999990031',true)$$)), null;
+insert into _resultado select 5, 'telefone novo: 4ª tentativa → mesma resposta do cadastrado', 'P0001 limite de envios atingido para este telefone', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Novo','21999990031',true)$$), null;
+select _reset();
+delete from tentativas_carona;
+-- tentativas antigas (fora da janela) não contam
+insert into tentativas_carona (telefone, criado_em) select (21900000000 + g)::text, now() - interval '3 hours' from generate_series(1,40) g;
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 5, 'registros antigos não contam para a janela de 10 min', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Janela','21988880001',true)$$), null;
 select _reset();
-insert into interessados_carona (evento,nome,telefone,consentimento) select 'lote', 'Lote', (21977770000 + g)::text, true from generate_series(1, 60 - (select count(*) from interessados_carona where criado_em > now() - interval '10 minutes')::int) g;
-insert into _resultado select 5, 'janela de 10 min preenchida com exatamente 60', '60', (select count(*)::text from interessados_carona where criado_em > now() - interval '10 minutes'), null;
+insert into tentativas_carona (telefone) select (21977770000 + g)::text from generate_series(1, 60 - (select count(*) from tentativas_carona where criado_em > now() - interval '10 minutes')::int) g;
+insert into _resultado select 5, 'janela de 10 min preenchida com exatamente 60 tentativas', '60', (select count(*)::text from tentativas_carona where criado_em > now() - interval '10 minutes'), null;
 select _como('anon', '{"role":"anon"}');
-insert into _resultado select 5, 'total na janela = 60: 61º envio → gatilho', 'P0001', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Sessenta e um','21966660001',true)$$), null;
+insert into _resultado select 5, 'janela cheia: telefone NOVO → gatilho', 'P0001 limite de envios atingido, tente mais tarde', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Sessenta e um','21966660001',true)$$), null;
+insert into _resultado select 5, 'janela cheia: telefone JÁ CADASTRADO → mesma resposta', 'P0001 limite de envios atingido, tente mais tarde', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Sessenta e um','21999990001',true)$$), null;
 select _reset();
+insert into _resultado select 5, 'tentativas barradas não gravaram registro', '0', (select count(*)::text from interessados_carona where nome = 'Sessenta e um'), null;
 insert into _resultado select 5, 'anon não executa a função do gatilho diretamente', '42501', (select _tenta($$select public.limita_envios_carona()$$) from (select _como('anon','{"role":"anon"}')) x), null;
 select _reset();
 
