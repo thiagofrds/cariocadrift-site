@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel | Carioca Drift</title>
+<meta name="description" content="Painel administrativo da Carioca Drift.">
+<meta name="theme-color" content="#1B1A1F">
+<link rel="canonical" href="https://cariocadrift.com.br/admin/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Carioca Drift">
+<meta property="og:title" content="Painel · Carioca Drift">
+<meta property="og:description" content="Painel administrativo da Carioca Drift.">
+<meta property="og:url" content="https://cariocadrift.com.br/admin/">
+<meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+<link rel="apple-touch-icon" href="/assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="robots" content="noindex"></head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt="Carioca Drift Culture"></span>
+      <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <ul class="menu">
+        <li><a href="/" >Home</a></li>
+        <li><a href="/treinos/" >Treinos</a></li>
+        <li><a href="/escolinha/" >Escolinha</a></li>
+        <li><a href="/sobre/" >Sobre</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<style>
+.painel{padding-block:32px 72px}
+.painel h1{font-size:clamp(44px,8vw,72px)}
+.abas{display:flex;gap:6px;flex-wrap:wrap;margin-top:22px;border-bottom:1px solid var(--borracha);padding-bottom:12px}
+.abas button{padding:10px 14px;border-radius:999px;border:1px solid var(--borracha);background:transparent;font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+.abas button[aria-selected="true"]{background:var(--faisca);color:var(--asfalto);border-color:var(--faisca)}
+.aba{margin-top:24px}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.barra .sessao{color:var(--cinza);font-size:14px}
+.btn-p{padding:12px 18px;font-size:22px}
+.btn-cinza{background:var(--pneu);color:var(--fumaca);border:1px solid var(--borracha);box-shadow:none}
+.btn-cinza:hover{border-color:var(--faisca)}
+.tabela{width:100%;border-collapse:collapse;font-size:15px}
+.tabela th{text-align:left;font-family:var(--rotulo);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:var(--cinza);padding:10px 8px;border-bottom:1px solid var(--borracha)}
+.tabela td{padding:12px 8px;border-bottom:1px solid var(--borracha);vertical-align:top}
+.tabela .num{font-variant-numeric:tabular-nums}
+.tabela .acoes-linha{display:flex;gap:6px;flex-wrap:wrap}
+.tabela .acoes-linha button,.tabela .acoes-linha a{padding:6px 10px;border-radius:999px;border:1px solid var(--borracha);background:var(--pneu);font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--fumaca);text-decoration:none}
+.tabela .acoes-linha .perigo{color:#FF8A80;border-color:#5a2a26}
+.rolagem{overflow-x:auto}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-family:var(--rotulo);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pill.on{background:var(--verde);color:#062}
+.pill.off{background:var(--borracha);color:var(--cinza)}
+/* formulário escuro */
+.form{display:grid;gap:16px;max-width:820px}
+.form .linha2{display:grid;gap:16px}
+@media (min-width:700px){.form .linha2{grid-template-columns:1fr 1fr}}
+.f{display:grid;gap:6px}
+.f span{font-family:var(--rotulo);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza)}
+.f input,.f textarea,.f select{width:100%;padding:12px 12px;font:500 16px var(--texto);border:1px solid var(--borracha);border-radius:var(--raio);background:var(--pneu);color:var(--fumaca)}
+.f textarea{min-height:90px;resize:vertical;line-height:1.4}
+.f input:focus,.f textarea:focus{border-color:var(--faisca);outline:none}
+.f small{color:var(--cinza);font-size:13px}
+.f .previa{width:160px;height:90px;object-fit:cover;border-radius:var(--raio);border:1px solid var(--borracha);background:#000}
+.grupo{padding:18px;border:1px solid var(--borracha);border-radius:10px;display:grid;gap:14px}
+.grupo h3{font-size:26px}
+.atracao{display:grid;gap:8px;padding:12px;border-radius:var(--raio);background:var(--pneu)}
+.atracao .rem{justify-self:end;padding:4px 10px;border-radius:999px;border:1px solid var(--borracha);background:transparent;font-size:13px;color:var(--cinza)}
+.check{display:flex;align-items:center;gap:10px;font-weight:600}
+.check input{width:22px;height:22px;accent-color:var(--faisca)}
+.form .rodape{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.msg{font-weight:600;min-height:22px}
+.msg.erro{color:#FF8A80}
+.msg.ok{color:var(--verde)}
+/* login */
+.login{max-width:440px;margin:40px auto 0}
+[hidden]{display:none!important}
+</style>
+
+<main class="painel">
+  <div class="wrap">
+    <p class="eyebrow">Carioca Drift</p>
+    <h1>Painel</h1>
+
+    <!-- LOGIN -->
+    <div class="login cartao" id="login">
+      <h2>Entrar</h2>
+      <p class="sub">Área da organização. Só quem está na lista de administradores entra.</p>
+      <label class="campo" for="email"><span>E-mail</span><input id="email" type="email" autocomplete="username" placeholder="voce@email.com"></label>
+      <label class="campo" for="senha"><span>Senha</span><input id="senha" type="password" autocomplete="current-password"></label>
+      <div class="erro" id="erroLogin"></div>
+      <button class="btn btn-fogo" id="entrar" type="button">Entrar</button>
+      <p class="nota"><a href="#" id="esqueci">Esqueci minha senha</a></p>
+    </div>
+
+    <!-- APP -->
+    <div id="app" hidden>
+      <div class="barra">
+        <span class="sessao">Logado como <b id="quem"></b></span>
+        <div class="acoes"><button class="btn btn-cinza btn-p" id="trocarSenha" type="button">Trocar senha</button><button class="btn btn-cinza btn-p" id="sair" type="button">Sair</button></div>
+      </div>
+      <div class="abas" role="tablist">
+        <button role="tab" data-aba="treinos" aria-selected="true">Treinos</button>
+        <button role="tab" data-aba="confirmacoes" aria-selected="false">Confirmações</button>
+        <button role="tab" data-aba="escolinha" aria-selected="false">Escolinha</button>
+      </div>
+
+      <!-- TREINOS -->
+      <section class="aba" id="aba-treinos">
+        <div id="listaTreinos">
+          <div class="barra"><h2>Treinos</h2><button class="btn btn-fogo btn-p" id="novoTreino" type="button">Novo treino</button></div>
+          <div class="rolagem"><table class="tabela"><thead><tr><th>Data</th><th>Treino</th><th>Status</th><th>Confirmados</th><th></th></tr></thead><tbody id="tbTreinos"></tbody></table></div>
+        </div>
+        <form class="form" id="formTreino" hidden autocomplete="off">
+          <div class="barra"><h2 id="tituloForm">Novo treino</h2><button class="btn btn-cinza btn-p" id="voltar" type="button">Voltar</button></div>
+          <div class="linha2">
+            <label class="f"><span>Título *</span><input name="titulo" required placeholder="Open Drift Session"></label>
+            <label class="f"><span>Endereço da página (slug) *</span><input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="open-drift-session-2"><small>Só letras minúsculas, números e hífen. Vira cariocadrift.com.br/treinos/<b>slug</b>/</small></label>
+          </div>
+          <label class="f"><span>Chamada (frase curta abaixo do título)</span><textarea name="chamada" placeholder="O primeiro treino de drift aberto ao público…"></textarea></label>
+          <div class="linha2">
+            <label class="f"><span>Tipo</span><input name="tipo" placeholder="Treino aberto ao público"></label>
+            <label class="f"><span>Data *</span><input name="data" type="date" required></label>
+            <label class="f"><span>Hora de início *</span><input name="hora_inicio" type="time" required value="09:00"></label>
+            <label class="f"><span>Hora de fim *</span><input name="hora_fim" type="time" required value="18:00"></label>
+          </div>
+          <div class="grupo"><h3>Local</h3>
+            <div class="linha2">
+              <label class="f"><span>Nome do local *</span><input name="local_nome" required placeholder="RJ Race Park"></label>
+              <label class="f"><span>Endereço *</span><input name="endereco" required placeholder="Estrada do Frutuoso, 320 · Santa Cruz, Rio de Janeiro"></label>
+              <label class="f"><span>Link do Google Maps</span><input name="maps_url" type="url" placeholder="https://maps.google.com/…"></label>
+              <label class="f"><span>Link do Waze</span><input name="waze_url" type="url" placeholder="https://waze.com/ul?…"></label>
+            </div>
+          </div>
+          <div class="grupo"><h3>Entrada e regras</h3>
+            <div class="linha2">
+              <label class="f"><span>Entrada (título)</span><input name="entrada_titulo" placeholder="Ingressos no local"></label>
+              <label class="f"><span>Entrada (detalhe)</span><input name="entrada_texto" placeholder="Venda direto na portaria, no dia."></label>
+              <label class="f"><span>Regra da pista (título)</span><input name="regra_titulo" placeholder="Capacete obrigatório"></label>
+              <label class="f"><span>Regra da pista (detalhe)</span><input name="regra_texto" placeholder="Pra quem for entrar na pista ou andar de carona."></label>
+            </div>
+          </div>
+          <div class="grupo"><h3>O que rola</h3>
+            <div id="atracoes"></div>
+            <button class="btn btn-cinza btn-p" id="addAtracao" type="button">Adicionar item</button>
+          </div>
+          <div class="grupo"><h3>Fotos e pista</h3>
+            <div class="linha2">
+              <label class="f"><span>Foto de capa</span><input name="capa_file" type="file" accept="image/jpeg,image/png,image/webp"><input name="capa_url" type="hidden"><img class="previa" id="previaCapa" alt="" hidden><small>Aparece no fundo do topo. Horizontal, de preferência 1600px de largura.</small></label>
+              <label class="f"><span>Foto ou mapa da pista</span><input name="pista_file" type="file" accept="image/jpeg,image/png,image/webp"><input name="pista_foto_url" type="hidden"><img class="previa" id="previaPista" alt="" hidden></label>
+            </div>
+            <label class="f"><span>Texto sobre a pista</span><textarea name="pista_texto" placeholder="Traçado em três seções…"></textarea></label>
+            <label class="f"><span>Link do reel / vídeo</span><input name="reel_url" type="url" placeholder="https://www.instagram.com/reel/…"></label>
+          </div>
+          <label class="check"><input name="publicado" type="checkbox"> Publicado (aparece no site)</label>
+          <div class="rodape">
+            <button class="btn btn-fogo btn-p" id="salvar" type="submit">Salvar</button>
+            <button class="btn btn-cinza btn-p" id="verPagina" type="button" hidden>Ver página</button>
+            <span class="msg" id="msgForm"></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- CONFIRMAÇÕES -->
+      <section class="aba" id="aba-confirmacoes" hidden>
+        <div class="barra"><h2>Confirmações</h2><div class="acoes"><select id="filtroTreino" class="f"></select><button class="btn btn-cinza btn-p" id="csvConf" type="button">Baixar CSV</button></div></div>
+        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>Telefone</th><th>Treino</th><th>Quando</th><th></th></tr></thead><tbody id="tbConf"></tbody></table></div>
+      </section>
+
+      <!-- ESCOLINHA -->
+      <section class="aba" id="aba-escolinha" hidden>
+        <div class="barra"><h2>Interessados na escolinha</h2><button class="btn btn-cinza btn-p" id="csvEsc" type="button">Baixar CSV</button></div>
+        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Mensagem</th><th>Quando</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/assets/cd.js"></script>
+<script>
+(() => {
+  const sb = supabase.createClient(CD.SB_URL, CD.SB_KEY);
+  const $ = id => document.getElementById(id);
+  const { esc, dataCurta, hora } = CD;
+  const fmtQuando = iso => new Date(iso).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+  const fmtTel = d => d.length === 11 ? `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}` : `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  const wa = d => `https://wa.me/55${d}`;
+  const baixaCsv = (nome, linhas) => {
+    const csv = linhas.map(l => l.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["﻿" + csv], {type:'text/csv;charset=utf-8'})); a.download = nome; a.click();
+  };
+
+  // ---------- Sessão ----------
+  async function mostrar(sessao){
+    $('login').hidden = !!sessao; $('app').hidden = !sessao;
+    if (sessao) { $('quem').textContent = sessao.user.email; await carregarTreinos(); }
+  }
+  sb.auth.getSession().then(({data}) => mostrar(data.session));
+  sb.auth.onAuthStateChange((ev, s) => { if (ev === 'SIGNED_OUT') mostrar(null); if (ev === 'PASSWORD_RECOVERY') trocarSenha(); });
+
+  $('entrar').addEventListener('click', async () => {
+    $('erroLogin').textContent = '';
+    const { data, error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('senha').value });
+    if (error) { $('erroLogin').textContent = 'E-mail ou senha incorretos.'; return; }
+    const { data: adm } = await sb.from('admins').select('email').limit(1);
+    if (!adm || !adm.length) { await sb.auth.signOut(); $('erroLogin').textContent = 'Esse e-mail não está na lista de administradores.'; return; }
+    mostrar(data.session);
+  });
+  $('senha').addEventListener('keydown', e => { if (e.key === 'Enter') $('entrar').click(); });
+  $('esqueci').addEventListener('click', async e => {
+    e.preventDefault(); const email = $('email').value.trim();
+    if (!email) { $('erroLogin').textContent = 'Digite seu e-mail primeiro.'; return; }
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/admin/' });
+    $('erroLogin').textContent = error ? 'Não deu pra enviar o e-mail agora.' : 'Enviamos um link pra redefinir a senha. Confere o e-mail.';
+  });
+  $('sair').addEventListener('click', () => sb.auth.signOut());
+  async function trocarSenha(){
+    const nova = prompt('Nova senha (mínimo 8 caracteres):'); if (!nova) return;
+    if (nova.length < 8) return alert('Senha muito curta.');
+    const { error } = await sb.auth.updateUser({ password: nova });
+    alert(error ? 'Não deu pra trocar a senha: ' + error.message : 'Senha trocada.');
+  }
+  $('trocarSenha').addEventListener('click', trocarSenha);
+
+  // ---------- Abas ----------
+  document.querySelectorAll('.abas [role=tab]').forEach(b => b.addEventListener('click', async () => {
+    document.querySelectorAll('.abas [role=tab]').forEach(x => x.setAttribute('aria-selected', x === b));
+    document.querySelectorAll('.aba').forEach(s => s.hidden = s.id !== 'aba-' + b.dataset.aba);
+    if (b.dataset.aba === 'confirmacoes') await carregarConf();
+    if (b.dataset.aba === 'escolinha') await carregarEsc();
+  }));
+
+  // ---------- Treinos ----------
+  let treinos = [], editando = null;
+  async function carregarTreinos(){
+    const { data, error } = await sb.from('treinos').select('*').order('data', {ascending:false});
+    if (error) { $('tbTreinos').innerHTML = `<tr><td colspan="5">Erro ao carregar: ${esc(error.message)}</td></tr>`; return; }
+    treinos = data;
+    const { data: cont } = await sb.from('confirmacoes').select('evento');
+    const n = {}; (cont || []).forEach(c => n[c.evento] = (n[c.evento] || 0) + 1);
+    $('tbTreinos').innerHTML = treinos.map(t => `<tr>
+      <td class="num">${esc(dataCurta(t.data))}<br><small>${esc(hora(t.hora_inicio))}–${esc(hora(t.hora_fim))}</small></td>
+      <td><b>${esc(t.titulo)}</b><br><small>/treinos/${esc(t.slug)}/</small></td>
+      <td><span class="pill ${t.publicado ? 'on' : 'off'}">${t.publicado ? 'Publicado' : 'Rascunho'}</span></td>
+      <td class="num">${n[t.slug] || 0}</td>
+      <td><div class="acoes-linha">
+        <button data-editar="${t.id}">Editar</button>
+        <a href="/treinos/evento/?t=${esc(t.slug)}" target="_blank" rel="noopener">Ver</a>
+        <button data-pub="${t.id}">${t.publicado ? 'Despublicar' : 'Publicar'}</button>
+        <button class="perigo" data-apagar="${t.id}">Apagar</button>
+      </div></td></tr>`).join('') || '<tr><td colspan="5">Nenhum treino ainda. Clica em "Novo treino".</td></tr>';
+    $('filtroTreino').innerHTML = `<option value="">Todos os treinos</option>` + treinos.map(t => `<option value="${esc(t.slug)}">${esc(dataCurta(t.data))} · ${esc(t.titulo)}</option>`).join('');
+  }
+  $('tbTreinos').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const id = +(b.dataset.editar || b.dataset.pub || b.dataset.apagar);
+    const t = treinos.find(x => x.id === id);
+    if (b.dataset.editar) abrirForm(t);
+    if (b.dataset.pub) { const { error } = await sb.from('treinos').update({ publicado: !t.publicado }).eq('id', id); if (error) alert(error.message); await carregarTreinos(); }
+    if (b.dataset.apagar && confirm(`Apagar "${t.titulo}"? As confirmações desse treino continuam salvas.`)) { const { error } = await sb.from('treinos').delete().eq('id', id); if (error) alert(error.message); await carregarTreinos(); }
+  });
+
+  const form = $('formTreino');
+  const campos = ['titulo','slug','chamada','tipo','data','hora_inicio','hora_fim','local_nome','endereco','maps_url','waze_url','entrada_titulo','entrada_texto','regra_titulo','regra_texto','pista_texto','reel_url','capa_url','pista_foto_url'];
+  const PADRAO = { tipo:'Treino aberto ao público', hora_inicio:'09:00', hora_fim:'18:00', local_nome:'RJ Race Park', endereco:'Estrada do Frutuoso, 320 · Santa Cruz, Rio de Janeiro',
+    maps_url:'https://www.google.com/maps/search/?api=1&query=RJ%20Race%20Park%20Estrada%20do%20Frutuoso%20320%20Santa%20Cruz%20RJ',
+    waze_url:'https://waze.com/ul?q=RJ%20Race%20Park%20Estrada%20do%20Frutuoso%20320%20Santa%20Cruz&navigate=yes',
+    entrada_titulo:'Ingressos no local', entrada_texto:'Venda direto na portaria, no dia.', regra_titulo:'Capacete obrigatório', regra_texto:'Pra quem for entrar na pista ou andar de carona. Sem capacete, não roda.',
+    atracoes:[{titulo:'Pilotos locais na pista',texto:'A galera do drift carioca andando o dia todo.'},{titulo:'Carona radical',texto:'Sente a adrenalina do banco do carona. Leva o capacete.'},{titulo:'Todos são bem-vindos',texto:'Traz a família, os amigos e o seu carro.'}] };
+
+  function abrirForm(t){
+    editando = t || null;
+    $('tituloForm').textContent = t ? 'Editar treino' : 'Novo treino';
+    const v = t || PADRAO;
+    campos.forEach(c => form.elements[c].value = v[c] ?? '');
+    form.elements.publicado.checked = !!(t && t.publicado);
+    form.elements.hora_inicio.value = (v.hora_inicio || '09:00').slice(0,5);
+    form.elements.hora_fim.value = (v.hora_fim || '18:00').slice(0,5);
+    previa('previaCapa', v.capa_url); previa('previaPista', v.pista_foto_url);
+    form.elements.capa_file.value = ''; form.elements.pista_file.value = '';
+    $('atracoes').innerHTML = ''; (v.atracoes || []).forEach(a => addAtracao(a));
+    $('verPagina').hidden = !t; $('msgForm').textContent = ''; $('msgForm').className = 'msg';
+    $('listaTreinos').hidden = true; form.hidden = false; window.scrollTo({top:0});
+  }
+  const previa = (id, url) => { const img = $(id); img.hidden = !url; if (url) img.src = url; };
+  function addAtracao(a = {}){
+    const d = document.createElement('div'); d.className = 'atracao';
+    d.innerHTML = `<label class="f"><span>Título</span><input data-t value="${esc(a.titulo||'')}" placeholder="Carona radical"></label><label class="f"><span>Descrição</span><input data-x value="${esc(a.texto||'')}" placeholder="Sente a adrenalina do banco do carona."></label><button type="button" class="rem">Remover</button>`;
+    d.querySelector('.rem').addEventListener('click', () => d.remove());
+    $('atracoes').appendChild(d);
+  }
+  $('addAtracao').addEventListener('click', () => addAtracao());
+  $('novoTreino').addEventListener('click', () => abrirForm(null));
+  $('voltar').addEventListener('click', () => { form.hidden = true; $('listaTreinos').hidden = false; });
+  $('verPagina').addEventListener('click', () => window.open(`/treinos/evento/?t=${form.elements.slug.value}`, '_blank'));
+  form.elements.titulo.addEventListener('input', () => { if (!editando && !form.elements.slug.dataset.tocado) form.elements.slug.value = slugify(form.elements.titulo.value); });
+  form.elements.slug.addEventListener('input', () => form.elements.slug.dataset.tocado = '1');
+  const slugify = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  form.elements.capa_file.addEventListener('change', e => { const f = e.target.files[0]; if (f) previa('previaCapa', URL.createObjectURL(f)); });
+  form.elements.pista_file.addEventListener('change', e => { const f = e.target.files[0]; if (f) previa('previaPista', URL.createObjectURL(f)); });
+
+  async function subirFoto(file, slug, tipo){
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const caminho = `treinos/${slug}/${tipo}-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from('fotos').upload(caminho, file, { upsert: true, contentType: file.type });
+    if (error) throw new Error('Foto: ' + error.message);
+    return sb.storage.from('fotos').getPublicUrl(caminho).data.publicUrl;
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const msg = $('msgForm'); msg.className = 'msg'; msg.textContent = 'Salvando…'; $('salvar').disabled = true;
+    try {
+      const reg = {};
+      campos.forEach(c => reg[c] = form.elements[c].value.trim() || null);
+      reg.publicado = form.elements.publicado.checked;
+      reg.atracoes = [...$('atracoes').querySelectorAll('.atracao')].map(d => ({ titulo: d.querySelector('[data-t]').value.trim(), texto: d.querySelector('[data-x]').value.trim() })).filter(a => a.titulo);
+      if (form.elements.capa_file.files[0]) reg.capa_url = await subirFoto(form.elements.capa_file.files[0], reg.slug, 'capa');
+      if (form.elements.pista_file.files[0]) reg.pista_foto_url = await subirFoto(form.elements.pista_file.files[0], reg.slug, 'pista');
+      const q = editando ? sb.from('treinos').update(reg).eq('id', editando.id) : sb.from('treinos').insert(reg);
+      const { data, error } = await q.select().single();
+      if (error) throw new Error(error.code === '23505' ? 'Já existe um treino com esse slug.' : error.message);
+      editando = data; $('tituloForm').textContent = 'Editar treino'; $('verPagina').hidden = false;
+      form.elements.capa_url.value = data.capa_url || ''; form.elements.pista_foto_url.value = data.pista_foto_url || '';
+      form.elements.capa_file.value = ''; form.elements.pista_file.value = '';
+      msg.className = 'msg ok'; msg.textContent = data.publicado ? 'Salvo e publicado.' : 'Salvo como rascunho.';
+      await carregarTreinos();
+    } catch (err) { msg.className = 'msg erro'; msg.textContent = err.message; }
+    $('salvar').disabled = false;
+  });
+
+  // ---------- Confirmações ----------
+  let conf = [];
+  async function carregarConf(){
+    const { data, error } = await sb.from('confirmacoes').select('*').order('criado_em', {ascending:false});
+    if (error) { $('tbConf').innerHTML = `<tr><td colspan="5">${esc(error.message)}</td></tr>`; return; }
+    conf = data; desenharConf();
+  }
+  function desenharConf(){
+    const f = $('filtroTreino').value; const lista = conf.filter(c => !f || c.evento === f);
+    $('tbConf').innerHTML = lista.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(c.evento)}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="5">Nenhuma confirmação.</td></tr>';
+  }
+  $('filtroTreino').addEventListener('change', desenharConf);
+  $('tbConf').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar essa confirmação?')) return; await sb.from('confirmacoes').delete().eq('id', +b.dataset.del); await carregarConf(); });
+  $('csvConf').addEventListener('click', () => { const f = $('filtroTreino').value; baixaCsv(`confirmacoes${f ? '-' + f : ''}.csv`, [['nome','telefone','treino','quando'], ...conf.filter(c => !f || c.evento === f).map(c => [c.nome, c.telefone, c.evento, c.criado_em])]); });
+
+  // ---------- Escolinha ----------
+  let escl = [];
+  async function carregarEsc(){
+    const { data, error } = await sb.from('interessados_escolinha').select('*').order('criado_em', {ascending:false});
+    if (error) { $('tbEsc').innerHTML = `<tr><td colspan="5">${esc(error.message)}</td></tr>`; return; }
+    escl = data;
+    $('tbEsc').innerHTML = escl.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(c.mensagem || '')}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="5">Ninguém ainda.</td></tr>';
+  }
+  $('tbEsc').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar esse interessado?')) return; await sb.from('interessados_escolinha').delete().eq('id', +b.dataset.del); await carregarEsc(); });
+  $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','mensagem','quando'], ...escl.map(c => [c.nome, c.telefone, c.mensagem, c.criado_em])]));
+})();
+</script>
+<div class="zebra" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt=""></span>
+      <span><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
+    </a>
+    <nav aria-label="Rodapé">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/escolinha/">Escolinha</a></li>
+        <li><a href="/sobre/">Sobre</a></li>
+      </ul>
+    </nav>
+    <p><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></p>
+  </div>
+</footer>
+</body>
+</html>

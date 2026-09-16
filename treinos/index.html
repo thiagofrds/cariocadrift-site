@@ -4,47 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Treinos | Carioca Drift</title>
-<meta name="description" content="Agenda dos treinos de drift da Carioca Drift no Rio de Janeiro. Próximo: Open Drift Session, 20 de setembro, no RJ Race Park.">
+<meta name="description" content="Agenda dos treinos de drift da Carioca Drift no Rio de Janeiro. Ficha completa, como chegar e confirmação de presença.">
 <meta name="theme-color" content="#1B1A1F">
 <link rel="canonical" href="https://cariocadrift.com.br/treinos/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Carioca Drift">
 <meta property="og:title" content="Treinos · Carioca Drift">
-<meta property="og:description" content="Agenda dos treinos de drift da Carioca Drift no Rio de Janeiro. Próximo: Open Drift Session, 20 de setembro, no RJ Race Park.">
+<meta property="og:description" content="Agenda dos treinos de drift da Carioca Drift no Rio de Janeiro. Ficha completa, como chegar e confirmação de presença.">
 <meta property="og:url" content="https://cariocadrift.com.br/treinos/">
 <meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/jpeg" href="../assets/logo.jpg">
-<link rel="apple-touch-icon" href="../assets/logo.jpg">
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+<link rel="apple-touch-icon" href="/assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
 <header class="nav">
   <div class="wrap">
-    <a class="marca" href="../">
-      <span class="logo"><img src="../assets/logo.jpg" alt="Carioca Drift Culture"></span>
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt="Carioca Drift Culture"></span>
       <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
     </a>
     <nav aria-label="Principal">
       <ul class="menu">
-        <li><a href="../" >Home</a></li>
-        <li><a href="../treinos/" aria-current="page">Treinos</a></li>
-        <li><a href="../escolinha/" >Escolinha</a></li>
-        <li><a href="../sobre/" >Sobre</a></li>
+        <li><a href="/" >Home</a></li>
+        <li><a href="/treinos/" aria-current="page">Treinos</a></li>
+        <li><a href="/escolinha/" >Escolinha</a></li>
+        <li><a href="/sobre/" >Sobre</a></li>
       </ul>
     </nav>
   </div>
 </header>
 <style>
 .agenda{display:grid;gap:16px;padding-block:24px 40px}
+.agenda h2{font-size:clamp(30px,5vw,40px);color:var(--cinza);margin-top:16px}
 .vazio{padding:26px 22px;border:1px dashed var(--borracha);border-radius:10px;color:var(--cinza);display:grid;gap:6px}
 .vazio b{font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;color:var(--fumaca)}
+.evento.passado{opacity:.75}
+.evento.passado .data b{color:var(--cinza)}
 .regras{background:var(--pneu)}
-.regras ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:0}
+.regras ul{list-style:none;padding:0;margin-top:22px;display:grid}
 .regras li{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--borracha);align-items:start}
 .regras li:last-child{border-bottom:1px solid var(--borracha)}
 .regras i{width:12px;height:44px;border-radius:2px;background:var(--faisca);display:block;margin-top:2px}
@@ -58,24 +63,12 @@
   <div class="wrap">
     <p class="eyebrow">Agenda</p>
     <h1>Treinos</h1>
-    <p class="prosa">Os treinos abertos da Carioca Drift acontecem no RJ Race Park, em Santa Cruz. Ficha completa, como chegar e confirmação de presença em cada um.</p>
+    <p class="prosa">Os treinos abertos da Carioca Drift. Ficha completa, como chegar e confirmação de presença em cada um.</p>
   </div>
 </section>
 
-<section class="wrap agenda">
-  <a class="evento" href="../treinos/open-drift-session/">
-    <div class="data"><b>20</b><small>set · dom</small></div>
-    <div class="corpo">
-      <span class="tag">Próximo · Treino aberto ao público</span>
-      <h3>Open Drift Session</h3>
-      <p class="meta">9h às 18h · RJ Race Park, Estrada do Frutuoso, 320 · Ingressos no local · Capacete obrigatório na pista e na carona</p>
-      <span class="cta">Ver o treino e confirmar presença</span>
-    </div>
-  </a>
-  <div class="vazio">
-    <b>Próximas datas em breve</b>
-    <span>Os novos treinos entram aqui e saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span>
-  </div>
+<section class="wrap agenda" id="agenda">
+  <div class="vazio" id="carregando"><b>Carregando agenda…</b></div>
 </section>
 
 <section class="secao regras">
@@ -85,25 +78,46 @@
     <ul>
       <li><i></i><div><b>Aberto a todo mundo</b><p>Vem de carro, de carona ou só pra assistir. Família e amigos são bem-vindos.</p></div></li>
       <li><i></i><div><b>Capacete obrigatório</b><p>Pra entrar na pista ou andar de carona. Sem capacete, não roda.</p></div></li>
-      <li><i></i><div><b>Ingressos no local</b><p>A venda é direto na portaria do RJ Race Park, no dia do treino.</p></div></li>
+      <li><i></i><div><b>Ingressos no local</b><p>A venda é direto na portaria, no dia do treino.</p></div></li>
       <li><i></i><div><b>Confirma presença</b><p>Cada treino tem uma lista. Confirmar ajuda a gente a dimensionar pista, carona e estrutura.</p></div></li>
     </ul>
   </div>
 </section>
 </main>
+
+<script src="/assets/cd.js"></script>
+<script>
+(async () => {
+  const ag = document.getElementById('agenda');
+  try {
+    const todos = await CD.treinosPublicados();
+    const agora = new Date();
+    const prox = todos.filter(t => CD.fim(t) >= agora);
+    const passados = todos.filter(t => CD.fim(t) < agora).reverse();
+    let html = "";
+    if (prox.length) html += prox.map((t, i) => CD.cardTreino(t).replace('class="tag">', `class="tag">${i === 0 ? "Próximo · " : ""}`)).join("");
+    else html += `<div class="vazio"><b>Nenhum treino marcado</b><span>As próximas datas saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></div>`;
+    if (prox.length) html += `<div class="vazio"><b>Próximas datas em breve</b><span>Os novos treinos entram aqui e saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></div>`;
+    if (passados.length) html += `<h2>Já rolou</h2>` + passados.map(t => CD.cardTreino(t).replace('class="evento"', 'class="evento passado"')).join("");
+    ag.innerHTML = html;
+  } catch (e) {
+    ag.innerHTML = `<div class="vazio"><b>Não deu pra carregar a agenda</b><span>Tenta de novo em instantes.</span></div>`;
+  }
+})();
+</script>
 <div class="zebra" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
-    <a class="marca" href="../">
-      <span class="logo"><img src="../assets/logo.jpg" alt=""></span>
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt=""></span>
       <span><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
     </a>
     <nav aria-label="Rodapé">
       <ul>
-        <li><a href="../">Home</a></li>
-        <li><a href="../treinos/">Treinos</a></li>
-        <li><a href="../escolinha/">Escolinha</a></li>
-        <li><a href="../sobre/">Sobre</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/escolinha/">Escolinha</a></li>
+        <li><a href="/sobre/">Sobre</a></li>
       </ul>
     </nav>
     <p><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></p>

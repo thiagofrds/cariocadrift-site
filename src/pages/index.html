@@ -51,7 +51,7 @@ nav: home
     <p class="slogan entra">More than drift. It's a culture.</p>
     <p class="lead entra">A cena do drift carioca em um lugar só: treinos abertos no RJ Race Park, escolinha pra quem quer aprender e a cultura que move tudo isso.</p>
     <div class="acoes entra">
-      <a class="btn btn-fogo" href="{{root}}treinos/open-drift-session/">Próximo treino: 20.09</a>
+      <a class="btn btn-fogo" href="{{root}}treinos/">Próximo treino</a>
       <a class="btn btn-linha" href="{{root}}escolinha/">Quero aprender</a>
     </div>
   </div>
@@ -63,17 +63,7 @@ nav: home
       <div><p class="eyebrow">Próximo treino</p><h2>Na pista</h2></div>
       <a href="{{root}}treinos/">Ver todos os treinos</a>
     </div>
-    <a class="evento destaque" href="{{root}}treinos/open-drift-session/">
-      <div class="data"><b>20</b><small>set · dom</small></div>
-      <div class="corpo">
-        <span class="tag">Treino aberto ao público</span>
-        <h3>Open Drift Session</h3>
-        <p class="meta">9h às 18h · RJ Race Park, Santa Cruz · Ingressos no local · Capacete obrigatório na pista</p>
-        <div class="contagem" id="contagem"><span>Faltam <b id="cd">--</b></span></div>
-        <span class="cta">Ver o treino e confirmar presença</span>
-      </div>
-      <div class="foto"><img src="{{root}}assets/pista.jpg" alt="Traçado do RJ Race Park" loading="lazy"></div>
-    </a>
+    <div id="proximoTreino"><div class="evento" style="opacity:.6"><div class="data"><b>--</b><small>&nbsp;</small></div><div class="corpo"><h3>Carregando…</h3></div></div></div>
   </div>
 </section>
 
@@ -109,19 +99,26 @@ nav: home
 </section>
 </main>
 
+<script src="/assets/cd.js"></script>
 <script>
-const INICIO = new Date("2026-09-20T09:00:00-03:00");
-const FIM = new Date("2026-09-20T18:00:00-03:00");
-const el = document.getElementById('cd');
-function tick(){
-  const agora = new Date();
-  if (agora >= FIM) { document.getElementById('contagem').innerHTML = '<span>Encerrado</span>'; return; }
-  if (agora >= INICIO) { document.getElementById('contagem').innerHTML = '<span><b>Rolando agora</b></span>'; return; }
-  let t = Math.floor((INICIO - agora)/1000);
-  const d = Math.floor(t/86400); t -= d*86400;
-  const h = Math.floor(t/3600); const m = Math.floor((t - h*3600)/60);
-  el.textContent = d > 0 ? `${d} dia${d>1?'s':''} e ${h}h` : `${h}h ${String(m).padStart(2,'0')}min`;
-  setTimeout(tick, 30000);
-}
-tick();
+(async () => {
+  const caixa = document.getElementById('proximoTreino');
+  try {
+    const todos = await CD.treinosPublicados();
+    const agora = new Date();
+    const prox = todos.find(t => CD.fim(t) >= agora);
+    if (!prox) { caixa.innerHTML = '<div class="evento"><div class="data"><b>?</b><small>em breve</small></div><div class="corpo"><span class="tag">Agenda</span><h3>Próximo treino em breve</h3><p class="meta">As novas datas saem primeiro no @cariocadrift_.</p></div></div>'; return; }
+    caixa.innerHTML = CD.cardTreino(prox, true);
+    const b = document.querySelector('.capa .btn-fogo'); if (b) { b.textContent = `Próximo treino: ${CD.dataCurta(prox.data)}`; b.href = `/treinos/${prox.slug}/`; }
+    const INICIO = CD.inicio(prox), FIM = CD.fim(prox), el = document.getElementById('cd'), cont = document.getElementById('contagem');
+    (function tick(){
+      const agora = new Date();
+      if (agora >= FIM) { cont.innerHTML = '<span>Encerrado</span>'; return; }
+      if (agora >= INICIO) { cont.innerHTML = '<span><b>Rolando agora</b></span>'; return; }
+      let t = Math.floor((INICIO - agora)/1000); const d = Math.floor(t/86400); t -= d*86400; const h = Math.floor(t/3600); const m = Math.floor((t - h*3600)/60);
+      el.textContent = d > 0 ? `${d} dia${d>1?'s':''} e ${h}h` : `${h}h ${String(m).padStart(2,'0')}min`;
+      setTimeout(tick, 30000);
+    })();
+  } catch (e) { caixa.innerHTML = ''; }
+})();
 </script>

@@ -17,24 +17,26 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/jpeg" href="./assets/logo.jpg">
-<link rel="apple-touch-icon" href="./assets/logo.jpg">
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+<link rel="apple-touch-icon" href="/assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/site.css">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
 <header class="nav">
   <div class="wrap">
-    <a class="marca" href="./">
-      <span class="logo"><img src="./assets/logo.jpg" alt="Carioca Drift Culture"></span>
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt="Carioca Drift Culture"></span>
       <span><b>Carioca Drift</b><span>More than drift. It's a culture.</span></span>
     </a>
     <nav aria-label="Principal">
       <ul class="menu">
-        <li><a href="./" aria-current="page">Home</a></li>
-        <li><a href="./treinos/" >Treinos</a></li>
-        <li><a href="./escolinha/" >Escolinha</a></li>
-        <li><a href="./sobre/" >Sobre</a></li>
+        <li><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/treinos/" >Treinos</a></li>
+        <li><a href="/escolinha/" >Escolinha</a></li>
+        <li><a href="/sobre/" >Sobre</a></li>
       </ul>
     </nav>
   </div>
@@ -77,7 +79,7 @@
 
 <main>
 <section class="capa">
-  <div class="fundo"><img src="./assets/carro.jpg" alt="" fetchpriority="high"></div>
+  <div class="fundo"><img src="/assets/carro.jpg" alt="" fetchpriority="high"></div>
   <div class="veu"></div>
   <svg class="grao" aria-hidden="true"><filter id="ruido"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#ruido)"/></svg>
   <div class="wrap">
@@ -86,8 +88,8 @@
     <p class="slogan entra">More than drift. It's a culture.</p>
     <p class="lead entra">A cena do drift carioca em um lugar só: treinos abertos no RJ Race Park, escolinha pra quem quer aprender e a cultura que move tudo isso.</p>
     <div class="acoes entra">
-      <a class="btn btn-fogo" href="./treinos/open-drift-session/">Próximo treino: 20.09</a>
-      <a class="btn btn-linha" href="./escolinha/">Quero aprender</a>
+      <a class="btn btn-fogo" href="/treinos/">Próximo treino</a>
+      <a class="btn btn-linha" href="/escolinha/">Quero aprender</a>
     </div>
   </div>
 </section>
@@ -96,35 +98,25 @@
   <div class="wrap">
     <div class="cabeca">
       <div><p class="eyebrow">Próximo treino</p><h2>Na pista</h2></div>
-      <a href="./treinos/">Ver todos os treinos</a>
+      <a href="/treinos/">Ver todos os treinos</a>
     </div>
-    <a class="evento destaque" href="./treinos/open-drift-session/">
-      <div class="data"><b>20</b><small>set · dom</small></div>
-      <div class="corpo">
-        <span class="tag">Treino aberto ao público</span>
-        <h3>Open Drift Session</h3>
-        <p class="meta">9h às 18h · RJ Race Park, Santa Cruz · Ingressos no local · Capacete obrigatório na pista</p>
-        <div class="contagem" id="contagem"><span>Faltam <b id="cd">--</b></span></div>
-        <span class="cta">Ver o treino e confirmar presença</span>
-      </div>
-      <div class="foto"><img src="./assets/pista.jpg" alt="Traçado do RJ Race Park" loading="lazy"></div>
-    </a>
+    <div id="proximoTreino"><div class="evento" style="opacity:.6"><div class="data"><b>--</b><small>&nbsp;</small></div><div class="corpo"><h3>Carregando…</h3></div></div></div>
   </div>
 </section>
 
 <section class="blocos">
   <div class="wrap atalhos">
-    <a class="atalho" href="./treinos/">
+    <a class="atalho" href="/treinos/">
       <h3>Treinos</h3>
       <p>Agenda dos treinos abertos, com ficha completa, como chegar e confirmação de presença.</p>
       <span class="cta">Ver agenda</span>
     </a>
-    <a class="atalho" href="./escolinha/">
+    <a class="atalho" href="/escolinha/">
       <h3>Escolinha de Drift</h3>
       <p>Aulas com o Fabinho Drift Show pra quem quer começar do zero ou evoluir na pista.</p>
       <span class="cta">Tenho interesse</span>
     </a>
-    <a class="atalho" href="./sobre/">
+    <a class="atalho" href="/sobre/">
       <h3>Sobre</h3>
       <p>Quem é a Carioca Drift, o que a gente faz e como fazer parte da cena.</p>
       <span class="cta">Conhecer</span>
@@ -144,35 +136,42 @@
 </section>
 </main>
 
+<script src="/assets/cd.js"></script>
 <script>
-const INICIO = new Date("2026-09-20T09:00:00-03:00");
-const FIM = new Date("2026-09-20T18:00:00-03:00");
-const el = document.getElementById('cd');
-function tick(){
-  const agora = new Date();
-  if (agora >= FIM) { document.getElementById('contagem').innerHTML = '<span>Encerrado</span>'; return; }
-  if (agora >= INICIO) { document.getElementById('contagem').innerHTML = '<span><b>Rolando agora</b></span>'; return; }
-  let t = Math.floor((INICIO - agora)/1000);
-  const d = Math.floor(t/86400); t -= d*86400;
-  const h = Math.floor(t/3600); const m = Math.floor((t - h*3600)/60);
-  el.textContent = d > 0 ? `${d} dia${d>1?'s':''} e ${h}h` : `${h}h ${String(m).padStart(2,'0')}min`;
-  setTimeout(tick, 30000);
-}
-tick();
+(async () => {
+  const caixa = document.getElementById('proximoTreino');
+  try {
+    const todos = await CD.treinosPublicados();
+    const agora = new Date();
+    const prox = todos.find(t => CD.fim(t) >= agora);
+    if (!prox) { caixa.innerHTML = '<div class="evento"><div class="data"><b>?</b><small>em breve</small></div><div class="corpo"><span class="tag">Agenda</span><h3>Próximo treino em breve</h3><p class="meta">As novas datas saem primeiro no @cariocadrift_.</p></div></div>'; return; }
+    caixa.innerHTML = CD.cardTreino(prox, true);
+    const b = document.querySelector('.capa .btn-fogo'); if (b) { b.textContent = `Próximo treino: ${CD.dataCurta(prox.data)}`; b.href = `/treinos/${prox.slug}/`; }
+    const INICIO = CD.inicio(prox), FIM = CD.fim(prox), el = document.getElementById('cd'), cont = document.getElementById('contagem');
+    (function tick(){
+      const agora = new Date();
+      if (agora >= FIM) { cont.innerHTML = '<span>Encerrado</span>'; return; }
+      if (agora >= INICIO) { cont.innerHTML = '<span><b>Rolando agora</b></span>'; return; }
+      let t = Math.floor((INICIO - agora)/1000); const d = Math.floor(t/86400); t -= d*86400; const h = Math.floor(t/3600); const m = Math.floor((t - h*3600)/60);
+      el.textContent = d > 0 ? `${d} dia${d>1?'s':''} e ${h}h` : `${h}h ${String(m).padStart(2,'0')}min`;
+      setTimeout(tick, 30000);
+    })();
+  } catch (e) { caixa.innerHTML = ''; }
+})();
 </script>
 <div class="zebra" aria-hidden="true"></div>
 <footer>
   <div class="wrap">
-    <a class="marca" href="./">
-      <span class="logo"><img src="./assets/logo.jpg" alt=""></span>
+    <a class="marca" href="/">
+      <span class="logo"><img src="/assets/logo.jpg" alt=""></span>
       <span><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
     </a>
     <nav aria-label="Rodapé">
       <ul>
-        <li><a href="./">Home</a></li>
-        <li><a href="./treinos/">Treinos</a></li>
-        <li><a href="./escolinha/">Escolinha</a></li>
-        <li><a href="./sobre/">Sobre</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/escolinha/">Escolinha</a></li>
+        <li><a href="/sobre/">Sobre</a></li>
       </ul>
     </nav>
     <p><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></p>

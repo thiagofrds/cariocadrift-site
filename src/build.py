@@ -28,6 +28,7 @@ def render(tpl, meta, root, path):
     for k, v in meta.items():
         out = out.replace("{{" + k + "}}", v)
     out = out.replace("{{og_title}}", meta.get("og_title", meta["title"]))
+    out = out.replace("{{extra_head}}", meta.get("extra_head", ""))
     out = out.replace("{{root}}", root).replace("{{path}}", path)
     out = re.sub(r'\{\{cur:(\w+)\}\}',
                  lambda m: 'aria-current="page"' if m.group(1) == meta.get("nav") else "", out)
@@ -37,7 +38,7 @@ gerados = []
 for pagina in sorted((SRC / "pages").rglob("index.html")):
     rel = pagina.relative_to(SRC / "pages").parent          # "" | treinos | treinos/open-drift-session
     profundidade = len(rel.parts)
-    root = "../" * profundidade if profundidade else "./"
+    root = "/"
     path = (str(rel).replace("\\", "/") + "/") if profundidade else ""
     meta, corpo = meta_e_corpo(pagina.read_text(encoding="utf-8"))
     html = "".join(render(PARTIALS[p], meta, root, path) for p in ("head", "nav")) \
@@ -48,4 +49,6 @@ for pagina in sorted((SRC / "pages").rglob("index.html")):
     destino.write_text(html, encoding="utf-8")
     gerados.append(str(destino.relative_to(RAIZ)))
 
+shutil.copyfile(RAIZ / "treinos" / "evento" / "index.html", RAIZ / "404.html")
+gerados.append("404.html")
 print("gerado:", ", ".join(gerados))
