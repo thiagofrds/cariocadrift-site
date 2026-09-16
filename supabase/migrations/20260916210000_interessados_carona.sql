@@ -4,7 +4,7 @@
 
 create table public.interessados_carona (
   id            bigserial primary key,
-  evento        text,                                   -- slug do treino quando o interesse veio da página de um treino; nulo = interesse geral
+  evento        text references public.treinos(slug) on update cascade on delete set null,  -- treino real de origem; nulo = interesse geral
   nome          text not null check (char_length(btrim(nome)) between 2 and 120),
   telefone      text not null check (telefone ~ '^[0-9]{10,11}$'),
   consentimento boolean not null check (consentimento),  -- aceite explícito de contato pelo telefone informado
@@ -35,14 +35,22 @@ grant insert on public.interessados_carona to anon, authenticated;
 grant select, delete on public.interessados_carona to authenticated;
 grant usage on sequence public.interessados_carona_id_seq to anon, authenticated;
 
--- proteção contra envios abusivos (além do honeypot no formulário e da unicidade por telefone):
+-- validação, duplicidade e proteção contra envios abusivos (além do honeypot no formulário):
+-- · evento, quando informado, precisa ser um treino publicado (a chave estrangeira garante que existe);
+-- · duplicidade é detectada antes do índice único, com mensagem sem dados (o índice fica como garantia final);
 -- no máximo 60 registros por 10 minutos no total, e no máximo 3 por telefone por hora.
 -- O bloqueio consultivo por transação serializa apenas os inserts desta tabela, por milissegundos, para que a
 -- contagem seja exata mesmo com envios simultâneos: nunca barra a menos, nunca barra a mais do que o limite.
 create or replace function public.limita_envios_carona() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
+  if new.evento is not null and not exists (select 1 from public.treinos t where t.slug = new.evento and t.publicado) then
+    raise exception 'treino inválido' using errcode = '23503';
+  end if;
   perform pg_advisory_xact_lock(hashtext('interessados_carona_limite'));
+  if exists (select 1 from public.interessados_carona c where c.telefone = new.telefone and coalesce(c.evento, '') = coalesce(new.evento, '')) then
+    raise exception 'telefone já está na lista' using errcode = '23505';   -- sem expor chave ou dados de terceiros
+  end if;
   if (select count(*) from public.interessados_carona where criado_em > now() - interval '10 minutes') >= 60 then
     raise exception 'limite de envios atingido, tente mais tarde' using errcode = 'P0001';
   end if;
@@ -57,8 +65,8 @@ create trigger interessados_carona_limite before insert on public.interessados_c
   for each row execute function public.limita_envios_carona();
 
 -- TESTES PROPOSTOS (rodar após aplicar, com as chaves de anon e de serviço):
--- 1. anon insert válido com consentimento=true → 201; leitura anon da tabela → 200 com zero linhas (RLS).
--- 2. mesmo telefone no mesmo treino → 409 (unicidade); telefone com 9 dígitos → 400 (check); consentimento=false → 403/400 (policy/check).
+-- 1. anon insert válido com consentimento=true e Prefer: return=minimal → 201 (sem privilégio de leitura); leitura anon → 401/permission denied.
+-- 2. mesmo telefone no mesmo treino → 409 com mensagem 'telefone já está na lista' e sem detalhes de chave; evento inexistente → 23503; evento em rascunho → 23503; telefone com 9 dígitos → 400 (check); consentimento=false → 403 (policy).
 -- 3. anon update/delete → 0 linhas afetadas (sem policy).
 -- 4. usuário logado que não é admin → select devolve zero linhas; admin → vê e apaga.
 -- 5. 4º envio do mesmo telefone em 1 hora → erro do gatilho; 61º envio em 10 minutos → erro do gatilho; com 40 envios simultâneos e 50 já na janela, exatamente 10 entram e 30 são barrados.

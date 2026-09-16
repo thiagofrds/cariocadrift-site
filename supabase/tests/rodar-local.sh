@@ -8,6 +8,7 @@ PG=/opt/homebrew/opt/postgresql@17/bin; D="${TMPDIR:-/tmp}/cd-pg-teste"; S=/tmp/
 psql() { "$PG/psql" -h "$S" -p 54329 -U harness -v ON_ERROR_STOP=1 -q "$@"; }
 psql -d postgres -c "drop database if exists cd_teste;" -c "create database cd_teste;"
 psql -d cd_teste -f supabase/tests/shim-supabase-local.sql
-for m in supabase/migrations/*.sql; do psql -d cd_teste -f "$m"; done
+psql -d cd_teste -c "grant all on schema public, storage to dono; alter table storage.objects owner to dono; alter table storage.buckets owner to dono;"
+for m in supabase/migrations/*.sql; do "$PG/psql" -h "$S" -p 54329 -U dono -v ON_ERROR_STOP=1 -q -d cd_teste -f "$m"; done
 "$PG/psql" -h "$S" -p 54329 -U harness -d cd_teste -f supabase/tests/interessados_carona.sql | grep -v '^_como\|^_reset\|^(1 row)\|^ *$\|^ok$\|^INSERT\|^CREATE\|^UPDATE\|^Output format'
 "$PG/pg_ctl" -D "$D/data" stop >/dev/null

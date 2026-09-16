@@ -176,3 +176,17 @@ Roteiros: `capturas-e2.js` 241 verificações, `qa-lancamento.js` 64, zero falha
 | Migration `20260916210000_interessados_carona.sql` | **não aplicada, aguardando revisão** | Limite global ajustado de 30 para 60 envios por 10 minutos; 3 por telefone por hora mantido; bloqueio consultivo por transação para contagem exata sob concorrência |
 | Testes funcionais | **32 de 32 passaram** | inserção anônima, leitura anônima negada, unicidade por treino e telefone, checks de nome e telefone, consentimento e origem obrigatórios pela policy, sem alteração ou exclusão pelo anônimo, não admin vê zero linhas, admin lê e apaga e não altera, gatilho por telefone e por janela, função do gatilho não executável pela API, outras tabelas intactas |
 | Testes de concorrência | **aprovado** | 50 registros na janela + 40 envios simultâneos com telefones distintos: exatamente 10 entraram e 30 foram barrados, total 60. 6 envios simultâneos do mesmo telefone em treinos diferentes: exatamente 3 entraram e 3 barrados. Nenhum interessado legítimo barrado abaixo do limite |
+
+## 16. Ajustes finais da migration da Carona Radical (16/09, noite)
+
+| Ajuste pedido | Resultado | Como foi verificado |
+|---|---|---|
+| `evento` só aceita treino real | **aprovado** | chave estrangeira para `treinos.slug` (atualiza em cascata, vira nulo se o treino for apagado) e gatilho exige treino **publicado**; interesse geral sem evento continua permitido. Testes: slug inventado → 23503; treino em rascunho → 23503; sem evento → ok |
+| Limites 60 por 10 min e 3 por telefone por hora | **aprovado** | 61º envio e 4º do mesmo telefone barrados; 40 envios simultâneos com 50 na janela: exatamente 10 entram; 6 simultâneos do mesmo telefone: exatamente 3 entram. Mensagens no formulário: "Muita gente entrando na lista agora. Tenta de novo em alguns minutos." e "Esse telefone já entrou na lista várias vezes na última hora…" (exibição no navegador depende do Supabase real) |
+| Gatilho conta todos os registros mesmo com RLS | **aprovado** | suíte rodada com as tabelas pertencendo a um role sem superusuário e sem `bypassrls`; a função `security definer` contou os 60 registros que o anônimo não pode ler e barrou o 61º |
+| Formulário envia sem permissão de leitura | **aprovado no Postgres** | anônimo tem só INSERT; inserir sem RETURNING funciona e listar dá erro de privilégio. O envio real usa `Prefer: return=minimal`, que não exige leitura: **a confirmar no Supabase real** |
+| Duplicidade não revela dados | **aprovado** | o gatilho detecta a duplicata antes do índice e responde "telefone já está na lista", sem chave nem dados; teste confere que a mensagem não contém telefone, nome nem "Key (" |
+| Admin visualiza, pesquisa, exporta e exclui | **aprovado no banco; interface a confirmar** | no Postgres: admin lê e apaga, não admin vê zero. A aba Carona Radical do painel (listar, pesquisar, filtrar por treino, CSV, apagar) só pode ser testada de ponta a ponta depois da migration no Supabase real |
+| Suíte isolada | **35 de 35 passaram** | `sh supabase/tests/rodar-local.sh` + `supabase/tests/concorrencia-carona.sh` |
+
+**Depende de validação no Supabase real (após a migration):** códigos HTTP do PostgREST (201/409/400/403), `return=minimal` sem SELECT, mensagens do gatilho chegando ao formulário, aba Carona Radical no painel de ponta a ponta com registro de teste apagado ao final, e o comportamento do role `postgres` do Supabase como dono (esperado igual ao testado).

@@ -18,11 +18,15 @@ insert into _resultado select 1, 'anon insert válido', 'ok', _tenta($$insert in
 insert into _resultado select 1, 'anon select → sem privilégio (nem lista vazia)', '42501', _tenta($$select count(*) from interessados_carona$$), null;
 select _reset();
 
+insert into treinos (slug,titulo,data,hora_inicio,hora_fim,local_nome,endereco,publicado) values ('treino-rascunho','Rascunho','2026-12-01','09:00','18:00','RJ Race Park','x',false), ('treino-b','B','2026-12-02','09:00','18:00','RJ Race Park','x',true), ('treino-c','C','2026-12-03','09:00','18:00','RJ Race Park','x',true), ('treino-d','D','2026-12-04','09:00','18:00','RJ Race Park','x',true), ('antigo','Antigo','2026-12-05','09:00','18:00','RJ Race Park','x',true), ('lote','Lote','2026-12-06','09:00','18:00','RJ Race Park','x',true);
 -- ===== 2. duplicado → 23505; telefone 9 dígitos → 23514 (check); sem consentimento → 23514 (check) ou 42501 (policy)
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 2, 'mesmo telefone no mesmo treino → unicidade', '23505', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$), null;
+insert into _resultado select 2, 'mensagem de duplicidade não contém telefone nem nome', 'sem-dados', (select case when r like '%21999990001%' or r like '%Teste%' or r like '%Key (%' then 'vazou: ' || r else 'sem-dados' end from _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$) r), null;
+insert into _resultado select 2, 'evento inexistente → recusado (chave estrangeira / gatilho)', '23503', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-inventado','Teste Ev','21999990009',true)$$), null;
 insert into _resultado select 2, 'mesmo telefone, interesse geral (sem treino) → permitido', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral','21999990001',true)$$), null;
 insert into _resultado select 2, 'mesmo telefone, interesse geral repetido → unicidade', '23505', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral 2','21999990001',true)$$), null;
+insert into _resultado select 2, 'evento em rascunho (não publicado) → recusado', '23503', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-rascunho','Teste Rasc','21999990010',true)$$), null;
 insert into _resultado select 2, 'telefone com 9 dígitos → check', '23514', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Curto','219999900',true)$$), null;
 insert into _resultado select 2, 'telefone com letras → check', '23514', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Letras','21abc990002',true)$$), null;
 insert into _resultado select 2, 'nome de 1 caractere → check', '23514', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','X','21999990003',true)$$), null;
@@ -74,12 +78,12 @@ select _como('anon', '{"role":"anon"}');
 insert into _resultado select 6, 'anon ainda insere confirmação de presença', 'ok', _tenta($$insert into confirmacoes (evento,nome,telefone) values ('open-drift-session','Teste Presenca','21955550001')$$), null;
 insert into _resultado select 6, 'anon ainda insere interesse na escolinha', 'ok', _tenta($$insert into interessados_escolinha (nome,telefone,pacote) values ('Teste Escola','21955550002','nao-sei')$$), null;
 insert into _resultado select 6, 'anon não lê confirmações', '0', (select count(*)::text from confirmacoes), null;
-insert into _resultado select 6, 'anon lê treinos publicados', '1', (select count(*)::text from treinos where publicado), null;
+insert into _resultado select 6, 'anon lê só treinos publicados (6 publicados, 1 rascunho)', '6', (select count(*)::text from treinos where publicado), null;
 select _reset();
 insert into _resultado select 6, 'carona não gravou em confirmacoes nem escolinha', '1|1', (select count(*)::text from confirmacoes) || '|' || (select count(*)::text from interessados_escolinha), null;
 
 update _resultado set ok = (obtido = esperado) or (esperado like '%|%' and obtido = any(string_to_array(esperado,'|'))) or (esperado ~ '^[0-9A-Z]{5}$' and obtido like esperado || '%') or (esperado like '%|%' and exists (select 1 from unnest(string_to_array(esperado,'|')) e where obtido like e || '%'));
 \pset tuples_only off
 \pset format aligned
-select n, teste, esperado, left(obtido, 60) as obtido, case when ok then 'PASSOU' else 'FALHOU' end as resultado from _resultado order by n, teste;
+select n, teste, esperado, left(obtido, 70) as obtido, case when ok then 'PASSOU' else 'FALHOU' end as resultado from _resultado order by n, teste;
 select count(*) filter (where ok) as passaram, count(*) filter (where not ok) as falharam from _resultado;

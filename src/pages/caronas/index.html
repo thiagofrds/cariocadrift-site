@@ -147,9 +147,15 @@ nav: treinos
       const r = await fetch(`${CD.SB_URL}/rest/v1/interessados_carona`, { method:'POST', headers:{apikey: CD.SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'}, body: JSON.stringify({ nome, telefone: digits, consentimento: true, origem: 'site', evento: treinoAlvo ? treinoAlvo.slug : null }) });
       if (r.status === 201) { mostrarOk(); return; }
       if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }
-      throw new Error('HTTP ' + r.status);
+      let corpo = null; try { corpo = await r.json(); } catch (e) {}
+      const msg = (corpo && corpo.message) || '';
+      // mensagens claras para os limites do gatilho (código P0001) e para treino inválido (23503)
+      if (/para este telefone/i.test(msg)) throw new Error('Esse telefone já entrou na lista várias vezes na última hora. Aguarde um pouco ou fale com a organização no evento.');
+      if (/limite de envios/i.test(msg)) throw new Error('Muita gente entrando na lista agora. Tenta de novo em alguns minutos.');
+      if (corpo && corpo.code === '23503') throw new Error('Esse treino não está disponível para lista de interesse. Recarregue a página.');
+      throw new Error('Não deu pra enviar agora. Tenta de novo em instantes.');
     } catch (e) {
-      erroConsent.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+      erroConsent.textContent = e.message && !/^HTTP|Failed to fetch|NetworkError/i.test(e.message) ? e.message : 'Não deu pra enviar agora. Tenta de novo em instantes.';
       btn.disabled = false; btn.textContent = 'Entrar na lista de interesse';
     }
   });
