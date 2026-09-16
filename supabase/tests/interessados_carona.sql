@@ -21,11 +21,12 @@ select _reset();
 insert into treinos (slug,titulo,data,hora_inicio,hora_fim,local_nome,endereco,publicado) values ('treino-rascunho','Rascunho','2026-12-01','09:00','18:00','RJ Race Park','x',false), ('treino-b','B','2026-12-02','09:00','18:00','RJ Race Park','x',true), ('treino-c','C','2026-12-03','09:00','18:00','RJ Race Park','x',true), ('treino-d','D','2026-12-04','09:00','18:00','RJ Race Park','x',true), ('antigo','Antigo','2026-12-05','09:00','18:00','RJ Race Park','x',true), ('lote','Lote','2026-12-06','09:00','18:00','RJ Race Park','x',true);
 -- ===== 2. duplicado → 23505; telefone 9 dígitos → 23514 (check); sem consentimento → 23514 (check) ou 42501 (policy)
 select _como('anon', '{"role":"anon"}');
-insert into _resultado select 2, 'mesmo telefone no mesmo treino → unicidade', '23505', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$), null;
-insert into _resultado select 2, 'mensagem de duplicidade não contém telefone nem nome', 'sem-dados', (select case when r like '%21999990001%' or r like '%Teste%' or r like '%Key (%' then 'vazou: ' || r else 'sem-dados' end from _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$) r), null;
+insert into _resultado select 2, 'mesmo telefone no mesmo treino → aceito em silêncio (mesma resposta de envio novo)', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Um de novo','21999990001',true)$$), null;
+insert into _resultado select 2, 'duplicata não gravou linha nova nem alterou a original', 'Teste Um', (select string_agg(nome, ',') from interessados_carona where telefone = '21999990001'), null;
 insert into _resultado select 2, 'evento inexistente → recusado (chave estrangeira / gatilho)', '23503', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-inventado','Teste Ev','21999990009',true)$$), null;
 insert into _resultado select 2, 'mesmo telefone, interesse geral (sem treino) → permitido', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral','21999990001',true)$$), null;
-insert into _resultado select 2, 'mesmo telefone, interesse geral repetido → unicidade', '23505', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral 2','21999990001',true)$$), null;
+insert into _resultado select 2, 'mesmo telefone, interesse geral repetido → aceito em silêncio, sem linha nova', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values (null,'Teste Um geral 2','21999990001',true)$$), null;
+insert into _resultado select 2, 'lista geral continua com um registro do telefone', '1', (select count(*)::text from interessados_carona where telefone = '21999990001' and evento is null), null;
 insert into _resultado select 2, 'evento em rascunho (não publicado) → recusado', '23503', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-rascunho','Teste Rasc','21999990010',true)$$), null;
 insert into _resultado select 2, 'telefone com 9 dígitos → check', '23514', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Curto','219999900',true)$$), null;
 insert into _resultado select 2, 'telefone com letras → check', '23514', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste Letras','21abc990002',true)$$), null;
@@ -34,6 +35,14 @@ insert into _resultado select 2, 'sem consentimento → recusado', '23514|42501'
 insert into _resultado select 2, 'origem diferente de site → recusado', '23514|42501', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento,origem) values ('open-drift-session','Teste Origem','21999990005',true,'painel')$$), null;
 select _reset();
 
+-- ===== 2b. apagar treino com interessado presente também na lista geral → não pode falhar
+select _como('anon', '{"role":"anon"}');
+insert into _resultado select 2, 'cadastro no treino-b para telefone que já está na lista geral', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('treino-b','Teste Um','21999990001',true)$$), null;
+select _reset();
+insert into _resultado select 2, 'apagar treino-b (com interessado que também está na lista geral) → sucesso', 'ok', _tenta($$delete from treinos where slug = 'treino-b'$$), null;
+insert into _resultado select 2, 'após apagar: nenhum registro perdido; o do treino-b virou geral (3 no total, 2 gerais)', '3 total, 2 gerais', (select count(*)::text from interessados_carona where telefone = '21999990001') || ' total, ' || (select count(*)::text from interessados_carona where telefone = '21999990001' and evento is null) || ' gerais', null;
+insert into treinos (slug,titulo,data,hora_inicio,hora_fim,local_nome,endereco,publicado) values ('treino-b','B','2026-12-02','09:00','18:00','RJ Race Park','x',true);
+delete from interessados_carona where telefone = '21999990001' and evento is null and nome <> 'Teste Um geral';
 -- ===== 3. anon update/delete → sem efeito (sem policy) ou sem privilégio
 select _como('anon', '{"role":"anon"}');
 insert into _resultado select 3, 'anon update → sem privilégio ou 0 linhas', '42501|0', coalesce(nullif(_tenta($$update interessados_carona set nome = 'hack'$$), 'ok'), '0'), null;
