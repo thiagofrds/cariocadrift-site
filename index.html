@@ -145,8 +145,7 @@ footer a{color:var(--faisca);font-weight:600;text-decoration:none}
   <div class="ok" id="ok">
     <h3>Presença confirmada!</h3>
     <p>Te esperamos domingo, 20 de setembro, no RJ Race Park. Se for pra pista ou de carona, leva o capacete.</p>
-    <p><a id="fallback" href="#" target="_blank" rel="noopener" hidden>Não deu certo? Confirme pelo formulário</a></p>
-  </div>
+      </div>
 </section>
 </main>
 
@@ -156,21 +155,15 @@ footer a{color:var(--faisca);font-weight:600;text-decoration:none}
 </div>
 
 <script>
-// ===== Google Forms =====
-// FORM_ID: trecho da URL de resposta entre /d/e/ e /viewform (link "Enviar" > ícone de link no Forms).
-// ENTRY_*: IDs dos campos (Forms > ⋮ > "Receber link preenchido" > preencher > copiar link > entry.NNNN).
-const FORM_ID    = "";
-const ENTRY_NOME = ""; // ex.: "entry.1234567890"
-const ENTRY_TEL  = ""; // ex.: "entry.0987654321"
-// ========================
+// Supabase (chave pública: só permite inserir, ninguém lê por ela)
+const SB_URL = "https://trkwfwvqzfvscqwwldpv.supabase.co";
+const SB_KEY = "sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm";
+const EVENTO = "open-drift-session-2026-09-20";
 
-const formBase = FORM_ID ? `https://docs.google.com/forms/d/e/${FORM_ID}` : "";
 const tel = document.getElementById('tel');
 const btn = document.getElementById('enviar');
 const erroNome = document.getElementById('erroNome');
 const erroTel = document.getElementById('erroTel');
-
-if (!formBase) btn.textContent = 'Confirmações abrem em breve';
 
 tel.addEventListener('input', () => {
   let d = tel.value.replace(/\D/g,'').slice(0,11);
@@ -179,11 +172,11 @@ tel.addEventListener('input', () => {
   else tel.value = d;
 });
 
-function mostrarOk(linkFallback){
+function mostrarOk(titulo){
+  if (titulo) document.querySelector('#ok h3').textContent = titulo;
   document.getElementById('formulario').style.display = 'none';
   const ok = document.getElementById('ok');
   ok.classList.add('on');
-  if (linkFallback) { const a = document.getElementById('fallback'); a.href = linkFallback; a.hidden = false; }
   ok.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
@@ -194,26 +187,19 @@ btn.addEventListener('click', async () => {
   erroTel.textContent = digits.length < 10 ? 'Digite o telefone com DDD.' : '';
   if (nome.length < 2 || digits.length < 10) return;
 
-  if (!formBase) { erroTel.textContent = 'Confirmações abrem em breve.'; return; }
-
-  // Sem os IDs dos campos: só abre o formulário do Google (opção simples).
-  if (!ENTRY_NOME || !ENTRY_TEL) { window.open(`${formBase}/viewform`, '_blank'); return; }
-
-  const q = `${ENTRY_NOME}=${encodeURIComponent(nome)}&${ENTRY_TEL}=${encodeURIComponent(tel.value)}`;
-  const prefill = `${formBase}/viewform?usp=pp_url&${q}`;
-
   btn.disabled = true; btn.textContent = 'Enviando…';
   try {
-    await fetch(`${formBase}/formResponse`, {
-      method: 'POST', mode: 'no-cors',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: q
+    const r = await fetch(`${SB_URL}/rest/v1/confirmacoes`, {
+      method: 'POST',
+      headers: {'apikey': SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+      body: JSON.stringify({evento: EVENTO, nome, telefone: digits})
     });
-    mostrarOk(prefill);
+    if (r.status === 201) { mostrarOk(); return; }
+    if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }
+    throw new Error('HTTP ' + r.status);
   } catch (e) {
-    // Sem rede ou bloqueio: abre o Forms já preenchido pra pessoa concluir lá.
-    window.open(prefill, '_blank');
-    mostrarOk(prefill);
+    erroTel.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+    btn.disabled = false; btn.textContent = 'Confirmar presença';
   }
 });
 </script>
