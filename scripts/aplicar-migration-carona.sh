@@ -9,14 +9,16 @@ PSQL=/opt/homebrew/opt/postgresql@17/bin/psql
 [ -x "$PSQL" ] || { echo "psql não encontrado em $PSQL"; exit 1; }
 PGPASSWORD="$(grep '^SUPABASE_DB_PASSWORD=' .env.local | cut -d= -f2- | tr -d '"'"'"'"')"; export PGPASSWORD
 [ -n "$PGPASSWORD" ] || { echo "SUPABASE_DB_PASSWORD ausente em .env.local"; exit 1; }
-echo "checksum do arquivo: $(shasum -a 256 "$ARQ" | cut -c1-16)  (esperado 2d72e7f5973f92e6)"
+CS="$(shasum -a 256 "$ARQ" | cut -c1-16)"
+[ "$CS" = "2d72e7f5973f92e6" ] || { echo "o arquivo não é a versão aprovada (checksum $CS, esperado 2d72e7f5973f92e6). Nada foi executado."; exit 1; }
+echo "arquivo conferido: $ARQ (versão aprovada, commit 332537a)"
 # conexão direta (IPv6) ou, se falhar, o pooler em modo sessão (IPv4)
 for CONN in "host=db.trkwfwvqzfvscqwwldpv.supabase.co port=5432 dbname=postgres user=postgres sslmode=require" \
             "host=aws-0-sa-east-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.trkwfwvqzfvscqwwldpv sslmode=require"; do
   if "$PSQL" "$CONN" -At -c "select 1" >/dev/null 2>&1; then break; fi; CONN=""
 done
 [ -n "$CONN" ] || { echo "não foi possível conectar ao banco de produção"; exit 1; }
-echo "conectado em $(echo "$CONN" | cut -d' ' -f1)"
+echo "conectado: $(echo "$CONN" | cut -d' ' -f1) · projeto trkwfwvqzfvscqwwldpv (carioca-drift) · banco $("$PSQL" "$CONN" -At -c "select current_database()")"
 if "$PSQL" "$CONN" -At -c "select 1 from pg_tables where schemaname='public' and tablename='interessados_carona'" | grep -q 1; then
   echo "a tabela interessados_carona já existe: nada a fazer"; exit 0
 fi
