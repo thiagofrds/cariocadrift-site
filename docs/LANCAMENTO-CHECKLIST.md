@@ -232,3 +232,7 @@ Ainda não aplicada. Formulário oculto. Sem merge.
 ## 20. Imagem de prévia com foto real (16/09, noite)
 
 Licença de uso das fotografias do Sergio Photos RJ confirmada por você. `assets/og.jpg` (1200×630) passou a ter a foto 3126 à direita, inteira na base e com a marca d'água visível, sem nada por cima; à esquerda, painel preto com a logo oficial, tagline, linha de contexto e o crédito "Foto: Sergio Photos RJ". Gerada por composição em navegador, sem edição da fotografia. A prévia do evento continua com a capa provisória da marca até a escolha da capa.
+
+## 21. Capa definitiva do Open Drift Session (16/09, noite)
+
+Com a licença confirmada e a sua escolha, `treinos.capa_url` passou de `/assets/capa-marca-open-drift-session.jpg` para `/assets/fotos/foto-3132.jpg`. A página do evento mostra a foto inteira com o crédito automático "Foto Sergio Photos RJ · Registro de treino anterior"; a página estática foi regenerada e a prévia de compartilhamento do evento aponta para a foto. Publicado e conferido no domínio real. A peça com a marca continua no repositório como alternativa.
