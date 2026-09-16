@@ -166,3 +166,32 @@ Autorização do Thiago em 16/09 ("eu tenho o supabase pro" / "faz você aí"): 
 | Dados no DEV agora | piloto: @qapiloto, perfil privado, associação **encerrada**, sem capacidades; admin: @qa_admin. Limpeza: apagar os dois usuários no painel Authentication do DEV (cascata apaga perfis, associação, histórico) |
 
 Regras mantidas: nenhuma alteração em produção, nenhum merge, nada publicado, nenhuma credencial de produção usada.
+
+## 10. Estado em 17/09/2026: fechamento da etapa B no DEV
+
+Tudo abaixo aconteceu só no branch `etapa-b-contas` e no projeto DEV. Nenhum merge, nada publicado, produção intocada.
+
+### 10.1 Resultados reais
+
+| Frente | Resultado |
+|---|---|
+| Cadastro com confirmação por e-mail | Template "Confirm sign up" do DEV trocado para enviar o código de 6 dígitos (`{{ .Token }}`) e o link, em português. Cadastro pela tela chegou ao Auth e voltou **429 "email rate limit exceeded"** (SMTP padrão: 2 e-mails/hora, só para membros da organização). A tela agora mostra "Muitos cadastros agora…" nesse caso. **Falta a sua ação** (10.3). Confirmação de e-mail continua ligada; nenhum SMTP contratado |
+| Perfis públicos `/u/<handle>/` | Edge Function `lista-perfis-build` publicada no DEV (segredo `BUILD_TOKEN`; 401 sem token, 401 com token errado, 401 sem JWT do gateway, 405 em POST, 200 com token). `build.py` gera `u/<handle>/index.html` só com nome de exibição e @ no título; `u/*/` no `.gitignore`. Teste `qa-perfis-build-dev.js` 11/11: liga → build gera → página responde com perfil; desliga → projeção some na hora e a página existente já mostra "não disponível"; build seguinte remove o arquivo. Workflow `.github/workflows/publicar.yml` escrito, **inativo** (10.3) |
+| B9/B10 | B9 (`chamadas_build`, limite 60/h) e B10 (revogação geral + concessão explícita) aplicadas no DEV após inventário (`docs/INVENTARIO-PRIVILEGIOS-DEV.md`). Regressão antes/depois: formulários 33/33, painel e login OK, etapa B 39/39, jornada 24/24, suíte isolada 152/152 |
+| QA visual (desktop 1440 e celular 390) | Cadastro, código, @ pendente, Minha Conta, perfil público (com foto e selo), Club (entrada, solicitar, pendente, recusada, membro, encerrada), painel Clube/Usuários. Corrigido: dica de disponibilidade do @ invisível (classe `.ok` global escondia), hero do Club no celular com o texto por cima da arte (agora arte inteira em cima, texto abaixo), ponto final duplicado no motivo, selo do cartão esticado, mensagem de limite no cadastro |
+| Jornada completa | entrar → solicitar (com mensagem) → painel aprova → Minha Conta "Membro" → área do membro com cartão → painel encerra (motivo) → usuário vê "Encerrada" com o motivo e pode pedir de novo. 12 passos × 2 tamanhos = 24/24, capturas `docs/capturas/dev/jornada-*.png` |
+
+### 10.2 Links locais para conferir (prévia do branch, porta 8766; no celular na mesma rede troque `localhost` por `192.168.68.51`)
+
+Estados reais (DEV): `http://localhost:8766/conta/?env=dev` (entrar/criar; contas de QA em 9), `http://localhost:8766/clube/?env=dev`, `http://localhost:8766/u/?h=qapiloto&env=dev` (só aparece com o perfil público ligado), `http://localhost:8766/admin/?env=dev`.
+Estados visuais sem banco: `/conta/?demo=criar|codigo|pendente|conta|membro`, `/clube/?demo=entrada|logado|solicitar|pendente|recusada|membro`, `/u/?demo=membro|indisponivel`, `/admin/?demo=clube|usuarios`.
+
+### 10.3 O que depende de você
+
+1. **Teste do código por e-mail** (única parte da etapa B não provada de ponta a ponta): em `http://localhost:8766/conta/?env=dev`, "Criar conta" com o seu e-mail da organização (`thiagofrds@yahoo.com.br`; ele já está em `admins` do DEV, então essa conta nasce admin lá) e uma senha nova só para o DEV. O código chega pelo SMTP padrão do Supabase; digite na tela. Aguarde ~1 h desde as 23:40 UTC de 16/09 (limite de 2 e-mails/hora já consumido). Alternativas: autorizar SMTP próprio no DEV (Resend/Brevo, plano gratuito) ou desligar "Confirm email" só no DEV, o que eu não fiz.
+2. **Publicação por artefato** (para a produção, mais tarde, com sua autorização): trocar a fonte do GitHub Pages para "GitHub Actions", criar os segredos `BUILD_PERFIS_URL` e `BUILD_TOKEN` no ambiente `github-pages`, e publicar a Edge Function no projeto de produção quando a etapa B for para lá.
+3. **Decisões do Clube** (`docs/CLUBE-CARIOCA-DRIFT.md`): cobrança, benefícios, renovação, suspensão. Nada foi implementado.
+4. Logo do Club com fundo transparente (pacote visual).
+
+### 10.4 Limpeza do DEV quando quiser
+Apagar as contas de QA em Authentication › Users do DEV (a cascata apaga perfil, associação, histórico); `docs/capturas/reset-qa-dev.sql` devolve a conta piloto ao estado inicial para repetir os roteiros.

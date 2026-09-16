@@ -10,7 +10,7 @@ Cada página começa com um bloco de metadados:
   ---
 Marcadores disponíveis no corpo: {{root}} (prefixo relativo até a raiz).
 """
-import pathlib, re, shutil, json, urllib.request
+import pathlib, re, shutil, json, os, urllib.request, urllib.parse
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 SRC = RAIZ / "src"
@@ -84,3 +84,39 @@ for t in treinos:
     destino.write_text(html, encoding="utf-8")
     gerados.append(str(destino.relative_to(RAIZ)))
 print("gerado:", ", ".join(gerados))
+
+# Perfis públicos /u/<handle>/ (etapa B, plano 4.1/4.2): a lista vem da Edge Function lista-perfis-build, autenticada
+# pelo BUILD_TOKEN (nunca chave de serviço). Toda página antiga em u/<handle>/ é apagada antes; quem despublicou some
+# neste build. A página gerada carrega só título e og:title (nome de exibição e @); o resto vem em tempo de execução
+# de perfil_publico(), que devolve nulo assim que o perfil fica privado. Sem BUILD_PERFIS_URL/BUILD_TOKEN, só limpa.
+PERFIS_URL, BUILD_TOKEN = os.environ.get("BUILD_PERFIS_URL", ""), os.environ.get("BUILD_TOKEN", "")
+PERFIS_APIKEY = os.environ.get("BUILD_PERFIS_APIKEY", SB_KEY)   # chave publicável do projeto da função (pública); a função exige JWT do gateway + o token de build
+for antiga in (RAIZ / "u").glob("*/"):
+    if antiga.is_dir(): shutil.rmtree(antiga)
+perfis = []
+if PERFIS_URL and BUILD_TOKEN:
+    depois = ""
+    try:
+        while True:
+            req = urllib.request.Request(f"{PERFIS_URL}?depois={urllib.parse.quote(depois)}", headers={"x-build-token": BUILD_TOKEN, "apikey": PERFIS_APIKEY, "Authorization": "Bearer " + PERFIS_APIKEY, "user-agent": "cariocadrift-build"})
+            lote = json.load(urllib.request.urlopen(req, timeout=20))
+            perfis += lote
+            if len(lote) < 500: break
+            depois = lote[-1]["handle"]
+    except Exception as e:
+        print("aviso: lista de perfis indisponível, páginas /u/<handle>/ não geradas:", type(e).__name__)   # nunca imprime o token
+        perfis = []
+tpl_u = (SRC / "pages" / "u" / "index.html").read_text(encoding="utf-8")
+meta_u, corpo_u = meta_e_corpo(tpl_u)
+for pf in perfis:
+    h = pf["handle"]
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_]{1,22}[a-z0-9]", h): continue
+    nome = (pf.get("nome_exibicao") or h).replace('"', "'")
+    meta = dict(meta_u); meta["title"] = f"{nome} (@{h}) | Carioca Drift"; meta["og_title"] = f"{nome} · @{h} · Carioca Drift"
+    meta["desc"] = f"Perfil de {nome} na Carioca Drift."
+    path = f"u/{h}/"
+    html = "".join(render(PARTIALS[p], meta, "/", path) for p in ("head", "nav")) + render(corpo_u, meta, "/", path) + render(PARTIALS["footer"], meta, "/", path)
+    (RAIZ / "u" / h).mkdir(parents=True, exist_ok=True)
+    (RAIZ / "u" / h / "index.html").write_text(html, encoding="utf-8")
+    gerados.append(path + "index.html")
+print(f"perfis públicos gerados: {len(perfis)}")

@@ -167,7 +167,7 @@ insert into _resultado select 6, 'anon lê treinos publicados', '1', (select cou
 insert into _resultado select 6, 'anon insere confirmação de presença', 'ok', _tenta($$insert into confirmacoes (evento,nome,telefone) values ('open-drift-session','Teste','21955550001')$$), null;
 insert into _resultado select 6, 'anon insere interesse na escolinha', 'ok', _tenta($$insert into interessados_escolinha (nome,telefone,pacote) values ('Teste','21955550002','nao-sei')$$), null;
 insert into _resultado select 6, 'anon insere interesse em carona', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste','21955550003',true)$$), null;
-insert into _resultado select 6, 'anon não lê confirmações', '0', (select count(*)::text from confirmacoes), null;
+insert into _resultado select 6, 'anon não lê confirmações (após B10: sem privilégio)', '42501', _tenta($$select count(*) from confirmacoes$$), null;
 select _reset();
 select _como('authenticated', _claims('44444444-4444-4444-4444-444444444444', 'thiagofrds@yahoo.com.br'));
 insert into _resultado select 6, 'admin lê confirmações, escolinha e carona', '1|1|1', (select (select count(*) from confirmacoes)::text || '|' || (select count(*) from interessados_escolinha)::text || '|' || (select count(*) from interessados_carona)::text), null;
@@ -259,6 +259,59 @@ insert into _resultado select 8, 'colunas de usuarios editáveis por authenticat
   (select string_agg(column_name, ',' order by column_name) from information_schema.column_privileges where table_schema = 'public' and table_name = 'usuarios' and grantee = 'authenticated' and privilege_type = 'UPDATE'), null;
 insert into _resultado select 8, 'anon sem nenhum privilégio em usuarios/capacidades/acoes', '0',
   (select count(*)::text from information_schema.table_privileges where table_schema = 'public' and grantee = 'anon' and table_name in ('usuarios','capacidades','acoes_usuario','acoes_admin','handles_reservados','tentativas_handle')), null;
+
+-- objetos criados após B10, para provar o padrão
+select _reset();
+set role dono;
+create table public._nova (id int);
+create function public._nova_fn() returns int language sql as $$ select 1 $$;
+reset role;
+
+-- ===== 10. B10: privilégios exatos dos papéis da API (inventário) e regressão dos formulários/painel
+select _reset();
+insert into _resultado select 10, 'anon: privilégios de tabela inteira (só treinos SELECT)', 'treinos:SELECT',
+  (select coalesce(string_agg(table_name || ':' || privilege_type, ',' order by table_name, privilege_type), '') from information_schema.role_table_grants where table_schema = 'public' and grantee = 'anon' and table_name not like '\_%'), null;
+insert into _resultado select 10, 'anon: privilégios por coluna (só INSERT nos 3 formulários)', 'confirmacoes:INSERT:evento,nome,telefone|interessados_carona:INSERT:consentimento,evento,nome,origem,telefone|interessados_escolinha:INSERT:mensagem,nome,pacote,telefone',
+  (select string_agg(x, '|' order by x) from (select c.table_name || ':' || c.privilege_type || ':' || string_agg(c.column_name, ',' order by c.column_name) as x from information_schema.role_column_grants c where c.table_schema = 'public' and c.grantee = 'anon' and not exists (select 1 from information_schema.role_table_grants t where t.table_schema = 'public' and t.table_name = c.table_name and t.grantee = 'anon' and t.privilege_type = c.privilege_type) group by c.table_name, c.privilege_type) q), null;
+insert into _resultado select 10, 'authenticated: privilégios de tabela inteira', 'acoes_admin:SELECT,acoes_usuario:SELECT,admins:SELECT,associacoes:SELECT,capacidades:SELECT,confirmacoes:DELETE,confirmacoes:SELECT,interessados_carona:DELETE,interessados_carona:SELECT,interessados_escolinha:DELETE,interessados_escolinha:SELECT,treinos:DELETE,treinos:INSERT,treinos:SELECT,treinos:UPDATE,usuarios:SELECT',
+  (select string_agg(table_name || ':' || privilege_type, ',' order by table_name, privilege_type) from information_schema.role_table_grants where table_schema = 'public' and grantee = 'authenticated' and table_name not like '\_%'), null;
+insert into _resultado select 10, 'PUBLIC sem privilégio em nenhuma tabela/função de public', '0',
+  (select ((select count(*) from information_schema.role_table_grants where table_schema = 'public' and grantee = 'PUBLIC') + (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname not like '\_%' and has_function_privilege('anon', p.oid, 'execute') and not has_function_privilege('anon', p.oid, 'execute')))::text), null;
+insert into _resultado select 10, 'funções executáveis por anon (exatamente 4)', 'avatar_visivel,eh_admin,handle_disponivel,perfil_publico',
+  (select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname not like '\_%' and has_function_privilege('anon', p.oid, 'execute')), null;
+insert into _resultado select 10, 'funções executáveis por authenticated (14)', 'avatar_visivel,cancelar_solicitacao_associacao,conceder_capacidade,decidir_associacao,definir_handle,definir_perfil_publico,eh_admin,eh_membro,encerrar_associacao,handle_disponivel,origem_admin,perfil_publico,revogar_capacidade,solicitar_associacao',
+  (select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname not like '\_%' and has_function_privilege('authenticated', p.oid, 'execute')), null;
+insert into _resultado select 10, 'service_role executa build e registro de chamada', 'true|true', (has_function_privilege('service_role', 'public.perfis_publicos_para_build(text,int)', 'execute')::text || '|' || has_function_privilege('service_role', 'public.registra_chamada_build(text)', 'execute')::text), null;
+insert into _resultado select 10, 'sequências: anon/authenticated só na de carona', 'interessados_carona_id_seq',
+  (select string_agg(c.relname, ',' order by c.relname) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'S' and (has_sequence_privilege('anon', c.oid, 'usage') or has_sequence_privilege('authenticated', c.oid, 'usage'))), null;
+insert into _resultado select 10, 'privilégios padrão de public sem anon/authenticated (papel dono; harness é só do teste)', '0',
+  (select count(*)::text from pg_default_acl d join pg_namespace n on n.oid = d.defaclnamespace, unnest(d.defaclacl) a where n.nspname = 'public' and pg_get_userbyid(d.defaclrole) <> 'harness' and a::text ~ '^(anon|authenticated)='), null;
+insert into _resultado select 10, 'objeto novo nasce sem privilégio para a API', '0|0', (select (select count(*) from information_schema.role_table_grants where table_schema='public' and table_name='_nova' and grantee in ('anon','authenticated'))::text || '|' || (select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname='_nova_fn' and (has_function_privilege('anon',p.oid,'execute') or has_function_privilege('authenticated',p.oid,'execute')))::text from (select 1) x), null;
+-- regressão funcional após a revogação
+select _como('anon', '{"role":"anon"}');
+insert into _resultado select 10, 'anon insere confirmação (coluna identity sem USAGE na sequência)', 'ok', _tenta($$insert into confirmacoes (evento,nome,telefone) values ('open-drift-session','Teste B10','21955550101')$$), null;
+insert into _resultado select 10, 'anon insere escolinha', 'ok', _tenta($$insert into interessados_escolinha (nome,telefone,pacote) values ('Teste B10','21955550102','nao-sei')$$), null;
+insert into _resultado select 10, 'anon insere carona', 'ok', _tenta($$insert into interessados_carona (evento,nome,telefone,consentimento) values ('open-drift-session','Teste B10','21955550103',true)$$), null;
+insert into _resultado select 10, 'anon não informa id nem criado_em na confirmação', '42501', _tenta($$insert into confirmacoes (evento,nome,telefone,criado_em) values ('open-drift-session','Teste','21955550104',now())$$), null;
+insert into _resultado select 10, 'anon lê treinos publicados', '1', (select count(*)::text from treinos where publicado), null;
+insert into _resultado select 10, 'anon não escreve em treinos (privilégio, não só RLS)', '42501', _tenta($$update treinos set titulo = 'x'$$), null;
+insert into _resultado select 10, 'anon não lê admins', '42501', _tenta($$select count(*) from admins$$), null;
+insert into _resultado select 10, 'anon não lê escolinha', '42501', _tenta($$select count(*) from interessados_escolinha$$), null;
+insert into _resultado select 10, 'anon não executa função de build', '42501', _tenta($$select perfis_publicos_para_build('', 10)$$), null;
+insert into _resultado select 10, 'anon não executa função do clube', '42501', _tenta($$select eh_membro('11111111-1111-1111-1111-111111111111')$$), null;
+select _reset();
+select _como('authenticated', _claims('44444444-4444-4444-4444-444444444444', 'thiagofrds@yahoo.com.br'));
+insert into _resultado select 10, 'admin: login legado (admins), lê leads e apaga', 'true|1|ok', (select eh_admin()::text) || '|' || (select count(*) from confirmacoes where nome = 'Teste B10')::text || '|' || _tenta($$delete from confirmacoes where nome = 'Teste B10'$$), null;
+insert into _resultado select 10, 'admin: cria treino', 'ok', _tenta($$insert into treinos (slug,titulo,data) values ('teste-b10','Teste B10','2026-10-10')$$), null;
+insert into _resultado select 10, 'admin: edita treino (gatilho atualizado_em sem EXECUTE para a API)', 'ok', _tenta($$update treinos set titulo = 'Teste B10 editado' where slug = 'teste-b10'$$), null;
+insert into _resultado select 10, 'admin: gatilho atualizou atualizado_em', 'true', (select (atualizado_em > criado_em)::text from treinos where slug = 'teste-b10'), null;
+insert into _resultado select 10, 'admin: apaga treino', 'ok', _tenta($$delete from treinos where slug = 'teste-b10'$$), null;
+insert into _resultado select 10, 'admin: aprova/encerra continuam executáveis', 'true|true', has_function_privilege('public.decidir_associacao(uuid,boolean,text)', 'execute')::text || '|' || has_function_privilege('public.conceder_capacidade(uuid,text,text)', 'execute')::text, null;
+select _reset();
+select _como('authenticated', _claims('11111111-1111-1111-1111-111111111111', 'ana@exemplo.com'));
+insert into _resultado select 10, 'logado comum: não vê leads (RLS), não apaga treino (0 linhas), edita o próprio perfil', '0|ok|ok', (select count(*)::text from confirmacoes) || '|' || _tenta($$delete from treinos where slug = 'open-drift-session'$$) || '|' || _tenta($$update usuarios set apresentacao = 'B10' where id = auth.uid()$$), null;
+insert into _resultado select 10, 'logado comum: treino continua lá', '1', (select count(*)::text from treinos where slug = 'open-drift-session'), null;
+select _reset();
 
 update _resultado set ok = (obtido = esperado) or (esperado ~ '^[0-9A-Z]{5}$' and obtido like esperado || '%');
 \pset tuples_only off

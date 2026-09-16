@@ -1,0 +1,44 @@
+# Publicação por artefato (plano da etapa B, seção 4.1). INATIVO até (1) a fonte do GitHub Pages ser trocada para
+# "GitHub Actions" e (2) os segredos BUILD_PERFIS_URL e BUILD_TOKEN existirem no ambiente github-pages: as duas coisas
+# são decisões do Thiago, feitas em produção só com autorização. Enquanto isso, o Pages continua servindo o branch main.
+# Só roda a partir de main (agendamentos e execuções manuais ignoram outros branches).
+name: Publicar site
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build (treinos e perfis públicos)
+        env:
+          BUILD_PERFIS_URL: ${{ secrets.BUILD_PERFIS_URL }}
+          BUILD_TOKEN: ${{ secrets.BUILD_TOKEN }}
+        run: python3 src/build.py
+      - name: Nenhuma página gerada de perfil pode estar versionada
+        run: |
+          if git ls-files u | grep -q '^u/.\+/index.html$'; then echo "u/<handle>/ versionado"; exit 1; fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          retention-days: 1
+      - id: deploy
+        uses: actions/deploy-pages@v4

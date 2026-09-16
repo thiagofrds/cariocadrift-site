@@ -23,7 +23,7 @@ extra_head: <meta name="robots" content="noindex">
 .arroba i{font-style:normal;padding:0 0 0 14px;color:var(--cinza);font-weight:600}
 .arroba input{border:0!important;margin:0!important;background:transparent!important}
 .dica{font-size:13px;color:var(--cinza);min-height:20px;margin-top:6px;line-height:1.4}
-.dica.ok{color:var(--verde)}.dica.err{color:#FF6B6B}
+.dica.livre{color:var(--verde)}.dica.err{color:#FF6B6B}
 .dica button{background:none;border:0;padding:0;color:var(--amarelo);font:inherit;text-decoration:underline;cursor:pointer}
 .consent{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;margin-top:16px;font-size:14px;color:var(--cinza);line-height:1.45}
 .consent input{width:22px;height:22px;margin-top:1px;accent-color:var(--amarelo)}
@@ -170,7 +170,7 @@ extra_head: <meta name="robots" content="noindex">
     const faixa = document.createElement('div'); faixa.className = 'demo'; faixa.innerHTML = `Demonstração visual · estado "${esc(estado)}" · sem gravação · <a href="?demo=entrar">entrar</a> · <a href="?demo=criar">criar</a> · <a href="?demo=codigo">código</a> · <a href="?demo=pendente">@ pendente</a> · <a href="?demo=conta">minha conta</a> · <a href="?demo=membro">membro</a>`; document.body.prepend(faixa);
     const perfilDemo = { nome: 'Ana Souza', nome_exibicao: 'Ana', handle: 'ana_souza', preferencia: 'piloto', instagram: 'ana.drift', apresentacao: 'Piloto de E36 desde 2023. Treino no RJ Race Park.', telefone: '21999990001', perfil_publico: false };
     if (estado === 'entrar') mostrar('acesso');
-    if (estado === 'criar') { mostrar('acesso'); aba('criar'); $('cHandle').value = 'ana_souza'; $('hDica').textContent = '@ana_souza disponível'; $('hDica').className = 'dica ok'; }
+    if (estado === 'criar') { mostrar('acesso'); aba('criar'); $('cHandle').value = 'ana_souza'; $('hDica').textContent = '@ana_souza disponível'; $('hDica').className = 'dica livre'; }
     if (estado === 'codigo') { mostrar('acesso'); $('fEntrar').hidden = true; $('fCriar').hidden = true; $('fCodigo').hidden = false; $('codEmail').textContent = 'ana@exemplo.com'; }
     if (estado === 'pendente') { mostrar('pendente'); $('pHandle').value = 'ana_souza'; $('pDica').innerHTML = '@ana_souza já está em uso. Sugestões: <button type="button">ana_souza_rj</button> <button type="button">ana_souza_drift</button> <button type="button">ana_souza2</button>'; $('pDica').className = 'dica err'; }
     if (estado === 'conta' || estado === 'membro') { mostrar('minhaConta'); preencher(perfilDemo, estado === 'membro' ? { status: 'aprovada', membro_desde: '2026-09-17' } : { status: 'pendente', solicitada_em: '2026-09-17' }, estado === 'membro' ? [] : []); if (estado === 'membro') { $('chavePublico').checked = true; $('chaveTxt').textContent = 'Público'; $('chaveTxt').className = 'status on'; } }
@@ -192,7 +192,7 @@ extra_head: <meta name="robots" content="noindex">
     const { data, error } = await sb.rpc('handle_disponivel', { entrada: v });
     if (error) { dica.textContent = 'Não deu pra verificar agora.'; dica.className = 'dica err'; return null; }
     if (!data.valido) { dica.textContent = 'Formato inválido: use letras minúsculas, números e _ (3 a 24).'; dica.className = 'dica err'; return null; }
-    if (data.disponivel) { dica.textContent = `@${data.handle} disponível`; dica.className = 'dica ok'; return data.handle; }
+    if (data.disponivel) { dica.textContent = `@${data.handle} disponível`; dica.className = 'dica livre'; return data.handle; }
     dica.innerHTML = `@${esc(data.handle)} já está em uso.` + (data.sugestoes.length ? ' Sugestões: ' + data.sugestoes.map(s => `<button type="button" data-s="${esc(s)}">${esc(s)}</button>`).join(' ') : '');
     dica.className = 'dica err'; dica.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => { input.value = b.dataset.s; checaHandle(input, dica); }));
     return null;
@@ -211,7 +211,7 @@ extra_head: <meta name="robots" content="noindex">
     $('criar').disabled = true;
     const { data, error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, preferencia: pref, handle, aceite: 'true' } } });
     $('criar').disabled = false;
-    if (error) return e.textContent = /already/i.test(error.message) ? 'Esse e-mail já tem conta. Entre com sua senha ou use "Esqueci minha senha".' : 'Não deu pra criar a conta agora.';
+    if (error) return e.textContent = /already/i.test(error.message) ? 'Esse e-mail já tem conta. Entre com sua senha ou use "Esqueci minha senha".' : (error.status === 429 || /rate limit/i.test(error.message)) ? 'Muitos cadastros agora. Espere alguns minutos e tente de novo.' : 'Não deu pra criar a conta agora.';
     if (data && data.session) return carregar();   // projeto sem confirmação de e-mail (DEV): entra direto
     $('fCriar').hidden = true; $('fCodigo').hidden = false; $('codEmail').textContent = email; $('codigo').focus();
     $('confirmar').onclick = async () => {
@@ -252,7 +252,7 @@ extra_head: <meta name="robots" content="noindex">
     if (caps && caps.length) { $('mcCapacidades').hidden = false; $('mcCapacidades').innerHTML = caps.map(c => `<span class="status on">${c === 'admin' ? 'Administração' : 'Fotógrafo credenciado'}</span>`).join(' ') + (caps.includes('admin') ? ' <a class="btn btn-linha btn-p" href="/admin/">Abrir painel</a>' : ''); }
     // clube
     const st = assoc ? assoc.status : null;
-    const T = { null: ['Você ainda não solicitou associação.', '—', ''], pendente: ['Solicitação enviada. A organização vai analisar e você acompanha por aqui.', 'Pendente', 'on'], aprovada: ['Você é membro do Clube Carioca Drift.', 'Membro', 'ok'], recusada: ['Sua solicitação foi recusada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + '.' : '.') + ' Você pode solicitar de novo.', 'Recusada', 'no'], cancelada: ['Você cancelou a solicitação. Pode solicitar de novo quando quiser.', 'Cancelada', ''], encerrada: ['Sua associação foi encerrada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + '.' : '.') + ' Você pode solicitar de novo.', 'Encerrada', 'no'] };
+    const T = { null: ['Você ainda não solicitou associação.', '—', ''], pendente: ['Solicitação enviada. A organização vai analisar e você acompanha por aqui.', 'Pendente', 'on'], aprovada: ['Você é membro do Clube Carioca Drift.', 'Membro', 'ok'], recusada: ['Sua solicitação foi recusada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + (/[.!?]$/.test(assoc.motivo) ? '' : '.') : '.') + ' Você pode solicitar de novo.', 'Recusada', 'no'], cancelada: ['Você cancelou a solicitação. Pode solicitar de novo quando quiser.', 'Cancelada', ''], encerrada: ['Sua associação foi encerrada' + (assoc && assoc.motivo ? ': ' + assoc.motivo + (/[.!?]$/.test(assoc.motivo) ? '' : '.') : '.') + ' Você pode solicitar de novo.', 'Encerrada', 'no'] };
     const [txt, rot, cls] = T[st] || T[null];
     $('clubeTxt').textContent = txt; $('clubeStatus').textContent = rot; $('clubeStatus').className = 'status ' + cls;
     $('clubeAcoes').innerHTML = st === 'aprovada' ? '<a class="btn am" href="/clube/">Entrar na área do clube</a>' : st === 'pendente' ? '<button class="btn btn-linha" id="cancelarAssoc" type="button">Cancelar solicitação</button>' : '<button class="btn am" id="solicitarAssoc" type="button">Solicitar associação</button>';

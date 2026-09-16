@@ -29,8 +29,10 @@
 /* hero: arte completa, nada por cima da arte; texto vem abaixo (mobile) ou ao lado (desktop) */
 .club-hero{position:relative;overflow:hidden;background:#000}
 .club-hero .arte{display:block;width:100%;height:auto;max-height:78vh;object-fit:cover;object-position:center}
-.club-hero .veu{position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,var(--c-preto))}
-.club-hero .texto{position:relative;margin-top:-64px;padding-bottom:36px;display:grid;gap:14px}
+.club-hero .grid{display:flex;flex-direction:column}
+.club-hero .arte{order:1;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 72%,transparent)}   /* celular: arte inteira em cima, base esmaecida */
+.club-hero .veu{display:none}
+.club-hero .texto{order:2;position:relative;margin-top:-28px;padding-bottom:36px;display:grid;gap:14px}
 .club-hero .rot{color:var(--c-amarelo)}
 .club-hero h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,9vw,96px);line-height:.88;text-transform:uppercase;color:var(--c-branco)}
 .club-hero h1 span{background:var(--c-metal);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -39,8 +41,7 @@
 @media (min-width:900px){
   .club-hero .grid{display:grid;grid-template-columns:5fr 7fr;gap:48px;align-items:center;padding:0}
   .club-hero .texto{margin-top:0;order:1;padding:56px 0}
-  .club-hero .arte{order:2;max-height:none;aspect-ratio:4/3}
-  .club-hero .veu{display:none}
+  .club-hero .arte{order:2;max-height:none;aspect-ratio:4/3;-webkit-mask-image:none;mask-image:none}
 }
 /* linha metálica de seção */
 .club-linha{height:2px;background:linear-gradient(90deg,transparent,var(--c-prata-escura) 20%,var(--c-branco) 50%,var(--c-prata-escura) 80%,transparent)}
