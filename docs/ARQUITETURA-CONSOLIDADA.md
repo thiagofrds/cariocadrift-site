@@ -1,199 +1,332 @@
-# Carioca Drift — Arquitetura consolidada
+# Carioca Drift — Arquitetura consolidada (v2)
 
-Documento único para aprovação. Substitui, no que conflitar, `TICKETING-E-CARIOCA-MEDIA.md` e `CARIOCA-PILOTOS-ARQUITETURA.md`, que ficam como anexos com o detalhe das auditorias. Nada implementado, nenhum banco alterado, nada publicado. Data: 16/09/2026.
+Documento único e fonte de verdade para aprovação. Prevalece sobre `CARIOCA-PILOTOS-ARQUITETURA.md` e `TICKETING-E-CARIOCA-MEDIA.md`, que ficam como anexos com o detalhe das auditorias do NMI. Nada implementado, nenhuma migration executada, nenhum banco alterado, nada publicado. Data: 16/09/2026.
 
-**Prioridade inegociável:** o lançamento de 20/09 do Open Drift Session, com ingressos no local e pilotos convidados, não depende de nada deste documento e não é alterado por ele.
-
----
-
-## 0. O que foi aprendido no NMI, em uma página
-
-Duas auditorias de leitura, sem tocar em nada, cobriram os três projetos. O detalhe está nos anexos. O que vale carregar para o Carioca Drift:
-
-**Desenhos que funcionaram em produção (NMI Lite):** perfil privado por padrão com perfil público servido por função de campos fechados; avatar em bucket privado com escrita só na própria pasta e entrega por URL assinada; veículos simples; fila de aprovação com motivo e auditoria em tabela própria; funções `security definer` com `search_path` vazio, EXECUTE revogado de PUBLIC e anon, e erro idêntico para "não existe" e "não é seu"; admin definido por script com chave de serviço, nunca pela API; login por e-mail e senha com código por e-mail; gateway Asaas com webhook autenticado e deduplicado; cortesia como pedido de valor zero; check-in por update atômico.
-
-**Desenhos testados mas nunca em produção (nmi-platform 2):** criação automática de perfil por trigger; inscrição com estados ricos e capacidade **serializada sob lock**, não checada; pedidos com preço congelado e total conferido por constraint; webhook idempotente por id do evento; caso "dinheiro chegou depois de expirar sem estoque"; emissão de ingresso idempotente; QR rotativo de 30 s derivado no servidor; validação sob lock com log de toda leitura; reembolso como registro que revoga ingresso e preserva check-in; teste automatizado de privilégios de funções.
-
-**Erros a não repetir:** capacidade guardada mas nunca verificada; senha fraca aceita pela API; 91 funções internas expostas; convite usado marcado como ativo; sem reconciliação de webhook; promoção da lista de espera manual; contrato app e SQL sem teste; reembolso que não estorna no provedor.
-
-**Fora do Carioca Drift, decidido:** feed, stories, rankings, mensalidade, associação, convite obrigatório, múltiplos clubes, papéis por clube, garagem avançada, passaporte de veículo, marketplace de peças, transferência de ingresso, Wallet, cupons na primeira versão, aplicativo nativo.
+**Prioridade inegociável:** o lançamento do site (Home, agenda, páginas dos treinos, escolinha) para o Open Drift Session de 20/09, com ingressos no local e pilotos convidados, não depende de nada aqui e não é alterado por nada aqui.
 
 ---
 
-## 1. Arquitetura consolidada
+## Decisões já aprovadas × ainda abertas
 
-**Forma.** Site estático no GitHub Pages, como hoje. Toda regra de dados, dinheiro e permissão vive no Postgres do projeto Supabase `carioca-drift`, isolado do NMI. O que precisa de segredo ou de conversar com serviço externo roda em Edge Functions do mesmo projeto. Não há servidor próprio.
+**Aprovadas por você (definitivas)**
+- Conta única para todos; piloto/espectador é preferência editável; fotógrafo e admin são capacidades; visitante navega sem login.
+- Perfil público desligado por padrão para todos; o usuário liga e desliga; desligar esconde perfil e veículos, inclusive por URL antiga e consulta pública.
+- Identificador público (@) escolhido pelo usuário, único, normalizado, com lista de reservados, verificação de disponibilidade e sugestões sem vazar dados; nunca derivado do e-mail. Política de troca definida aqui, sem implementar troca.
+- Inscrição de pista sem carro cadastrado, com três opções no formulário; a organização pode exigir dados do carro antes da autorização final.
+- Sem CPF nem nascimento no cadastro; coleta progressiva.
+- Credencial de fotógrafo solicitada pelo site e aprovada pela administração, verificada no backend.
+- Rota neutra `/u/<handle>/` para todos os perfis.
+- Garagem simplificada, veículos privados por padrão, visibilidade individual, subordinada à visibilidade do perfil.
+- Três modalidades de pista por evento; Open Drift Session em convidados.
+- Capacidade controlada no banco sob concorrência; lista de espera ordenada; promoção automática só quando não depender de avaliação; histórico de decisões.
+- Separação entre usuário, preferência, veículo, inscrição, aprovação, ingresso e interesse, imposta no banco.
+- Migração administrativa gradual, compatível, testada, reversível.
+- Ticketing e Media na conta única, pedidos separados, sem presumir split ou reembolso do gateway.
+- Fora de escopo: feed, stories, rankings, mensalidade, associação, múltiplos clubes, app nativo, garagem avançada, Wallet, transferência de ingresso.
+
+**Abertas (dependem de você; não foram preenchidas com suposição)** — listadas na seção 10.
+
+---
+
+## 1. Modelo de usuários consolidado
+
+**Uma pessoa, uma conta.** `auth.users` do Supabase é a identidade; `usuarios` é o perfil. Não existem tipos de conta.
+
+| Conceito | Onde vive | O que é |
+|---|---|---|
+| Conta | `auth.users` | e-mail e credencial. Único método na primeira versão: e-mail e senha forte, com código de seis dígitos por e-mail para confirmação e recuperação. Sem OAuth, sem SMS |
+| Perfil | `usuarios` | nome, @, preferência, opcionais, visibilidade |
+| Preferência | `usuarios.preferencia` | `piloto` ou `espectador`, editável, sem efeito de autorização |
+| Capacidade | `capacidades` | `admin` (operacional) ou `fotografo` (comercial); concedida e revogada pela administração; verificada por função e policy |
+| Veículo | `veiculos` | zero, um ou vários; privados por padrão |
+| Inscrição de pista | `inscricoes_pista` | pedido de participação num treino específico |
+| Interesse | `confirmacoes` (atual) | manifestação anônima; não muda |
+| Ingresso | `ingressos` (bilheteria) | direito de entrada do público |
+| Licença de mídia | `licencas` (media) | direito de download de um item comprado |
+
+**Cadastro básico (e só isso):** nome, e-mail, senha, preferência, @, aceite dos termos. Foto, Instagram, apresentação, telefone e veículos são opcionais e vêm depois.
+
+**Coleta progressiva de dados.** Cada operação declara o que precisa, e o sistema pede na hora, uma vez, e guarda com finalidade registrada:
+
+| Operação | Dado adicional pedido | Onde fica |
+|---|---|---|
+| Inscrição de pista | telefone (contato no dia); carro, se a organização exigir antes da autorização final | `usuarios.telefone`; `inscricoes_pista.veiculo_id` |
+| Compra de ingresso ou mídia | o que o gateway exigir do pagador (possivelmente CPF) | `dados_pagador` (tabela separada, só funções leem) |
+| Fotógrafo aprovado | dados de recebimento (chave PIX, e o que a lei exigir) | `fotografos` (só o dono e admin) |
+| Requisito legal específico de um treino (ex.: termo de responsabilidade, maioridade) | nascimento ou documento, só naquele treino | `requisitos_atendidos` por inscrição |
+
+Nenhum desses campos é criado "por precaução": cada tabela nasce na etapa em que a operação existe.
+
+---
+
+## 2. Modelo de dados revisado
+
+Todas as tabelas em migrations novas do projeto `carioca-drift`. `treinos`, `confirmacoes`, `interessados_escolinha` continuam. `admins` migra conforme a seção 5.
+
+### 2.1 Contas
 
 ```
-Visitante sem login
-  lê: treinos publicados, perfis públicos, galerias públicas, escolinha
-  escreve: confirmação de interesse, interesse na escolinha (como hoje)
+usuarios
+  id uuid pk = auth.users.id
+  handle text unique            -- normalizado (ver 2.2)
+  nome text (2..120)
+  nome_exibicao text (2..40)
+  preferencia text check in ('piloto','espectador')
+  apresentacao text (<=400) null
+  instagram text null  check ~ '^[a-z0-9._]{1,30}$'
+  avatar_path text null
+  telefone text null
+  perfil_publico boolean default false
+  aceite_termos_em timestamptz
+  criado_em, atualizado_em
 
-Usuário logado (conta única)
-  edita: perfil, veículos, preferência piloto/espectador
-  lê: suas inscrições, seus ingressos, suas compras de mídia
-  chama: inscrever_na_pista, criar_pedido_ingresso, criar_pedido_media, meu_codigo_qr
+capacidades
+  usuario_id uuid -> usuarios
+  capacidade text check in ('admin','fotografo')
+  concedida_por uuid -> usuarios
+  concedida_em timestamptz
+  revogada_em timestamptz null
+  motivo text null
+  primary key (usuario_id, capacidade)      -- revogação preserva a linha (histórico)
 
-Capacidade "fotografo" (mesma conta)
-  edita: galerias, itens, preços; lê: suas vendas, seus repasses
+pedidos_credencial_fotografo
+  id, usuario_id, portfolio_url, instagram, mensagem (<=500),
+  status check in ('pendente','aprovado','recusado'), decidido_por, decidido_em, motivo, criado_em
 
-Capacidade "admin" (mesma conta)
-  edita: treinos, lotes, regras de pista; decide inscrições; concede cortesias e capacidades;
-  reembolsa; opera portaria; lê resumos financeiros separados
+acoes_admin
+  id, admin_id, alvo_usuario_id null, acao text, motivo text (<=500), contexto jsonb, criado_em
 
-Edge Functions
-  criar-cobranca, pagamentos-webhook/<provedor>, reembolsar-no-provedor,
-  media-upload-url, media-download-url, reconciliar-pagamentos (cron)
-
-Postgres
-  contas:      usuarios, capacidades, acoes_admin, veiculos
-  treinos:     treinos (+ regras), inscricoes_pista
-  bilheteria:  lotes, pedidos, itens_pedido, pagamentos, eventos_pagamento, reembolsos, ingressos, checkins, portaria_staff
-  media:       fotografos, galerias, itens_media, pedidos_media, itens_pedido_media, licencas, repasses
-  atual:       confirmacoes, interessados_escolinha (intocadas)
+handles_reservados
+  handle text pk, motivo text
 ```
 
-**Regras de segurança transversais**
-1. Nenhuma tabela de dinheiro, ingresso, inscrição ou capacidade aceita INSERT, UPDATE ou DELETE pela API. Só funções.
-2. Toda função `security definer` tem `search_path` vazio, EXECUTE revogado de PUBLIC e anon, e um teste que prova isso para todas as funções do schema.
-3. Capacidade, estoque e duplicidade são decididos sob `select ... for update`, nunca por checagem prévia.
-4. O navegador nunca confirma nada de valor: pagamento só por webhook autenticado ou reconciliação no servidor.
-5. Dado pessoal privado sai só por função com lista fechada de campos.
-6. Erro de "não existe" e "não é seu" é o mesmo erro.
+### 2.2 Identificador público (@)
+
+- **Normalização**: minúsculas, sem acento, só `[a-z0-9_]`, 3 a 24 caracteres, sem começar ou terminar com `_`, sem `__`. Guardado já normalizado; a comparação é sempre sobre o normalizado.
+- **Reservados**: lista em `handles_reservados`, semeada com termos administrativos e confusos (`admin`, `administrador`, `suporte`, `oficial`, `cariocadrift`, `carioca_drift`, `drift`, `staff`, `organizacao`, `fotografo`, `ingressos`, `media`, `treinos`, `escolinha`, `sobre`, `u`, `api`, `login`, `conta`, `null`, `undefined`, e variações), mais qualquer handle que contenha `carioca` ou `drift` seguido de `oficial`. A lista é editável por admin.
+- **Disponibilidade**: função `handle_disponivel(texto)` devolve só `true`/`false` e, quando falso, até três sugestões geradas a partir do próprio texto pedido (sufixos numéricos ou `_rj`), sem consultar nem revelar nada de outros usuários. Rate limit por usuário e IP na Edge Function que a expõe.
+- **Nunca derivado do e-mail.** O trigger de criação de perfil não gera handle; o cadastro só conclui quando o usuário escolhe um disponível.
+- **Política de troca (definida, não implementada nesta fase)**: uma troca a cada 90 dias; o handle antigo fica em `handles_anteriores(handle, usuario_id, liberado_em)` por 180 dias, período em que ninguém pode registrá-lo e `/u/<antigo>/` redireciona para o novo **apenas se o perfil estiver público**; depois de 180 dias o handle volta ao pool. Trocas ficam em `acoes_usuario`. Implementar só com sua aprovação.
+
+### 2.3 Garagem
+
+```
+veiculos
+  id, usuario_id -> usuarios, marca (1..60), modelo (1..60), ano smallint (1950..2100),
+  apelido (<=40) null, descricao (<=500) null, foto_path null,
+  publico boolean default false, criado_em, atualizado_em
+```
+
+Sem placa, chassi, documento, peças, histórico, transferência. Bucket `veiculos` privado, escrita só na própria pasta `{uid}/`, leitura por URL assinada gerada apenas quando (perfil público **e** veículo público) ou para o dono ou admin.
+
+### 2.4 Treinos e inscrições
+
+`treinos` ganha: `participacao_pista` (`convidados` padrão | `aprovacao` | `publica`), `capacidade_pista` int null, `inscricoes_abrem_em`, `inscricoes_fecham_em`, `regras_pista` text, `exige_veiculo_para_autorizar` boolean, `requisitos` jsonb (lista declarativa, ex.: `["termo_responsabilidade"]`).
+
+```
+inscricoes_pista
+  id, treino_id, usuario_id, veiculo_id null,
+  situacao_veiculo check in ('sem_carro','informa_depois','veiculo_cadastrado'),
+  status check in ('pendente','aprovada','lista_espera','recusada','cancelada_pelo_piloto','cancelada_pela_organizacao'),
+  posicao_lista int null, mensagem_ao_organizador (<=500),
+  requisitos_pendentes text[] default '{}', criado_em, atualizado_em
+  unique parcial: (treino_id, usuario_id) where status in ('pendente','aprovada','lista_espera')
+
+decisoes_inscricao
+  id, inscricao_id, de_status, para_status, decidida_por (null = sistema), motivo, criado_em
+```
+
+### 2.5 Bilheteria e mídia
+
+Mantêm o modelo dos anexos, com estas revisões já incorporadas: titular = `usuarios.id`; `treinos.capacidade_publico` (total) e `lotes.quantidade_total` (por tipo/lote), somando vendidos, reservados, cortesias e gratuitos; `pagamentos.origem` (`INGRESSO`|`MEDIA`); `reembolsos.status_provedor`; `checkins.origem` (`SCANNER`|`MANUAL`); `licencas`; `lancamentos_repasse`; `repasses`. Detalhe em `TICKETING-E-CARIOCA-MEDIA.md`, seções 4 e 6, lidas com as correções da seção 7 deste documento.
 
 ---
 
-## 2. Modelo único de usuários e permissões
+## 3. Matriz de permissões
 
-**Uma conta para todos.** Visitante navega sem login. Cadastro pede só e-mail, senha, nome e a preferência `piloto` ou `espectador`, com aceite dos termos. Confirmação por código de seis dígitos no e-mail. Não pede CPF, nascimento, endereço ou telefone; telefone entra depois, só quando necessário (inscrição de pista ou compra), e fica privado.
+Legenda: L = lê, E = escreve, F = só via função, — = nada.
 
-| Tabela | Colunas | Acesso |
+| Objeto | Anônimo | Usuário (próprio) | Usuário (terceiros) | Fotógrafo | Admin |
+|---|---|---|---|---|---|
+| `treinos` publicados | L | L | L | L | L/E |
+| `treinos` rascunho | — | — | — | — | L/E |
+| `confirmacoes` | F (inserir) | F | — | — | L, F (apagar) |
+| `usuarios` | — | L/E (exceto id, handle após criação, capacidades) | — | — | L |
+| Perfil público via `perfil_publico(handle)` | L se `perfil_publico` | L | L se público | L | L |
+| `capacidades` | — | L (próprias) | — | L (próprias) | L; F (conceder/revogar, nunca a si mesmo) |
+| `pedidos_credencial_fotografo` | — | F (criar), L (próprio) | — | L (próprio) | L; F (decidir) |
+| `veiculos` | via função, se público | L/E | via função, se público | via função | L |
+| `inscricoes_pista` | — | F (inscrever, cancelar), L (próprias) | — | — | L; F (decidir) |
+| `decisoes_inscricao` | — | L (das próprias inscrições) | — | — | L |
+| `acoes_admin` | — | — | — | — | L |
+| `lotes` à venda | L | L | L | L | L/E |
+| `pedidos`, `pagamentos`, `ingressos` | — | F (criar pedido), L (próprios) | — | — | L; F (cortesia, reembolso) |
+| `meu_codigo_qr(ingresso)` | — | F (só titular) | — | — | — |
+| `validar_ingresso` | — | — | — | — | F (só `portaria_staff` do treino) |
+| `checkins` | — | — | — | — | L (append-only) |
+| `galerias`, `itens_media` (prévias) publicados | L | L | L | L/E (próprios) | L |
+| originais de mídia | — | F (download com licença) | — | F (próprios) | — |
+| `pedidos_media`, `licencas` | — | F (criar), L (próprios) | — | L (vendas próprias) | L |
+| `lancamentos_repasse`, `repasses` | — | — | — | L (próprios) | L/E |
+
+**Garantias explícitas:** ninguém aprova a própria inscrição (`decidir_inscricao` recusa `usuario_id = auth.uid()` mesmo para admin); ninguém concede capacidade a si mesmo (`conceder_capacidade` recusa alvo = chamador); revogar capacidade tem efeito imediato porque toda policy consulta `capacidades` com `revogada_em is null` na hora; portaria não lê a tabela de ingressos; fotógrafo só vê linhas com `fotografo_id = auth.uid()`.
+
+---
+
+## 4. Fluxos
+
+### 4.1 Cadastro (celular primeiro)
+1. Tela única: nome, e-mail, senha, preferência (dois botões), @ com verificação ao digitar, aceite. Nada mais.
+2. Código de seis dígitos chega por e-mail; a pessoa digita na mesma tela.
+3. Trigger em `auth.users` cria `usuarios` com nome, preferência e @ vindos do metadado do cadastro (o @ já foi validado antes de criar a conta; o trigger revalida e, em colisão, deixa o handle nulo e o site pede outro na primeira entrada).
+4. Perfil nasce privado. "Minha conta" oferece foto, Instagram, apresentação, veículos e o interruptor "Perfil público".
+
+### 4.2 Perfil e visibilidade
+- Interruptor "Perfil público" liga e desliga. Desligado: `perfil_publico(handle)` devolve nulo, `/u/<handle>/` mostra "perfil não disponível", veículos não aparecem em nenhuma consulta pública, URLs antigas e indexadores recebem o mesmo nulo.
+- Cada veículo tem "Mostrar no perfil". Só aparece se o perfil também estiver público.
+- Projeção pública fixa: `handle, nome_exibicao, preferencia, apresentacao, instagram, avatar (URL assinada curta), veiculos_publicos[marca, modelo, ano, apelido, foto assinada], treinos_aprovados_count`. Nada mais, nunca.
+
+### 4.3 Veículo
+Adicionar, editar, remover, marcar público, trocar foto. Só o dono. Foto sobe direto para o bucket na pasta do dono por URL assinada de envio.
+
+### 4.4 Inscrição de pista
+1. Página do treino lê `participacao_pista`. `convidados`: só a frase, sem botão. `aprovacao`/`publica`: "Quero pilotar".
+2. Sem login → cadastro curto → volta ao treino.
+3. Formulário: (a) "Ainda não tenho carro cadastrado", (b) "Vou informar meu carro depois", (c) selecionar um veículo cadastrado; telefone se ainda não houver; mensagem; aceite das `regras_pista` e dos `requisitos` do treino.
+4. `inscrever_na_pista` trava a linha do treino, valida janela e modalidade, calcula `requisitos_pendentes` (ex.: `veiculo` quando `exige_veiculo_para_autorizar` e a opção foi a ou b) e decide: `aprovacao` → `pendente`; `publica` sem requisitos pendentes e com vaga → `aprovada`; `publica` sem vaga → `lista_espera` com `posicao_lista` = próximo; `publica` com requisitos pendentes → `pendente` (fica para a organização, nunca aprova sozinha).
+5. Piloto acompanha em "Minha conta", pode completar o carro depois (o que reavalia `requisitos_pendentes`) e pode cancelar.
+6. Cancelamento libera a vaga e chama `promover_lista(treino)`: promove, em ordem de `posicao_lista`, apenas inscrições em `publica`, dentro da janela, **sem requisitos pendentes**; qualquer uma que dependa de avaliação permanece onde está. Tudo sob o mesmo lock do treino, gravado em `decisoes_inscricao` com `decidida_por = null` (sistema).
+
+### 4.5 Aprovação administrativa
+Painel, aba Pista do treino: filas por status, contador aprovadas/capacidade, dados do piloto e do carro, mensagem, requisitos pendentes. Ações: aprovar, recusar com motivo, mover para lista, promover, marcar requisito como atendido. `decidir_inscricao` trava o treino, recusa aprovar acima da capacidade, recusa se o alvo é o próprio admin, grava em `decisoes_inscricao` e em `acoes_admin`.
+
+### 4.6 Credencial de fotógrafo
+"Quero fotografar" em "Minha conta": portfólio, Instagram, mensagem. Cria pedido `pendente`. Painel, aba Fotógrafos: aprovar (cria `capacidades = fotografo` e a linha em `fotografos` para dados de recebimento, que o próprio fotógrafo preenche depois) ou recusar com motivo. Revogar seta `revogada_em`; galerias existentes ficam ocultas até nova concessão.
+
+---
+
+## 5. Estratégia de migração administrativa
+
+Hoje: `admins(email)` e `eh_admin()` lendo por e-mail do JWT; painel `/admin/` e policies dependem de `eh_admin()`.
+
+| Passo | O que muda | Reversível? |
 |---|---|---|
-| `usuarios` | `id` = `auth.users.id`, `handle` único, `nome`, `nome_exibicao`, `preferencia` (`piloto`/`espectador`, editável), `apresentacao` ≤ 400, `instagram`, `avatar_path`, `perfil_publico` bool, `telefone`, `email`, `aceite_termos_em`, timestamps | dono lê e edita o próprio; admin lê; anon não lê a tabela |
-| `capacidades` | `usuario_id`, `capacidade` (`admin`/`fotografo`), `concedida_por`, `concedida_em`, `revogada_em` | dono lê as próprias; sem escrita pela API; admin inicial por script; fotógrafo por função de admin |
-| `acoes_admin` | `admin_id`, `alvo_usuario_id`, `acao`, `motivo`, `contexto` jsonb, `criado_em` | admin lê; só funções gravam |
+| 1 | Criar `usuarios`, `capacidades`, `acoes_admin`. Script único, executado com chave de serviço, cria `usuarios` para cada e-mail em `admins` que já tenha conta em `auth.users` e insere `capacidades = admin`. `admins` **não** é apagada | Sim: apagar as tabelas novas |
+| 2 | `eh_admin()` passa a devolver verdadeiro se **qualquer** das duas fontes confirmar: `capacidades` ativa **ou** e-mail em `admins`. Nenhuma policy muda de texto | Sim: voltar a função à versão anterior |
+| 3 | Sondas de permissão rodam contra o ambiente de desenvolvimento: admin atual continua entrando no painel; anônimo continua sem ler nada privado; usuário comum não vira admin; ninguém consegue inserir em `capacidades` pela API (teste tenta e falha) | — |
+| 4 | Período de compatibilidade de pelo menos um treino operado com o painel. Painel exibe de onde veio a permissão | — |
+| 5 | Depois de validado: `eh_admin()` lê só `capacidades`; `admins` é renomeada para `admins_legado` e mantida uma versão; só então removida | Sim, enquanto `admins_legado` existir |
 
-Funções de permissão: `eh_admin()`, `eh_fotografo()`, `eh_portaria(treino)`, todas lendo `capacidades` ou `portaria_staff`, todas usadas dentro das policies e das funções de negócio, nunca só na interface.
-
-Perfil público: `perfil_publico(handle)` devolve handle, nome de exibição, preferência, apresentação, Instagram, avatar assinado, veículos marcados como públicos e contagem de treinos com inscrição aprovada. Nunca e-mail, telefone ou nascimento.
-
-A tabela `admins` atual migra para `capacidades`; `eh_admin()` passa a consultar a nova tabela; o painel de hoje continua funcionando.
+**Nunca**: um endpoint que crie admin. Novos admins entram pelo mesmo script com chave de serviço ou por `conceder_capacidade` chamada por outro admin, nunca pelo próprio.
 
 ---
 
-## 3. Modelo mínimo de veículos e inscrições
+## 6. Estratégia de rotas públicas
 
-**Veículos, opcionais para qualquer usuário.**
+**Situação atual.** GitHub Pages serve arquivos. Páginas de treino existem de duas formas: o build gera `treinos/<slug>/index.html` para cada treino publicado (HTTP 200, meta próprios); treinos criados depois do build caem no `404.html`, que renderiza a página pelo JavaScript, mas com status 404 permanente até o próximo build.
 
-| `veiculos` | `usuario_id`, `marca`, `modelo`, `ano`, `apelido`, `descricao` ≤ 500, `foto_path`, `publico` bool |
-|---|---|
+**Perfis em `/u/<handle>/`, mesma estratégia, com uma diferença importante: perfis públicos são opt-in e mudam com frequência.**
 
-Dono faz tudo; admin lê; público só via `perfil_publico()` e só se `publico`. Sem placa, chassi, documento ou histórico.
+1. **Canônico:** `/u/<handle>/`. Uma única família de URL para piloto, espectador e fotógrafo.
+2. **Primeira carga de um perfil recém-publicado:** `404.html` reconhece o padrão `/u/<handle>/`, chama `perfil_publico(handle)` e renderiza. Funciona no acesso direto e ao atualizar a página, porque o servidor devolve o mesmo `404.html` para qualquer caminho inexistente. O status é 404 até o próximo build, o que só afeta indexação e prévia de link, não o uso.
+3. **Geração estática recorrente:** uma GitHub Action, a cada 15 minutos e sob demanda, roda o build, que consulta os perfis com `perfil_publico = true` e gera `u/<handle>/index.html` com título e descrição próprios (só os campos da projeção pública). A partir daí o perfil responde 200 e tem prévia própria no WhatsApp. O mesmo mecanismo passa a cobrir os treinos, resolvendo a dependência de build manual que existe hoje.
+4. **Despublicar:** o build seguinte remove `u/<handle>/index.html`; enquanto ele não roda, a página estática ainda serve o HTML antigo, por isso **a página gerada nunca embute dados: ela sempre consulta `perfil_publico(handle)` ao carregar** e mostra "perfil não disponível" se a função devolver nulo. O HTML estático carrega só título, descrição e o esqueleto. Assim URLs antigas e caches não expõem nada depois de desligar a visibilidade.
+5. **Handles reservados** nunca geram página. Handles inexistentes caem no `404.html` com "perfil não encontrado", com a mesma mensagem de "não disponível" para não revelar se existe.
+6. **Compatibilidade com os eventos:** idêntica. Um único `404.html` decide por prefixo (`/treinos/` ou `/u/`) qual módulo renderizar; um único `build.py` gera as duas famílias.
 
-**Regras de pista por treino.** `treinos` ganha `participacao_pista` (`convidados` padrão, `aprovacao`, `publica`), `capacidade_pista`, janela de inscrição e `regras_pista`. O Open Drift Session fica em `convidados`.
-
-**Inscrições de pista, separadas de qualquer ingresso.**
-
-| `inscricoes_pista` | `treino_id`, `usuario_id`, `veiculo_id` opcional, `status` (`pendente`/`aprovada`/`lista_espera`/`recusada`/`cancelada_pelo_piloto`/`cancelada_pela_organizacao`), `posicao_lista`, `mensagem_ao_organizador`, `motivo_decisao`, `decidida_por`, `decidida_em` |
-|---|---|
-
-Um registro vivo por piloto por treino. `inscrever_na_pista` decide sob lock: em `publica` confirma até a capacidade e manda o excedente para a lista; em `aprovacao` nasce pendente. `cancelar_inscricao` libera a vaga e promove o primeiro da lista automaticamente. `decidir_inscricao` é só de admin, respeita capacidade e audita.
-
-Inscrição aprovada **não** gera ingresso de público. Se a portaria precisar credenciar piloto, isso vira um tipo de ingresso `pista` emitido a partir da inscrição aprovada, dentro do módulo de bilheteria, sem misturar as tabelas.
+**Limite honesto:** o prazo de até 15 minutos entre publicar o perfil e ter 200 com prévia própria. Se isso for inaceitável, a alternativa é sair do GitHub Pages para uma hospedagem com função de borda, o que é mudança de arquitetura e não está proposta agora.
 
 ---
 
-## 4. Integração futura com ingressos e mídia
+## 7. Integração planejada com Ticketing e Carioca Media
 
-### 4.1 Carioca Ticketing, revisado
+Tudo do `TICKETING-E-CARIOCA-MEDIA.md` continua válido com estas correções obrigatórias:
 
-**Conta.** Compra exige login na conta única. O titular do ingresso é `usuarios.id`. Confirmação de interesse continua anônima e nunca vira ingresso.
-
-**Capacidade em dois níveis.** `treinos.capacidade_publico` é o teto do evento; `lotes.quantidade_total` é o teto de cada lote. `criar_pedido` trava os lotes envolvidos e a linha do treino, soma vendidos mais reservados mais cortesias mais gratuitos, e recusa acima de qualquer um dos dois tetos. Capacidade de pista é outra coluna, contada pelas inscrições, nunca pelos ingressos.
-
-**Cortesias e gratuitos contam.** Cortesia é pedido com total zero, origem `CORTESIA`, concedido por admin com motivo e auditoria. Ingresso gratuito é pedido com lote de valor zero, origem `GRATUITO`. Os dois nascem `PAGO` sem passar pelo gateway, emitem ingresso na hora e **entram na contagem de capacidade e nos relatórios**, separados da receita.
-
-**Confirmação só no servidor.** Só dois caminhos marcam um pedido como pago: o webhook do provedor, autenticado por assinatura ou token guardado em tabela sem policy e deduplicado por `unique (provedor, id_evento)`; e a reconciliação, uma Edge Function em cron que consulta no provedor os pedidos `PENDENTE` com pagamento iniciado e aplica o mesmo `confirmar_pagamento`. Isso cobre o webhook perdido, que o NMI deixou em aberto. O navegador só consulta o status.
-
-**Pagamento duplicado, recusado, tardio.** Segundo webhook do mesmo evento cai no `on conflict`. Recusa mantém o pedido pendente até expirar. Dinheiro chegando após expiração sem estoque vira `REEMBOLSO_NECESSARIO` e aparece no painel.
-
-**Reembolso efetivo.** `reembolsar` grava o registro interno e chama a Edge Function `reembolsar-no-provedor`, que executa o estorno na API do gateway e devolve a referência. Se o provedor falhar, o registro fica `PENDENTE_NO_PROVEDOR` e o admin vê a pendência; nada é marcado como reembolsado sem confirmação do provedor. Reembolso total revoga os ingressos e preserva os check-ins. **Se o gateway escolhido não expuser estorno por API para PIX, o fluxo cai para reembolso manual registrado, com referência preenchida à mão.** Isso é uma das decisões comerciais.
-
-**Portaria com contingência.** Modo normal: scanner online, QR rotativo, validação sob lock. Contingência para queda de internet, em três camadas: hotspot dedicado como primeira linha; **lista de contingência** gerada no painel antes do treino, em PDF, com serial, nome e tipo de cada ingresso e cortesia, para conferência manual com marcação em papel; e, ao voltar a conexão, o admin lança os check-ins manuais pelo painel com `origem = MANUAL`, gravando quem lançou. Não haverá validação offline no aparelho nesta fase, mas `checkins` já nasce com `origem` e `lido_em_no_aparelho` para isso caber depois sem migration nova.
-
-**Modalidade por evento.** `treinos.modalidade`: `interesse`, `local`, `gratuito`, `online`. O site renderiza o CTA pelo campo. `online` só é selecionável no painel com a chave global de bilheteria ligada. Trocar a modalidade do Open Drift Session exige sua autorização expressa.
-
-### 4.2 Carioca Media, revisado
-
-**Conta.** Fotógrafo é `capacidades = fotografo` na mesma conta. Sem capacidade, os menus de mídia não existem e, mais importante, as policies e funções recusam. A capacidade libera: painel de mídia, upload, galerias, preços e pacotes, pedidos e vendas, e os próprios recebimentos.
-
-**Pedidos separados.** `pedidos_media` e `itens_pedido_media` não se misturam com `pedidos` de ingresso. `pagamentos` ganha `origem` (`INGRESSO`/`MEDIA`) para o webhook rotear e para os relatórios separarem receita de ingressos e comissão de mídia. Um pagamento nunca cobre os dois.
-
-**Arquivos.** Original em bucket privado, jamais lido pelo público; prévia reduzida com marca d'água em bucket público. Upload direto do fotógrafo por URL assinada de envio; download do comprador por URL assinada de minutos, gerada só após checar `licencas`.
-
-**Comissões, repasses e reembolsos, sem presumir o gateway.**
-- `fotografos.percentual_comissao` é definido por fotógrafo pela administração; o padrão é uma decisão sua.
-- Cada item pago gera uma linha em `licencas` (direito de download) e uma linha em `lancamentos_repasse`: bruto, comissão, líquido, fotógrafo, período.
-- **Repasse é feito pela organização, fora do gateway, por PIX, em ciclo fixo** (proposta: mensal), a partir do relatório `repasses` que consolida os lançamentos do período. O admin marca o repasse como pago com comprovante. Isso funciona com qualquer gateway. Se o provedor escolhido oferecer split automático, ele entra depois como otimização, não como dependência.
-- Reembolso de mídia: mesmo mecanismo do ingresso, via provedor; revoga a licença e gera lançamento negativo no repasse do fotógrafo daquele período. Download já feito não é revertido; a política de reembolso de mídia precisa dizer isso.
-- O fotógrafo vê apenas o que é dele: itens, vendas, lançamentos e repasses filtrados por `fotografo_id = auth.uid()` nas policies.
-
-**Acervo atual.** Nenhuma foto de Sergio Photos RJ vira produto sem acordo comercial e licença.
+- **Conta:** comprador e fotógrafo são `usuarios`. Não existe cadastro de comprador.
+- **Capacidade em dois níveis** (evento e lote), contando cortesias e gratuitos, sob lock; capacidade de pista é outra coisa e conta inscrições.
+- **Cortesias e gratuitos** são pedidos de total zero, com origem própria, emitidos sem gateway, contados na capacidade e separados da receita.
+- **Confirmação** só por webhook autenticado e deduplicado, ou por reconciliação em cron consultando o provedor. Nunca pelo navegador.
+- **Reembolso** só é marcado como feito após confirmação do provedor via API; sem API de estorno para a modalidade, fica `MANUAL_PENDENTE` com referência preenchida por admin.
+- **Portaria:** scanner online com QR rotativo; contingência com hotspot, lista impressa gerada pelo painel e lançamento manual auditado ao voltar a conexão; `checkins.origem` registra o caminho.
+- **Media:** credencial pelo site com aprovação; galerias vinculadas a `treinos`; originais privados; prévias com marca d'água; venda; downloads por URL assinada após checar `licencas`; comissão por fotógrafo; repasse feito pela organização por PIX em ciclo fixo com relatório e comprovante; reembolso revoga licença e gera lançamento negativo.
+- **Gateway:** antes de escolher, verificar por escrito: PIX e cartão, estorno por API para cada meio, webhook com assinatura, sandbox, exigência de CPF do pagador, existência de split. Nada disso é presumido.
 
 ---
 
-## 5. Etapas de implementação independentes
+## 8. Plano de execução por etapas
 
-Cada etapa é um branch com migrations aplicadas primeiro num ambiente de desenvolvimento do Supabase, testes de banco, revisão sua, e só então produção. Nenhuma toca o `main` nem o Supabase de produção sem autorização.
+Cada etapa em branch próprio, migrations aplicadas primeiro em ambiente de desenvolvimento do Supabase (branch de banco ou projeto `carioca-drift-dev`), testes, sua revisão, e só então produção com sua autorização.
 
-| Etapa | Conteúdo | Independência |
+| Etapa | Entrega | Depende de |
 |---|---|---|
-| **A. Lançamento** | Site atual da Fase 01 mais a direção visual E.2 aprovada; DNS, HTTPS, Site URL do Auth | Já em andamento; não depende de nada abaixo |
-| **B. Contas** | `usuarios`, `capacidades`, `acoes_admin`, trigger, login, "Minha conta", perfil público, migração de `admins`, política de senha forte, SMTP próprio | Depende só de A. Base de todo o resto |
-| **C. Veículos e pista** | `veiculos`, buckets, regras de pista em `treinos`, `inscricoes_pista`, painel de aprovação | Depende de B |
-| **D. Bilheteria** | tabelas, funções, lotes, cortesias, gratuitos, Edge Functions de cobrança, webhook, reconciliação e reembolso, "Meus ingressos", portaria, lista de contingência | Depende de B e da decisão do gateway. Não depende de C |
-| **E. Carioca Media** | tabelas, buckets, upload, galerias, pedidos de mídia, licenças, download, repasses, painel do fotógrafo | Depende de B e da parte de pagamentos de D. Não depende de C |
-| **F. Piloto real** | Um treino em `aprovacao` (C) e um treino `gratuito` com ingresso online e portaria (D), antes de qualquer venda | Depende das etapas que valida |
+| A | Lançamento do site (em andamento, fora deste documento) | — |
+| B | Contas: `usuarios`, `capacidades`, `acoes_admin`, `handles_reservados`, trigger, login, cadastro curto, "Minha conta", visibilidade, `perfil_publico()`, rota `/u/`, Action de build recorrente, migração administrativa passos 1–3 | A |
+| C | Garagem e pista: `veiculos`, bucket, regras de pista em `treinos`, `inscricoes_pista`, `decisoes_inscricao`, painel de aprovação, credencial de fotógrafo (pedido e aprovação, sem painel de mídia ainda) | B |
+| D | Bilheteria: conforme anexo com as correções da seção 7 | B, decisão do gateway |
+| E | Carioca Media: conforme anexo com as correções da seção 7 | B, C (credencial), pagamentos de D |
+| F | Piloto real: um treino em `aprovacao` e um `gratuito` com portaria, antes de vender | C, D |
+| G | Migração administrativa passos 4–5 | um treino operado após B |
+
+O que sai sozinho: B entrega cadastro e perfis; B+C entrega inscrições sem dinheiro; B+D entrega bilheteria com pista por convite; C e D não dependem entre si.
 
 ---
 
-## 6. O que pode ser lançado sem depender das demais
+## 9. Testes obrigatórios de segurança e integridade
 
-- **A, hoje.** O site com interesse e ingressos no local.
-- **B sozinha.** Cadastro, perfil e perfis públicos já entregam valor à comunidade sem pista, ingresso ou mídia.
-- **B + C.** Inscrição de pilotos com aprovação e lista de espera funciona sem nenhum pagamento no sistema.
-- **B + D.** Bilheteria funciona sem inscrição de pilotos, porque a pista continua por convite.
-- **B + E.** Carioca Media funciona sem bilheteria de ingressos, desde que a parte de pagamentos de D exista; por isso D vem antes de E.
-- **C e E nunca dependem uma da outra.** D e C nunca dependem uma da outra.
+Suíte de banco (mesmo modelo do NMI, contra Postgres real em desenvolvimento) e sondas contra o ambiente de desenvolvimento. Todos precisam passar antes de qualquer produção.
+
+**Privilégios**
+- Toda função em `public` tem EXECUTE revogado de PUBLIC e anon; lista de exceções explícita e testada.
+- Nenhuma tabela de `usuarios`, `capacidades`, `veiculos`, `inscricoes_pista`, `pedidos*`, `ingressos`, `checkins`, `licencas`, `repasses` aceita INSERT/UPDATE/DELETE de anon ou authenticated.
+
+**Privacidade**
+- Anônimo e usuário comum não leem `usuarios` de terceiros; `perfil_publico` devolve nulo para perfil privado e exatamente a projeção para perfil público.
+- Desligar `perfil_publico` esconde imediatamente veículos marcados como públicos.
+- URL assinada de foto não é gerada para veículo privado ou perfil privado.
+
+**Autorização**
+- Usuário não edita nem apaga veículo de outro.
+- `decidir_inscricao` recusa quando o alvo é o chamador, inclusive admin.
+- `conceder_capacidade` recusa alvo = chamador; inserção direta em `capacidades` falha.
+- Após `revogada_em`, fotógrafo perde acesso ao painel, às vendas e aos originais na mesma transação.
+- Fotógrafo A não lê vendas, lançamentos ou originais de B.
+- Portaria não lê `ingressos`; `validar_ingresso` falha para quem não está em `portaria_staff` do treino.
+
+**Concorrência e integridade**
+- Duas inscrições simultâneas na última vaga: uma aprovada, uma na lista.
+- Duas aprovações administrativas simultâneas na última vaga: uma passa, uma é recusada.
+- Cancelamento promove o primeiro da lista que não tem requisito pendente, e nunca o que depende de avaliação.
+- Um registro vivo por piloto por treino.
+- Bilheteria: corrida pela última unidade, 20 reentregas do mesmo webhook, pagamento após expiração sem estoque, reembolso acima do pago recusado, dois scans simultâneos do mesmo QR.
+- Handle: normalização, reservados, colisão, sugestões sem vazamento.
+
+**Contrato**
+- O JavaScript do site chama apenas funções existentes com as assinaturas testadas (teste que lê o código do site e confere contra o schema).
 
 ---
 
-## 7. Decisões comerciais e operacionais que dependem de você
+## 10. Dependências e decisões ainda pendentes
 
-**Comerciais**
-1. Gateway de pagamento e em nome de quem fica a conta. Verificar antes de decidir: estorno de PIX por API, taxas, prazo de liquidação, exigência de CPF do pagador.
-2. Percentual padrão de comissão do Carioca Media e ciclo de repasse.
-3. Política de reembolso de ingresso: prazo, integral ou parcial, chargeback.
-4. Política de reembolso de mídia, incluindo o caso de download já feito.
-5. Acordo com Sergio Photos RJ para o acervo atual e modelo de licença para fotógrafos futuros.
+**Comerciais (sua decisão)**
+1. Gateway de pagamento, titular da conta, e a verificação por escrito de estorno por API, split, sandbox e CPF.
+2. Comissão padrão e ciclo de repasse do Carioca Media.
+3. Política de reembolso de ingresso e de mídia.
+4. Acordo com Sergio Photos RJ e modelo de licença para fotógrafos.
 
-**Operacionais**
-6. Quem opera a portaria e quem pode conceder cortesia, com limite.
-7. Regra de aprovação de fotógrafo: pede pelo site ou a organização concede por fora.
-8. Perfil público ligado por padrão para quem escolhe piloto, ou opcional.
-9. Handle gerado do e-mail ou escolhido no cadastro.
-10. Inscrição de pista sem veículo cadastrado é permitida.
-11. SMTP próprio para o Supabase Auth e textos de termos e privacidade.
-12. Compute do Supabase: manter Micro quando a bilheteria entrar.
+**Operacionais (sua decisão)**
+5. Quem opera a portaria; quem concede cortesia e com que limite.
+6. Requisitos de veículo antes da autorização final de pista: quais treinos exigem e o que exigem.
+7. Textos de termos, privacidade e regras de pista.
+8. SMTP próprio para o Supabase Auth e política de senha forte ligada no painel.
+9. Aceite do prazo de até 15 minutos para o 200 dos perfis novos, ou mudança de hospedagem.
+10. Ambiente de desenvolvimento: branch de banco do Supabase ou segundo projeto (custo).
 
-**Pendências herdadas do lançamento**
-13. Avaliação visual da E.2 e autorização do merge.
-14. Site URL e redirecionamentos no Supabase Auth.
-15. HTTPS forçado no GitHub Pages quando o certificado sair.
+**Pendências do lançamento (fora deste documento)**
+11. Avaliação visual da E.2 e autorização do merge.
+12. Site URL e redirecionamentos no Supabase Auth; HTTPS forçado no GitHub Pages.
 
 ---
 
 ## Anexos
-
-- `TICKETING-E-CARIOCA-MEDIA.md`: auditoria completa do ticketing do NMI, modelo de dados detalhado da bilheteria e fluxos passo a passo.
-- `CARIOCA-PILOTOS-ARQUITETURA.md`: auditoria de perfis, veículos, inscrições, aprovação e permissões do NMI, com trechos de SQL de referência.
+- `TICKETING-E-CARIOCA-MEDIA.md`: auditoria do ticketing do NMI, modelo detalhado da bilheteria e da mídia.
+- `CARIOCA-PILOTOS-ARQUITETURA.md`: auditoria de perfis, veículos, inscrições, aprovação e permissões do NMI.

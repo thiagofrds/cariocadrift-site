@@ -1,5 +1,8 @@
 # Carioca Drift — Ticketing + Carioca Media
 
+> **Anexo.** Este documento é referência de auditoria. Onde divergir de `ARQUITETURA-CONSOLIDADA.md`, vale a consolidada (v2, 16/09/2026): conta única, perfil público desligado por padrão, @ escolhido pelo usuário, rota `/u/<handle>/`, inscrição sem carro, coleta progressiva de dados, credencial de fotógrafo pelo site.
+
+
 Documento técnico para aprovação. Nada aqui foi implementado. Nenhum banco foi alterado. Data: 16/09/2026.
 
 ---

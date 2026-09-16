@@ -1,5 +1,8 @@
 # Carioca Drift — Modelo de usuários e Carioca Pilotos
 
+> **Anexo.** Este documento é referência de auditoria. Onde divergir de `ARQUITETURA-CONSOLIDADA.md`, vale a consolidada (v2, 16/09/2026): conta única, perfil público desligado por padrão, @ escolhido pelo usuário, rota `/u/<handle>/`, inscrição sem carro, coleta progressiva de dados, credencial de fotógrafo pelo site.
+
+
 Arquitetura mínima para aprovação. Nada implementado, nenhum banco alterado. Data: 16/09/2026.
 
 Complementa `TICKETING-E-CARIOCA-MEDIA.md`. Onde os dois se cruzam, este documento prevalece no que diz respeito a contas e permissões.
