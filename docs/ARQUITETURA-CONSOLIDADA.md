@@ -79,8 +79,11 @@ usuarios
   avatar_path text null
   telefone text null
   perfil_publico boolean default false
+  estado_cadastro text check in ('handle_pendente','completo') default 'completo'
   aceite_termos_em timestamptz
   criado_em, atualizado_em
+  check (handle is not null or estado_cadastro = 'handle_pendente')
+  check (perfil_publico = false or handle is not null)
 
 capacidades
   usuario_id uuid -> usuarios
@@ -108,6 +111,9 @@ handles_reservados
 - **Reservados**: lista em `handles_reservados`, semeada com termos administrativos e confusos (`admin`, `administrador`, `suporte`, `oficial`, `cariocadrift`, `carioca_drift`, `drift`, `staff`, `organizacao`, `fotografo`, `ingressos`, `media`, `treinos`, `escolinha`, `sobre`, `u`, `api`, `login`, `conta`, `null`, `undefined`, e variações), mais qualquer handle que contenha `carioca` ou `drift` seguido de `oficial`. A lista é editável por admin.
 - **Disponibilidade**: função `handle_disponivel(texto)` devolve só `true`/`false` e, quando falso, até três sugestões geradas a partir do próprio texto pedido (sufixos numéricos ou `_rj`), sem consultar nem revelar nada de outros usuários. Rate limit por usuário e IP na Edge Function que a expõe.
 - **Nunca derivado do e-mail.** O trigger de criação de perfil não gera handle; o cadastro só conclui quando o usuário escolhe um disponível.
+- **Concorrência na escolha.** A verificação ao digitar é orientação, não reserva. A garantia é a restrição `unique` em `usuarios.handle`. Dois cadastros simultâneos com o mesmo @: o trigger do primeiro grava; o do segundo recebe violação de unicidade, captura, e cria o perfil com `handle = null` e `estado_cadastro = 'handle_pendente'`. Nunca falha a criação da conta nem gera handle automático.
+- **Conta com handle pendente.** Existe em `auth.users` e em `usuarios`, pode entrar e sair, ler o próprio perfil e chamar `definir_handle(texto)`; nada mais. `definir_handle` só aceita quando `handle is null`, normaliza, checa reservados, insere sob a mesma restrição `unique` e, em colisão, devolve "indisponível" com sugestões, sem alterar nada. Ao gravar, muda `estado_cadastro` para `completo`. Toda função de escrita do módulo (inscrever, cadastrar veículo, pedir credencial, ligar perfil público, editar perfil) começa verificando `estado_cadastro = 'completo'` e recusa com erro único; as restrições `check` da tabela impedem perfil público sem handle mesmo que alguma função esqueça a verificação. O site, ao entrar, lê o estado e força a tela de escolha antes de qualquer outra.
+- **Recuperação sem conta duplicada.** O e-mail é único em `auth.users`; tentar cadastrar de novo com o mesmo e-mail não cria segunda conta (o Auth reenvia a confirmação ou recusa), e o trigger é idempotente (`on conflict (id) do nothing`), então nunca há dois `usuarios` para uma conta. O caminho de recuperação é sempre entrar e concluir, nunca recadastrar.
 - **Política de troca (definida, não implementada nesta fase)**: uma troca a cada 90 dias; o handle antigo fica em `handles_anteriores(handle, usuario_id, liberado_em)` por 180 dias, período em que ninguém pode registrá-lo e `/u/<antigo>/` redireciona para o novo **apenas se o perfil estiver público**; depois de 180 dias o handle volta ao pool. Trocas ficam em `acoes_usuario`. Implementar só com sua aprovação.
 
 ### 2.3 Garagem
@@ -180,7 +186,7 @@ Legenda: L = lê, E = escreve, F = só via função, — = nada.
 ### 4.1 Cadastro (celular primeiro)
 1. Tela única: nome, e-mail, senha, preferência (dois botões), @ com verificação ao digitar, aceite. Nada mais.
 2. Código de seis dígitos chega por e-mail; a pessoa digita na mesma tela.
-3. Trigger em `auth.users` cria `usuarios` com nome, preferência e @ vindos do metadado do cadastro (o @ já foi validado antes de criar a conta; o trigger revalida e, em colisão, deixa o handle nulo e o site pede outro na primeira entrada).
+3. Trigger em `auth.users` cria `usuarios` com nome, preferência e @ vindos do metadado do cadastro. O trigger revalida o @ e, em colisão ou valor inválido, grava `handle = null` com `estado_cadastro = 'handle_pendente'`; o site então mostra só a tela de escolha, que chama `definir_handle`, e nada mais é liberado até concluir (regras em 2.2).
 4. Perfil nasce privado. "Minha conta" oferece foto, Instagram, apresentação, veículos e o interruptor "Perfil público".
 
 ### 4.2 Perfil e visibilidade
@@ -265,8 +271,8 @@ Assim a decisão de assinar é tomada no banco, não no site, e `perfil_publico`
 | Passo | O que muda | Como se valida | Reversão |
 |---|---|---|---|
 | 1. Estrutura nova ao lado | Migration cria `usuarios`, `capacidades`, `acoes_admin`, `handles_reservados`. Nada existente é tocado | Migration aplicada em desenvolvimento; painel atual testado igual antes | Migration de reversão apaga as quatro tabelas |
-| 2. Semear os admins atuais | Script com chave de serviço, executado uma vez: para cada e-mail em `admins`, localiza a conta em `auth.users`, cria `usuarios` (handle provisório reservado, ex.: `admin_1`, a ser trocado pelo próprio admin no primeiro acesso) e insere `capacidades = admin` com `concedida_por = null` e `motivo = 'migração'`. E-mail sem conta em `auth.users` é listado no relatório e não migra. `admins` continua intacta | Relatório do script: N e-mails, N migrados, lista dos não migrados | Apagar as linhas semeadas (marcadas pelo motivo) |
-| 3. Função em modo duplo | `eh_admin()` devolve verdadeiro se `capacidades` tem `admin` ativo para `auth.uid()` **ou** e-mail em `admins`. Nova função `origem_admin()` devolve `capacidades`, `legado` ou ambas, para o painel exibir | Suíte de testes de 5.1 e verificação do painel de 5.2 | Restaurar o corpo anterior de `eh_admin()` (uma migration de uma linha) |
+| 2. Semear os admins atuais | Script com chave de serviço, executado uma vez: para cada e-mail em `admins`, localiza a conta em `auth.users`, cria `usuarios` (handle provisório reservado, ex.: `admin_1`, a ser trocado pelo próprio admin no primeiro acesso) e insere `capacidades = admin` com `concedida_por = null` e `motivo = 'migração'`. E-mail sem conta em `auth.users` é listado no relatório e não migra. `admins` continua intacta | Relatório do script: N e-mails, N migrados, lista dos não migrados | Apagar as linhas semeadas (marcadas pelo motivo) **que ainda estejam ativas**; linhas revogadas ficam, e o e-mail delas já não está em `admins` |
+| 3. Função em modo duplo | `eh_admin()` com precedência: (a) se existe **qualquer** linha `capacidades(admin)` para `auth.uid()`, ativa ou revogada, ela é a única fonte: verdadeiro só se `revogada_em is null`; (b) só se não existe linha nenhuma, consulta o e-mail em `admins`. O legado é fallback exclusivo de quem ainda não foi migrado; nunca reabilita quem foi revogado. `revogar_capacidade(admin)` é a única forma de revogar e, na mesma transação, preenche `revogada_em`, remove o e-mail de `admins` e grava em `acoes_admin` o e-mail removido. `origem_admin()` devolve `capacidades`, `legado` ou `revogado`, para o painel exibir | Suíte de 5.1 e verificação do painel de 5.2, incluindo os testes de revogação | Restaurar o corpo anterior de `eh_admin()`. Como a revogação também removeu o e-mail de `admins`, o rollback **não** devolve acesso a ninguém revogado; devolve só a quem nunca foi revogado |
 | 4. Compatibilidade | Pelo menos um treino inteiro operado pelo painel (criar, publicar, ler confirmações, exportar) com o modo duplo. Painel mostra "permissão via: capacidades" ou "via: legado". Meta: todo admin real aparece como `capacidades` | Nenhum admin com origem só `legado` ao fim do período; nenhum incidente de acesso | Igual ao passo 3 |
 | 5. Cortar o legado | `eh_admin()` lê só `capacidades`. `admins` é renomeada para `admins_legado` (sem policy, sem função que a leia) | Suíte de 5.1 repetida; painel verificado de novo | Renomear de volta e restaurar o modo duplo |
 | 6. Remover | `admins_legado` é apagada | Só após critérios de 5.3 | Não há; por isso os critérios |
@@ -279,6 +285,14 @@ Assim a decisão de assinar é tomada no banco, não no site, e `perfil_publico`
 - Admin não consegue conceder capacidade a si mesmo por `conceder_capacidade`; consegue a terceiro, e a ação aparece em `acoes_admin`.
 - Anon continua sem ler `confirmacoes`, `interessados_escolinha`, `treinos` não publicados, `usuarios`, `capacidades`.
 - Revogar `admin` de um usuário logado bloqueia a próxima operação dele no painel sem precisar de novo login.
+
+**Revogação, compatibilidade e rollback (obrigatórios no passo 3, repetidos no 5):**
+- Admin migrado e revogado: `eh_admin()` falso na mesma transação; e-mail ausente de `admins`; `acoes_admin` tem a linha com o e-mail removido.
+- Defesa em profundidade: com chave de serviço, reinserir o e-mail em `admins` de um usuário com linha revogada em `capacidades`; `eh_admin()` continua falso, porque a linha em `capacidades` tem precedência.
+- Compatibilidade: e-mail só em `admins`, sem linha em `capacidades` (admin não migrado): verdadeiro no modo duplo; falso após o passo 5.
+- Rollback após revogação: restaurar o corpo antigo de `eh_admin()`; o revogado continua falso (e-mail já não está em `admins`); os não revogados continuam verdadeiros.
+- Rollback do passo 2 não apaga linhas revogadas.
+- Nova concessão a alguém revogado só por `conceder_capacidade` chamada por outro admin, criando linha nova ativa; a partir daí verdadeiro só por `capacidades`, nunca pelo legado.
 - Todo o schema `public`: nenhuma função nova com EXECUTE para PUBLIC ou anon além da lista explícita (`perfil_publico`).
 
 #### 5.2 Verificação das permissões do painel atual
@@ -301,12 +315,23 @@ Todos obrigatórios: (a) todo e-mail de `admins` tem linha ativa em `capacidades
 
 1. **Canônico:** `/u/<handle>/`. Uma única família de URL para piloto, espectador e fotógrafo.
 2. **Primeira carga de um perfil recém-publicado:** `404.html` reconhece o padrão `/u/<handle>/`, chama `perfil_publico(handle)` e renderiza. Funciona no acesso direto e ao atualizar a página, porque o servidor devolve o mesmo `404.html` para qualquer caminho inexistente. O status é 404 até o próximo build, o que só afeta indexação e prévia de link, não o uso.
-3. **Geração estática recorrente:** uma GitHub Action, a cada 15 minutos e sob demanda, roda o build, que consulta os perfis com `perfil_publico = true` e gera `u/<handle>/index.html` com título e descrição próprios (só os campos da projeção pública). A partir daí o perfil responde 200 e tem prévia própria no WhatsApp. O mesmo mecanismo passa a cobrir os treinos, resolvendo a dependência de build manual que existe hoje.
-4. **Despublicar:** o build seguinte remove `u/<handle>/index.html`; enquanto ele não roda, a página estática ainda serve o HTML antigo, por isso **a página gerada nunca embute dados: ela sempre consulta `perfil_publico(handle)` ao carregar** e mostra "perfil não disponível" se a função devolver nulo. O HTML estático carrega só título, descrição e o esqueleto. Assim URLs antigas e caches não expõem nada depois de desligar a visibilidade.
-5. **Handles reservados** nunca geram página. Handles inexistentes caem no `404.html` com "perfil não encontrado", com a mesma mensagem de "não disponível" para não revelar se existe.
-6. **Compatibilidade com os eventos:** idêntica. Um único `404.html` decide por prefixo (`/treinos/` ou `/u/`) qual módulo renderizar; um único `build.py` gera as duas famílias.
+3. **Geração estática recorrente:** uma GitHub Action, a cada 15 minutos e sob demanda, roda o build, que consulta os perfis com `perfil_publico = true` e gera `u/<handle>/index.html`. A partir daí o perfil responde 200 e tem prévia própria no WhatsApp. O mesmo mecanismo passa a cobrir os treinos, resolvendo a dependência de build manual que existe hoje.
+4. **O que o HTML gerado contém, e só isso:** `<title>` e `og:title` com `nome_exibicao` e `@handle`; `og:description` com um texto fixo da plataforma ("Perfil no Carioca Drift"), sem apresentação, sem preferência; `og:image` sempre a imagem da marca, nunca o avatar; e o esqueleto da página. Nome de exibição e handle são os dois únicos dados pessoais que existem no arquivo, e existem porque a pessoa os tornou públicos ao ligar o interruptor. Todo o resto (foto, apresentação, Instagram, veículos, contagem) é lido de `perfil_publico(handle)` ao abrir a página, e nunca é escrito em arquivo.
+5. **Despublicar, camada por camada:**
 
-**Limite honesto:** o prazo de até 15 minutos entre publicar o perfil e ter 200 com prévia própria. Se isso for inaceitável, a alternativa é sair do GitHub Pages para uma hospedagem com função de borda, o que é mudança de arquitetura e não está proposta agora.
+| Camada | O que acontece | Quando |
+|---|---|---|
+| Dados (foto, apresentação, Instagram, veículos) | `perfil_publico` passa a devolver nulo; a página, gerada ou não, mostra "perfil não disponível" | imediato, na transação do interruptor |
+| Arquivos (avatar, fotos de veículo) | policies de storage deixam de assinar; URLs já assinadas expiram em até 10 minutos | imediato para novas; até 10 min para emitidas |
+| HTML gerado (`title`, `og:title` com nome e handle) | continua no ar até o próximo build, que remove o arquivo; depois a URL cai no `404.html` com "não disponível" | até 15 minutos |
+| Prévias de link já geradas por WhatsApp, Telegram, Instagram, X | ficam no cache desses serviços pelo prazo deles; não há como forçar limpeza | fora do nosso controle |
+| Caches de buscadores e arquivos da web | páginas de perfil saem com `<meta name="robots" content="noindex, noarchive">` por padrão, o que reduz muito indexação e cópia, mas não impede um rastreador que ignore a instrução | fora do nosso controle |
+
+Portanto: o prazo de até 15 minutos é o **compromisso de publicação** (quando um perfil passa a responder 200 com prévia). A **garantia de privacidade** é outra: os dados sensíveis nunca ficam em arquivo e somem na hora; nome de exibição e handle podem permanecer em HTML por até 15 minutos e em caches de terceiros por prazo que não controlamos. Isso é dito ao usuário no texto do interruptor, sem prometer remoção imediata do que terceiros já armazenaram.
+6. **Handles reservados** nunca geram página. Handles inexistentes caem no `404.html` com "perfil não encontrado", com a mesma mensagem de "não disponível" para não revelar se existe.
+7. **Compatibilidade com os eventos:** idêntica. Um único `404.html` decide por prefixo (`/treinos/` ou `/u/`) qual módulo renderizar; um único `build.py` gera as duas famílias.
+
+**Limite honesto:** até 15 minutos entre publicar o perfil e ter 200 com prévia própria, e o mesmo prazo para o nome sumir do HTML ao despublicar. A alternativa seria sair do GitHub Pages para uma hospedagem com função de borda, o que é mudança de arquitetura e não está proposta agora.
 
 ---
 
@@ -373,9 +398,15 @@ Uma etapa só é considerada pronta para produção quando todos os itens passam
 
 **B. Contas e perfis**
 - Cadastro em uma tela; código por e-mail; perfil criado por trigger; @ verificado antes de criar a conta; reservados bloqueados; sugestões sem vazamento.
+- Concorrência do @: dois cadastros simultâneos com o mesmo @ resultam em exatamente um `usuarios.handle` gravado e um perfil `handle_pendente`; nunca dois handles iguais, nunca conta sem perfil, nunca handle gerado automaticamente.
+- Conta `handle_pendente`: entra e sai; lê o próprio perfil; `definir_handle` funciona uma vez e vira `completo`; inscrever, cadastrar veículo, pedir credencial, ligar perfil público e editar perfil falham com o erro único; `update usuarios set perfil_publico = true` direto no banco falha pela restrição `check`.
+- Recuperação: novo cadastro com o mesmo e-mail não cria segunda conta nem segundo perfil; trigger idempotente testado com inserção repetida.
 - Perfil nasce privado; interruptor liga e desliga; `perfil_publico` devolve nulo quando desligado e a projeção exata quando ligado.
-- `/u/<handle>/` abre por acesso direto para perfil recém-publicado (via `404.html`) e responde 200 após a Action; despublicar faz a página estática mostrar "não disponível" na mesma hora.
-- Migração administrativa nos passos 1 a 3 concluída; suíte 5.1 e roteiro 5.2 verdes; painel atual sem regressão.
+- `/u/<handle>/` abre por acesso direto para perfil recém-publicado (via `404.html`) e responde 200 após a Action.
+- HTML gerado contém só nome de exibição e handle como dados pessoais (teste lê o arquivo gerado e confere que apresentação, Instagram, telefone, e-mail e caminhos de foto não aparecem); `og:image` é a marca; `robots` é `noindex, noarchive`.
+- Despublicar: `perfil_publico` nulo na mesma transação; URL assinada nova recusada; página gerada mostra "não disponível" ao abrir; build seguinte remove o arquivo e a URL passa a cair no `404.html`.
+- Texto do interruptor informa o prazo de 15 minutos para o HTML e a ausência de controle sobre caches de terceiros.
+- Migração administrativa nos passos 1 a 3 concluída; suíte 5.1 (incluindo revogação, compatibilidade e rollback) e roteiro 5.2 verdes; painel atual sem regressão.
 - Testes de privilégios: só `perfil_publico` com EXECUTE para anon.
 
 **C. Veículos e inscrições de pista**
