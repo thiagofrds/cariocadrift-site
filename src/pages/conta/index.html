@@ -1,0 +1,294 @@
+---
+title: Conta | Carioca Drift
+desc: Entre ou crie sua conta na Carioca Drift. Perfil privado por padrão, preferência piloto ou espectador, e solicitação de associação ao Clube.
+og_title: Conta · Carioca Drift
+nav: conta
+extra_head: <meta name="robots" content="noindex">
+---
+<style>
+.conta{padding-block:32px 72px}
+.conta h1{font-size:clamp(44px,8vw,72px)}
+.conta .grade{display:grid;gap:28px;margin-top:24px}
+@media (min-width:900px){.conta .grade{grid-template-columns:1fr 1fr;gap:56px;align-items:start}}
+.cartao .abas{display:flex;gap:6px;margin-bottom:18px}
+.cartao .abas button{flex:1;padding:10px;border:1px solid var(--linha-forte);background:transparent;font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
+.cartao .abas button[aria-selected="true"]{color:var(--gelo);border-color:var(--amarelo);box-shadow:inset 0 -2px 0 var(--amarelo)}
+.pref{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pref label{border:1px solid var(--linha-forte);padding:12px;cursor:pointer;display:grid;gap:4px}
+.pref label:has(input:checked){border-color:var(--amarelo)}
+.pref input{display:none}
+.pref b{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;line-height:1}
+.pref small{color:var(--cinza);font-size:13px}
+.arroba{display:flex;align-items:center;gap:0;margin-top:8px;border:1px solid var(--linha-forte);background:var(--preto)}
+.arroba i{font-style:normal;padding:0 0 0 14px;color:var(--cinza);font-weight:600}
+.arroba input{border:0!important;margin:0!important;background:transparent!important}
+.dica{font-size:13px;color:var(--cinza);min-height:20px;margin-top:6px;line-height:1.4}
+.dica.ok{color:var(--verde)}.dica.err{color:#FF6B6B}
+.dica button{background:none;border:0;padding:0;color:var(--amarelo);font:inherit;text-decoration:underline;cursor:pointer}
+.consent{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;margin-top:16px;font-size:14px;color:var(--cinza);line-height:1.45}
+.consent input{width:22px;height:22px;margin-top:1px;accent-color:var(--amarelo)}
+.codigo{letter-spacing:.4em;font-family:var(--display);font-size:32px!important;text-align:center}
+/* minha conta */
+.mc{display:grid;gap:22px}
+.bloco{border-top:1px solid var(--linha-forte);padding-top:14px;display:grid;gap:10px}
+.bloco h2{font-size:clamp(28px,4vw,36px)}
+.bloco .linha{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.status{display:inline-block;padding:4px 10px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--linha-forte);color:var(--cinza)}
+.status.on{border-color:var(--amarelo);color:var(--amarelo)}
+.status.ok{border-color:var(--verde);color:var(--verde)}
+.status.no{border-color:#FF6B6B;color:#FF6B6B}
+.chave{display:flex;align-items:center;gap:12px}
+.chave input{width:46px;height:26px;appearance:none;background:var(--linha-forte);position:relative;cursor:pointer;border-radius:13px}
+.chave input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--gelo);transition:transform .15s}
+.chave input:checked{background:var(--amarelo)}
+.chave input:checked::after{transform:translateX(20px)}
+.avatar{display:flex;gap:14px;align-items:center}
+.avatar .img{width:72px;height:72px;border-radius:50%;background:var(--grafite);border:1px solid var(--linha-forte);overflow:hidden;flex:none;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:28px;color:var(--cinza)}
+.avatar .img img{width:100%;height:100%;object-fit:cover}
+.aviso{padding:14px 16px;border:1px solid var(--linha-forte);border-left:3px solid var(--amarelo);color:var(--cinza);font-size:14px;line-height:1.45}
+.aviso b{color:var(--gelo)}
+.demo{position:fixed;top:64px;left:0;right:0;z-index:40;background:var(--vermelho);color:#fff;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:6px}
+.demo a{color:#fff}
+</style>
+
+<main id="conteudo" class="conta">
+  <div class="wrap">
+    <span class="rot am">Carioca Drift</span>
+    <h1 id="titulo">Sua conta</h1>
+
+    <div id="semAmbiente" class="aviso" hidden><b>Módulo de contas ainda não ativo.</b> As contas rodam num ambiente de desenvolvimento separado da produção, que ainda não foi criado. Nada aqui grava dados.</div>
+
+    <!-- ENTRAR / CRIAR CONTA -->
+    <div class="grade" id="acesso" hidden>
+      <div>
+        <p class="prosa">Uma conta única para todo mundo: quem pilota, quem assiste e quem fotografa. O perfil nasce privado e você decide se quer torná-lo público.</p>
+        <p class="prosa" style="margin-top:14px">Com a conta você acompanha suas confirmações, monta seu perfil e pode solicitar associação ao Clube Carioca Drift.</p>
+      </div>
+      <div class="cartao">
+        <div class="abas" role="tablist"><button role="tab" data-t="entrar" aria-selected="true" type="button">Entrar</button><button role="tab" data-t="criar" aria-selected="false" type="button">Criar conta</button></div>
+        <div id="fEntrar">
+          <label class="campo" for="lEmail"><span>E-mail</span><input id="lEmail" type="email" autocomplete="username" placeholder="voce@email.com"></label>
+          <label class="campo" for="lSenha"><span>Senha</span><input id="lSenha" type="password" autocomplete="current-password"></label>
+          <div class="erro" id="lErro"></div>
+          <button class="btn am" id="entrar" type="button">Entrar</button>
+          <p class="nota"><a href="#" id="esqueci">Esqueci minha senha</a></p>
+        </div>
+        <div id="fCriar" hidden>
+          <label class="campo" for="cNome"><span>Seu nome</span><input id="cNome" autocomplete="name" placeholder="Nome e sobrenome" maxlength="120"></label>
+          <label class="campo" for="cEmail"><span>E-mail</span><input id="cEmail" type="email" autocomplete="email" placeholder="voce@email.com"></label>
+          <label class="campo" for="cSenha"><span>Senha</span><input id="cSenha" type="password" autocomplete="new-password" placeholder="mínimo 12 caracteres"></label>
+          <div class="campo"><span>Você é</span>
+            <div class="pref">
+              <label><input type="radio" name="pref" value="piloto"><b>Piloto</b><small>ando ou quero andar na pista</small></label>
+              <label><input type="radio" name="pref" value="espectador" checked><b>Espectador</b><small>curto assistir e acompanhar</small></label>
+            </div>
+          </div>
+          <div class="campo"><span>Seu @ (identificador público)</span>
+            <div class="arroba"><i>@</i><input id="cHandle" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="seu_nome" maxlength="24"></div>
+            <div class="dica" id="hDica">Letras minúsculas, números e _ · 3 a 24 caracteres. Nunca vem do seu e-mail.</div>
+          </div>
+          <label class="consent" for="cAceite"><input id="cAceite" type="checkbox"><span>Li e aceito os termos de uso e a política de privacidade. Meu perfil nasce privado; e-mail e telefone nunca são exibidos.</span></label>
+          <div class="erro" id="cErro"></div>
+          <button class="btn am" id="criar" type="button">Criar conta</button>
+        </div>
+        <div id="fCodigo" hidden>
+          <h2>Confirme seu e-mail</h2>
+          <p class="sub">Enviamos um código de 6 dígitos para <b id="codEmail"></b>. Digite aqui.</p>
+          <label class="campo" for="codigo"><span>Código</span><input id="codigo" class="codigo" inputmode="numeric" maxlength="6" placeholder="000000"></label>
+          <div class="erro" id="codErro"></div>
+          <button class="btn am" id="confirmar" type="button">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESCOLHER @ (conta pendente) -->
+    <div class="grade" id="pendente" hidden>
+      <div><p class="prosa">Sua conta existe, mas o @ que você escolheu não ficou disponível. Escolha outro para concluir o cadastro. Até lá, nada mais é liberado.</p></div>
+      <div class="cartao">
+        <h2>Escolha seu @</h2>
+        <div class="campo" style="margin-top:14px"><span>Seu @</span>
+          <div class="arroba"><i>@</i><input id="pHandle" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="seu_nome" maxlength="24"></div>
+          <div class="dica" id="pDica"></div>
+        </div>
+        <div class="erro" id="pErro"></div>
+        <button class="btn am" id="definirHandle" type="button">Concluir cadastro</button>
+      </div>
+    </div>
+
+    <!-- MINHA CONTA -->
+    <div class="mc" id="minhaConta" hidden>
+      <div class="linha"><div><span class="rot" id="mcArroba"></span><h2 id="mcNome" style="font-size:clamp(34px,6vw,52px)"></h2></div><div class="acoes"><a class="btn btn-linha" id="verPerfil" href="#" hidden>Ver meu perfil público</a><button class="btn btn-linha" id="sair" type="button">Sair</button></div></div>
+      <div id="mcCapacidades" class="linha" hidden></div>
+
+      <div class="bloco">
+        <h2>Perfil</h2>
+        <div class="avatar"><div class="img" id="avatarBox">?</div><div><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="btn btn-linha btn-p" id="trocarFoto" type="button">Trocar foto</button><p class="nota" style="text-align:left;margin-top:6px">JPG, PNG ou WebP até 3 MB. Fica privada até você ligar o perfil público.</p></div></div>
+        <div class="linha2" style="display:grid;gap:12px">
+          <label class="campo" for="eNome"><span>Nome</span><input id="eNome" maxlength="120"></label>
+          <label class="campo" for="eExib"><span>Nome de exibição</span><input id="eExib" maxlength="40"></label>
+          <div class="campo"><span>Você é</span><div class="pref"><label><input type="radio" name="epref" value="piloto"><b>Piloto</b><small>ando ou quero andar</small></label><label><input type="radio" name="epref" value="espectador"><b>Espectador</b><small>assisto e acompanho</small></label></div></div>
+          <label class="campo" for="eInsta"><span>Instagram (sem @)</span><input id="eInsta" maxlength="30" placeholder="seu.perfil"></label>
+          <label class="campo" for="eApres"><span>Apresentação (até 400 caracteres)</span><textarea id="eApres" maxlength="400" placeholder="Conta um pouco sobre você e o drift."></textarea></label>
+          <label class="campo" for="eTel"><span>Telefone (privado, só a organização vê)</span><input id="eTel" type="tel" inputmode="numeric" maxlength="15" placeholder="(21) 99999-9999"></label>
+        </div>
+        <div class="erro" id="eErro"></div>
+        <div class="acoes"><button class="btn am" id="salvarPerfil" type="button">Salvar perfil</button></div>
+      </div>
+
+      <div class="bloco">
+        <h2>Visibilidade</h2>
+        <div class="linha"><div><b>Perfil público</b><p class="nota" style="text-align:left;margin:4px 0 0">Ligado, seu nome de exibição, @, preferência, apresentação, Instagram e foto aparecem em <span id="urlPerfil"></span>. Desligado, nada aparece, nem por link antigo.</p></div><label class="chave"><input id="chavePublico" type="checkbox"><span id="chaveTxt" class="status">Privado</span></label></div>
+        <p class="nota" style="text-align:left">Ao desligar: os dados somem na hora; nome e @ podem ficar até 15 minutos em páginas já geradas, e prévias em caches de terceiros não estão sob nosso controle.</p>
+      </div>
+
+      <div class="bloco" id="blocoClube">
+        <h2>Clube Carioca Drift</h2>
+        <div class="linha"><div><b>Associação</b><p class="nota" style="text-align:left;margin:4px 0 0" id="clubeTxt"></p></div><span class="status" id="clubeStatus">—</span></div>
+        <div id="clubeAcoes" class="acoes"></div>
+        <p class="nota" style="text-align:left">Ser membro não libera pista, não é ingresso e não garante participação em eventos. Pista e ingressos continuam com as regras de cada treino.</p>
+      </div>
+
+      <div class="bloco">
+        <h2>Segurança</h2>
+        <div class="acoes"><button class="btn btn-linha btn-p" id="trocarSenha" type="button">Trocar senha</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async () => {
+  const $ = id => document.getElementById(id), { esc } = CD;
+  const fmtTel = d => !d ? '' : d.length === 11 ? `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}` : `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  const mostrar = id => { for (const s of ['semAmbiente','acesso','pendente','minhaConta']) $(s).hidden = s !== id; };
+  let perfil = null, sb = null;
+
+  // ---------- modo demonstração (só localhost, ?demo=<estado>): visual sem banco ----------
+  if (CD.DEMO) {
+    const estado = new URLSearchParams(location.search).get('demo') || 'entrar';
+    const faixa = document.createElement('div'); faixa.className = 'demo'; faixa.innerHTML = `Demonstração visual · estado "${esc(estado)}" · sem gravação · <a href="?demo=entrar">entrar</a> · <a href="?demo=criar">criar</a> · <a href="?demo=codigo">código</a> · <a href="?demo=pendente">@ pendente</a> · <a href="?demo=conta">minha conta</a> · <a href="?demo=membro">membro</a>`; document.body.prepend(faixa);
+    const perfilDemo = { nome: 'Ana Souza', nome_exibicao: 'Ana', handle: 'ana_souza', preferencia: 'piloto', instagram: 'ana.drift', apresentacao: 'Piloto de E36 desde 2023. Treino no RJ Race Park.', telefone: '21999990001', perfil_publico: false };
+    if (estado === 'entrar') mostrar('acesso');
+    if (estado === 'criar') { mostrar('acesso'); aba('criar'); $('cHandle').value = 'ana_souza'; $('hDica').textContent = '@ana_souza disponível'; $('hDica').className = 'dica ok'; }
+    if (estado === 'codigo') { mostrar('acesso'); $('fEntrar').hidden = true; $('fCriar').hidden = true; $('fCodigo').hidden = false; $('codEmail').textContent = 'ana@exemplo.com'; }
+    if (estado === 'pendente') { mostrar('pendente'); $('pHandle').value = 'ana_souza'; $('pDica').innerHTML = '@ana_souza já está em uso. Sugestões: <button type="button">ana_souza_rj</button> <button type="button">ana_souza_drift</button> <button type="button">ana_souza2</button>'; $('pDica').className = 'dica err'; }
+    if (estado === 'conta' || estado === 'membro') { mostrar('minhaConta'); preencher(perfilDemo, estado === 'membro' ? { status: 'aprovada', membro_desde: '2026-09-17' } : { status: 'pendente', solicitada_em: '2026-09-17' }, estado === 'membro' ? [] : []); if (estado === 'membro') { $('chavePublico').checked = true; $('chaveTxt').textContent = 'Público'; $('chaveTxt').className = 'status on'; } }
+    return;
+  }
+
+  if (!CD.CONTAS_DISPONIVEIS) { mostrar('semAmbiente'); return; }
+  sb = supabase.createClient(CD.SB_URL, CD.SB_KEY);
+
+  // ---------- abas entrar/criar ----------
+  function aba(t){ document.querySelectorAll('.cartao .abas [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t)); $('fEntrar').hidden = t !== 'entrar'; $('fCriar').hidden = t !== 'criar'; $('fCodigo').hidden = true; }
+  document.querySelectorAll('.cartao .abas [role=tab]').forEach(b => b.addEventListener('click', () => aba(b.dataset.t)));
+
+  // ---------- disponibilidade do @ ----------
+  let tHandle = null;
+  async function checaHandle(input, dica){
+    const v = input.value.trim(); dica.className = 'dica';
+    if (!v) { dica.textContent = 'Letras minúsculas, números e _ · 3 a 24 caracteres. Nunca vem do seu e-mail.'; return null; }
+    const { data, error } = await sb.rpc('handle_disponivel', { entrada: v });
+    if (error) { dica.textContent = 'Não deu pra verificar agora.'; dica.className = 'dica err'; return null; }
+    if (!data.valido) { dica.textContent = 'Formato inválido: use letras minúsculas, números e _ (3 a 24).'; dica.className = 'dica err'; return null; }
+    if (data.disponivel) { dica.textContent = `@${data.handle} disponível`; dica.className = 'dica ok'; return data.handle; }
+    dica.innerHTML = `@${esc(data.handle)} já está em uso.` + (data.sugestoes.length ? ' Sugestões: ' + data.sugestoes.map(s => `<button type="button" data-s="${esc(s)}">${esc(s)}</button>`).join(' ') : '');
+    dica.className = 'dica err'; dica.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => { input.value = b.dataset.s; checaHandle(input, dica); }));
+    return null;
+  }
+  for (const [i, d] of [['cHandle','hDica'],['pHandle','pDica']]) $(i).addEventListener('input', () => { clearTimeout(tHandle); tHandle = setTimeout(() => checaHandle($(i), $(d)), 400); });
+
+  // ---------- criar conta ----------
+  $('criar').addEventListener('click', async () => {
+    const nome = $('cNome').value.trim(), email = $('cEmail').value.trim(), senha = $('cSenha').value, pref = document.querySelector('[name=pref]:checked').value, aceite = $('cAceite').checked;
+    const e = $('cErro'); e.textContent = '';
+    if (nome.length < 2) return e.textContent = 'Digite seu nome.';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return e.textContent = 'Digite um e-mail válido.';
+    if (senha.length < 12) return e.textContent = 'A senha precisa ter pelo menos 12 caracteres.';
+    const handle = await checaHandle($('cHandle'), $('hDica')); if (!handle) return e.textContent = 'Escolha um @ disponível.';
+    if (!aceite) return e.textContent = 'Aceite os termos para continuar.';
+    $('criar').disabled = true;
+    const { error } = await sb.auth.signUp({ email, password: senha, options: { data: { nome, preferencia: pref, handle, aceite: 'true' } } });
+    $('criar').disabled = false;
+    if (error) return e.textContent = /already/i.test(error.message) ? 'Esse e-mail já tem conta. Entre com sua senha ou use "Esqueci minha senha".' : 'Não deu pra criar a conta agora.';
+    $('fCriar').hidden = true; $('fCodigo').hidden = false; $('codEmail').textContent = email; $('codigo').focus();
+    $('confirmar').onclick = async () => {
+      const { error: e2 } = await sb.auth.verifyOtp({ email, token: $('codigo').value.trim(), type: 'signup' });
+      if (e2) return $('codErro').textContent = 'Código inválido ou expirado.';
+      await carregar();
+    };
+  });
+  // ---------- entrar ----------
+  $('entrar').addEventListener('click', async () => {
+    const { error } = await sb.auth.signInWithPassword({ email: $('lEmail').value.trim(), password: $('lSenha').value });
+    if (error) return $('lErro').textContent = 'E-mail ou senha incorretos.';
+    await carregar();
+  });
+  $('lSenha').addEventListener('keydown', e => { if (e.key === 'Enter') $('entrar').click(); });
+  $('esqueci').addEventListener('click', async e => { e.preventDefault(); const email = $('lEmail').value.trim(); if (!email) return $('lErro').textContent = 'Digite seu e-mail primeiro.'; const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/conta/' }); $('lErro').textContent = error ? 'Não deu pra enviar agora.' : 'Enviamos um link pra redefinir a senha.'; });
+  $('sair').addEventListener('click', async () => { await sb.auth.signOut(); mostrar('acesso'); });
+  $('trocarSenha').addEventListener('click', async () => { const nova = prompt('Nova senha (mínimo 12 caracteres):'); if (!nova) return; if (nova.length < 12) return alert('Senha muito curta.'); const { error } = await sb.auth.updateUser({ password: nova }); alert(error ? 'Não deu pra trocar.' : 'Senha trocada.'); });
+  sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') $('trocarSenha').click(); });
+
+  // ---------- @ pendente ----------
+  $('definirHandle').addEventListener('click', async () => {
+    const { data, error } = await sb.rpc('definir_handle', { entrada: $('pHandle').value.trim() });
+    if (error || !data.ok) return $('pErro').textContent = { invalido: 'Formato inválido.', reservado: 'Esse @ é reservado.', indisponivel: 'Esse @ acabou de ser ocupado. Tente outro.', ja_definido: 'Seu @ já está definido.' }[data && data.motivo] || 'Não deu pra salvar agora.';
+    await carregar();
+  });
+
+  // ---------- minha conta ----------
+  function preencher(p, assoc, caps){
+    perfil = p;
+    $('mcArroba').textContent = p.handle ? '@' + p.handle : ''; $('mcNome').textContent = p.nome_exibicao;
+    $('eNome').value = p.nome || ''; $('eExib').value = p.nome_exibicao || ''; $('eInsta').value = p.instagram || ''; $('eApres').value = p.apresentacao || ''; $('eTel').value = fmtTel(p.telefone || '');
+    const r = document.querySelector(`[name=epref][value=${p.preferencia}]`); if (r) r.checked = true;
+    $('avatarBox').innerHTML = p.avatar_url ? `<img src="${esc(p.avatar_url)}" alt="">` : esc((p.nome_exibicao || '?')[0].toUpperCase());
+    $('chavePublico').checked = !!p.perfil_publico; $('chaveTxt').textContent = p.perfil_publico ? 'Público' : 'Privado'; $('chaveTxt').className = 'status' + (p.perfil_publico ? ' on' : '');
+    $('urlPerfil').textContent = `cariocadrift.com.br/u/${p.handle || '…'}/`; $('verPerfil').hidden = !p.perfil_publico; $('verPerfil').href = `/u/?h=${encodeURIComponent(p.handle || '')}`;
+    // capacidades
+    if (caps && caps.length) { $('mcCapacidades').hidden = false; $('mcCapacidades').innerHTML = caps.map(c => `<span class="status on">${c === 'admin' ? 'Administração' : 'Fotógrafo credenciado'}</span>`).join(' ') + (caps.includes('admin') ? ' <a class="btn btn-linha btn-p" href="/admin/">Abrir painel</a>' : ''); }
+    // clube
+    const st = assoc ? assoc.status : null;
+    const T = { null: ['Você ainda não solicitou associação.', '—', ''], pendente: ['Solicitação enviada. A organização vai analisar e você acompanha por aqui.', 'Pendente', 'on'], aprovada: ['Você é membro do Clube Carioca Drift.', 'Membro', 'ok'], recusada: ['Sua solicitação foi recusada' + (assoc && assoc.motivo ? ': ' + assoc.motivo : '.') + ' Você pode solicitar de novo.', 'Recusada', 'no'], cancelada: ['Você cancelou a solicitação. Pode solicitar de novo quando quiser.', 'Cancelada', ''], encerrada: ['Sua associação foi encerrada' + (assoc && assoc.motivo ? ': ' + assoc.motivo : '.') + ' Você pode solicitar de novo.', 'Encerrada', 'no'] };
+    const [txt, rot, cls] = T[st] || T[null];
+    $('clubeTxt').textContent = txt; $('clubeStatus').textContent = rot; $('clubeStatus').className = 'status ' + cls;
+    $('clubeAcoes').innerHTML = st === 'aprovada' ? '<a class="btn am" href="/clube/">Entrar na área do clube</a>' : st === 'pendente' ? '<button class="btn btn-linha" id="cancelarAssoc" type="button">Cancelar solicitação</button>' : '<button class="btn am" id="solicitarAssoc" type="button">Solicitar associação</button>';
+    const s = $('solicitarAssoc'); if (s) s.addEventListener('click', async () => { const msg = prompt('Quer deixar uma mensagem para a organização? (opcional)') || null; const { data, error } = await sb.rpc('solicitar_associacao', { mensagem_txt: msg }); if (error || !data.ok) alert('Não deu pra enviar agora.'); else await carregar(); });
+    const c = $('cancelarAssoc'); if (c) c.addEventListener('click', async () => { if (!confirm('Cancelar sua solicitação?')) return; await sb.rpc('cancelar_solicitacao_associacao'); await carregar(); });
+  }
+  $('trocarFoto').addEventListener('click', () => $('avatarFile').click());
+  $('avatarFile').addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return; const { data: { user } } = await sb.auth.getUser();
+    const caminho = `${user.id}/avatar-${Date.now()}.${(f.name.split('.').pop() || 'jpg').toLowerCase()}`;
+    const { error } = await sb.storage.from('avatares').upload(caminho, f, { upsert: true, contentType: f.type }); if (error) return alert('Não deu pra enviar a foto.');
+    const { error: e2 } = await sb.from('usuarios').update({ avatar_path: caminho }).eq('id', user.id); if (e2) return alert('Foto enviada, mas não deu pra salvar no perfil.');
+    await carregar();
+  });
+  $('salvarPerfil').addEventListener('click', async () => {
+    const { data: { user } } = await sb.auth.getUser(); const tel = $('eTel').value.replace(/\D/g, '');
+    const reg = { nome: $('eNome').value.trim(), nome_exibicao: $('eExib').value.trim(), preferencia: document.querySelector('[name=epref]:checked').value, instagram: $('eInsta').value.trim().replace(/^@/, '').toLowerCase() || null, apresentacao: $('eApres').value.trim() || null, telefone: tel || null };
+    const { error } = await sb.from('usuarios').update(reg).eq('id', user.id);
+    $('eErro').textContent = error ? 'Não deu pra salvar. Confira os campos.' : ''; if (!error) { $('eErro').textContent = 'Perfil salvo.'; await carregar(); }
+  });
+  $('chavePublico').addEventListener('change', async e => {
+    const ligar = e.target.checked; if (ligar && !confirm('Tornar seu perfil público? Nome de exibição, @, preferência, apresentação, Instagram e foto ficam visíveis para qualquer pessoa.')) { e.target.checked = false; return; }
+    const { data, error } = await sb.rpc('definir_perfil_publico', { ligar }); if (error || !data.ok) { e.target.checked = !ligar; alert(data && data.motivo === 'cadastro_incompleto' ? 'Conclua o cadastro primeiro.' : 'Não deu pra alterar agora.'); return; }
+    await carregar();
+  });
+
+  async function carregar(){
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { mostrar('acesso'); return; }
+    const { data: p } = await sb.from('usuarios').select('*').eq('id', session.user.id).single();
+    if (!p) { mostrar('acesso'); return; }
+    if (p.estado_cadastro !== 'completo' || !p.handle) { mostrar('pendente'); return; }
+    if (p.avatar_path) { const { data: s } = await sb.storage.from('avatares').createSignedUrl(p.avatar_path, 600); p.avatar_url = s && s.signedUrl; }
+    const [{ data: assoc }, { data: caps }] = await Promise.all([sb.from('associacoes').select('*').eq('usuario_id', session.user.id).maybeSingle(), sb.from('capacidades').select('capacidade').eq('usuario_id', session.user.id).is('revogada_em', null)]);
+    preencher(p, assoc, (caps || []).map(c => c.capacidade)); mostrar('minhaConta');
+  }
+  $('eTel').addEventListener('input', () => { let d = $('eTel').value.replace(/\D/g,'').slice(0,11); $('eTel').value = d.length > 6 ? `(${d.slice(0,2)}) ${d.slice(2,d.length-4)}-${d.slice(-4)}` : d.length > 2 ? `(${d.slice(0,2)}) ${d.slice(2)}` : d; });
+  await carregar();
+})();
+</script>

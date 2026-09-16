@@ -1,7 +1,19 @@
 /* Carioca Drift · utilidades compartilhadas (público) */
 window.CD = (() => {
-  const SB_URL = "https://trkwfwvqzfvscqwwldpv.supabase.co";
-  const SB_KEY = "sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm";
+  // Ambientes: produção (padrão) e DEV (etapa B). O DEV só é usado em localhost com ?env=dev (fica em localStorage)
+  // e só quando o projeto DEV existir; até lá as páginas de conta mostram o aviso "ambiente não configurado".
+  const AMBIENTES = {
+    prod: { url: "https://trkwfwvqzfvscqwwldpv.supabase.co", key: "sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm" },
+    dev:  { url: "", key: "" }   // preencher quando o projeto carioca-drift-dev for criado (com autorização)
+  };
+  const LOCAL = /^(localhost|127\.0\.0\.1|192\.168\.)/.test(location.hostname);
+  const envParam = new URLSearchParams(location.search).get('env');
+  if (LOCAL && envParam) { try { localStorage.setItem('cd_env', envParam === 'dev' ? 'dev' : 'prod'); } catch (e) {} }
+  let ENV = 'prod'; try { if (LOCAL && localStorage.getItem('cd_env') === 'dev') ENV = 'dev'; } catch (e) {}
+  const DEMO = LOCAL && new URLSearchParams(location.search).has('demo');
+  const SB_URL = AMBIENTES[ENV].url || AMBIENTES.prod.url;
+  const SB_KEY = AMBIENTES[ENV].key || AMBIENTES.prod.key;
+  const CONTAS_DISPONIVEIS = ENV === 'dev' && !!AMBIENTES.dev.url;   // módulo de contas só existe no DEV
   const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   const MESES_LONGO = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
   const DIAS = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
@@ -128,5 +140,5 @@ window.CD = (() => {
   const init = () => { menuMobile(); ctaProximo(); barraProximo(); topoMarca(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  return { SB_URL, SB_KEY, participacao, RENDERS_CONCEITUAIS, CARONA_LISTA_ATIVA, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
+  return { SB_URL, SB_KEY, ENV, DEMO, CONTAS_DISPONIVEIS, participacao, RENDERS_CONCEITUAIS, CARONA_LISTA_ATIVA, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();

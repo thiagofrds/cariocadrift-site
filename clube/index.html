@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clube | Carioca Drift</title>
+<meta name="description" content="Área do Clube Carioca Drift, exclusiva para membros aprovados.">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="canonical" href="https://cariocadrift.com.br/clube/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Carioca Drift">
+<meta property="og:title" content="Clube Carioca Drift">
+<meta property="og:description" content="Área do Clube Carioca Drift, exclusiva para membros aprovados.">
+<meta property="og:url" content="https://cariocadrift.com.br/clube/">
+<meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@0,700;0,800;1,900&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/cd.js"></script>
+<meta name="robots" content="noindex"></head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="top" id="topo">
+  <div class="wrap">
+    <span class="rotulo-top" aria-hidden="true">Carioca Drift Culture</span>
+    <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="/" >Home</a></li>
+        <li><a href="/treinos/" >Treinos</a></li>
+        <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+        <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
+        <li><a href="/escolinha/" >Escolinha</a></li>
+        <li><a href="/sobre/" >Sobre</a></li>
+        <li><a href="/conta/" aria-current="page" id="navConta">Conta</a></li>
+      </ul>
+    </nav>
+    <a class="cta" id="navCta" href="/treinos/">Próximo treino</a>
+    <button class="menu-btn" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+<div class="mm" id="menuMobile" hidden>
+  <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254"></a>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="/" >Home</a></li>
+      <li><a href="/treinos/" >Treinos</a></li>
+      <li><span class="breve" title="Em breve">Ingressos<i>em breve</i></span></li>
+      <li><span class="breve" title="Em breve">Carioca Media<i>em breve</i></span></li>
+      <li><a href="/escolinha/" >Escolinha</a></li>
+      <li><a href="/sobre/" >Sobre</a></li>
+      <li><a href="/conta/" aria-current="page">Conta</a></li>
+    </ul>
+    <a class="ig" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture →</a>
+  </nav>
+</div>
+<style>
+.clube{padding-block:40px 72px}
+.clube h1{font-size:clamp(44px,9vw,84px)}
+.clube h1 em{font-style:italic;font-weight:900;color:var(--amarelo)}
+.clube .cartao-m{border:1px solid var(--linha-forte);border-top:3px solid var(--amarelo);padding:22px;display:grid;gap:10px;max-width:560px;margin-top:24px}
+.clube .cartao-m b{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.clube .cartao-m .rot{color:var(--amarelo)}
+.clube .lista{margin-top:36px;display:grid;gap:18px}
+.clube .lista li{list-style:none;padding-top:14px;border-top:1px solid var(--linha-forte)}
+.clube .lista b{display:block;font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}
+.clube .lista p{color:var(--cinza);font-size:15px;margin-top:6px;max-width:44ch}
+.bloqueio{padding:60px 0;text-align:center}
+.bloqueio h1{font-size:clamp(40px,8vw,72px)}
+.bloqueio p{color:var(--cinza);margin-top:12px;max-width:44ch;margin-inline:auto}
+@media (min-width:900px){.clube .lista{grid-template-columns:repeat(3,1fr);gap:40px}}
+</style>
+
+<main id="conteudo">
+  <div class="wrap clube" id="area" hidden>
+    <span class="rot am">Área exclusiva</span>
+    <h1>Clube <em>Carioca Drift</em></h1>
+    <p class="prosa">Bem-vindo, <b id="cNome"></b>. Esta área é dos membros aprovados do clube.</p>
+    <div class="cartao-m"><span class="rot">Sua associação</span><b>Membro desde <span id="cDesde"></span></b><p class="nota" style="text-align:left;margin:0">Ser membro não libera pista, não é ingresso e não garante participação em eventos. Pista e ingressos seguem as regras de cada treino.</p></div>
+    <ul class="lista">
+      <li><b>Comunicados</b><p>Avisos da organização para os membros aparecerão aqui.</p></li>
+      <li><b>Encontros</b><p>Atividades do clube, quando houver, serão anunciadas aqui.</p></li>
+      <li><b>Benefícios</b><p>A definir pela organização. Nada foi prometido ainda.</p></li>
+    </ul>
+  </div>
+  <div class="wrap bloqueio" id="bloqueio" hidden>
+    <span class="rot am">Clube Carioca Drift</span>
+    <h1 id="bTitulo">Área dos membros</h1>
+    <p id="bTexto"></p>
+    <div class="acoes" style="justify-content:center;margin-top:24px" id="bAcoes"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async () => {
+  const $ = id => document.getElementById(id);
+  const bloqueia = (titulo, texto, acoes) => { $('bloqueio').hidden = false; $('bTitulo').textContent = titulo; $('bTexto').textContent = texto; $('bAcoes').innerHTML = acoes; };
+  const libera = (nome, desde) => { $('area').hidden = false; $('cNome').textContent = nome; $('cDesde').textContent = desde; };
+  if (CD.DEMO) { const e = new URLSearchParams(location.search).get('demo'); return e === 'membro' ? libera('Ana', '17.09.2026') : bloqueia('Área dos membros', 'Você precisa ser membro aprovado do Clube Carioca Drift para entrar aqui.', '<a class="btn am" href="/conta/">Ir para minha conta</a>'); }
+  if (!CD.CONTAS_DISPONIVEIS) return bloqueia('Área dos membros', 'O módulo de contas ainda não está ativo.', '<a class="btn btn-linha" href="/">Home</a>');
+  const sb = supabase.createClient(CD.SB_URL, CD.SB_KEY);
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return bloqueia('Área dos membros', 'Entre na sua conta para acessar a área do clube.', '<a class="btn am" href="/conta/">Entrar</a>');
+  const [{ data: p }, { data: a }] = await Promise.all([sb.from('usuarios').select('nome_exibicao').eq('id', session.user.id).single(), sb.from('associacoes').select('status, membro_desde').eq('usuario_id', session.user.id).maybeSingle()]);
+  if (!a || a.status !== 'aprovada') return bloqueia('Área dos membros', a && a.status === 'pendente' ? 'Sua solicitação está em análise. Você acompanha o status em Minha Conta.' : 'Você precisa ser membro aprovado do Clube Carioca Drift para entrar aqui. Solicite a associação em Minha Conta.', '<a class="btn am" href="/conta/">Ir para minha conta</a>');
+  libera(p.nome_exibicao, new Date(a.membro_desde).toLocaleDateString('pt-BR'));
+})();
+</script>
+<footer>
+  <div class="wrap">
+    <div class="marca-rodape">
+      <a class="logo" href="/" aria-label="Carioca Drift Culture, início"><img src="/assets/marca/logos/logo-carioca-drift-transparente.png" alt="" width="1254" height="1254" loading="lazy"></a>
+      <b>Carioca Drift Culture<small>More than drift. It's a culture.</small></b>
+      <p>Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift e a cena carioca crescendo junto.</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <span class="rotulo">Site</span>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/caronas/">Caronas</a></li>
+        <li><a href="/escolinha/">Escolinha de Drift</a></li>
+        <li><a href="/sobre/">Sobre</a></li>
+      </ul>
+    </nav>
+    <div>
+      <span class="rotulo">Contato</span>
+      <ul>
+        <li><a class="insta" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">@cariocadriftculture</a></li>
+        <li>Direct no Instagram pra parcerias e dúvidas</li>
+        <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
+      </ul>
+    </div>
+    <div class="rodape-base">
+      <span>© 2026 Carioca Drift Culture · Rio de Janeiro · Fotografias: Sergio Photos RJ</span>
+      <a href="/admin/">Painel</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

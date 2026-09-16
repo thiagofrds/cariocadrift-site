@@ -122,6 +122,8 @@ footer{padding-bottom:110px}
 <script>
 (async () => {
   const { esc, paragrafos, rest, inicio, fim, hora, dataExtenso, dataCurta, foto } = CD;
+  const mu = location.pathname.match(/^\/u\/([a-z0-9_]{3,24})\/?$/);   // perfil ainda sem página estática (404.html): abre pelo template
+  if (mu) { location.replace('/u/?h=' + encodeURIComponent(mu[1])); return; }
   const m = location.pathname.match(/^\/treinos\/([a-z0-9-]+)\/?$/);
   const slug = (m && m[1] !== "evento" ? m[1] : null) || new URLSearchParams(location.search).get("t");
   const carregando = document.getElementById('carregando');

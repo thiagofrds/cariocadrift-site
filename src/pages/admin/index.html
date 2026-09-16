@@ -88,6 +88,8 @@ extra_head: <meta name="robots" content="noindex">
       <div class="abas" role="tablist">
         <button role="tab" data-aba="treinos" aria-selected="true">Treinos</button>
         <button role="tab" data-aba="leads" aria-selected="false">Leads</button>
+        <button role="tab" data-aba="clube" aria-selected="false">Clube</button>
+        <button role="tab" data-aba="usuarios" aria-selected="false">Usuários</button>
       </div>
 
       <!-- TREINOS -->
@@ -170,6 +172,27 @@ extra_head: <meta name="robots" content="noindex">
           <div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>Telefone</th><th>Data</th><th>Origem</th><th>Mensagem</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
         </div>
       </section>
+
+      <!-- CLUBE -->
+      <section class="aba" id="aba-clube" hidden>
+        <div class="barra"><h2>Clube Carioca Drift</h2><span class="sessao">Associação ≠ conta ≠ piloto autorizado ≠ ingresso. Aprovar não libera pista nem entrada.</span></div>
+        <div class="subabas" role="tablist">
+          <button role="tab" data-csub="pendentes" aria-selected="true">Solicitações</button>
+          <button role="tab" data-csub="membros" aria-selected="false">Membros</button>
+          <button role="tab" data-csub="historico" aria-selected="false">Histórico</button>
+        </div>
+        <div class="ferramentas"><input id="buscaClube" type="search" placeholder="Pesquisar por nome ou @" autocomplete="off"><span></span><span class="resumo" id="resumoClube"></span><div class="acoes"><button class="btn btn-cinza btn-p" id="csvClube" type="button">CSV membros</button></div></div>
+        <div class="sub" id="csub-pendentes"><div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>@</th><th>Pedido</th><th>Mensagem</th><th></th></tr></thead><tbody id="tbPendentes"></tbody></table></div></div>
+        <div class="sub" id="csub-membros" hidden><div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>@</th><th>Membro desde</th><th>Situação</th><th></th></tr></thead><tbody id="tbMembros"></tbody></table></div></div>
+        <div class="sub" id="csub-historico" hidden><div class="rolagem"><table class="tabela leads"><thead><tr><th>Quando</th><th>Ação</th><th>Alvo</th><th>Por</th><th>Motivo</th></tr></thead><tbody id="tbHistorico"></tbody></table></div></div>
+      </section>
+
+      <!-- USUÁRIOS -->
+      <section class="aba" id="aba-usuarios" hidden>
+        <div class="barra"><h2>Usuários</h2><span class="sessao">Permissão do painel via <b id="origemAdmin">—</b>. Capacidades são concedidas por outro administrador, nunca a si mesmo.</span></div>
+        <div class="ferramentas"><input id="buscaUsuarios" type="search" placeholder="Pesquisar por nome, @ ou e-mail" autocomplete="off"><span></span><span class="resumo" id="resumoUsuarios"></span><span></span></div>
+        <div class="rolagem"><table class="tabela leads"><thead><tr><th>Nome</th><th>@</th><th>Cadastro</th><th>Perfil</th><th>Capacidades</th><th></th></tr></thead><tbody id="tbUsuarios"></tbody></table></div>
+      </section>
     </div>
   </div>
 </main>
@@ -226,7 +249,10 @@ extra_head: <meta name="robots" content="noindex">
     document.querySelectorAll('.abas [role=tab]').forEach(x => x.setAttribute('aria-selected', x === b));
     document.querySelectorAll('.aba').forEach(s => s.hidden = s.id !== 'aba-' + b.dataset.aba);
     if (b.dataset.aba === 'leads') await abrirSub(subAtual);
+    if (b.dataset.aba === 'clube') await carregarClube();
+    if (b.dataset.aba === 'usuarios') await carregarUsuarios();
   }));
+  document.querySelectorAll('.subabas [role=tab][data-csub]').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('[data-csub]').forEach(x => x.setAttribute('aria-selected', x === b)); document.querySelectorAll('#aba-clube .sub').forEach(d => d.hidden = d.id !== 'csub-' + b.dataset.csub); }));
   document.querySelectorAll('.subabas [role=tab]').forEach(b => b.addEventListener('click', () => abrirSub(b.dataset.sub)));
   async function abrirSub(sub){
     subAtual = sub;
@@ -391,6 +417,66 @@ extra_head: <meta name="robots" content="noindex">
     $('tbEsc').innerHTML = lista.map(c => `<tr><td class="nome">${esc(c.nome)}</td><td class="num" data-r="Telefone"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td class="num" data-r="Data">${fmtQuando(c.criado_em)}</td><td data-r="Origem">Site · Escolinha</td><td data-r="Mensagem">${esc([PAC[c.pacote] || '', c.mensagem || ''].filter(Boolean).join(' · '))}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Ninguém ainda.</td></tr>';
   }
   $('tbEsc').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar esse interessado?')) return; await sb.from('interessados_escolinha').delete().eq('id', +b.dataset.del); await carregarEsc(); });
+  // ---------- Clube (associações) ----------
+  let assoc = [], usuariosMapa = {}, historico = [];
+  const nomeU = id => { const u = usuariosMapa[id]; return u ? `${esc(u.nome_exibicao)} <small>@${esc(u.handle || '…')}</small>` : '—'; };
+  const casaClube = (u) => { const q = normaliza($('buscaClube').value.trim()); if (!q) return true; return normaliza(u.nome_exibicao + ' ' + u.nome).includes(q) || (u.handle || '').includes(q); };
+  async function carregarClube(){
+    if (!CD.CONTAS_DISPONIVEIS) { $('tbPendentes').innerHTML = '<tr><td colspan="5">O módulo de contas e Clube ainda não está ativo neste ambiente.</td></tr>'; return; }
+    const [{ data: a }, { data: u }, { data: h }] = await Promise.all([sb.from('associacoes').select('*').order('solicitada_em', { ascending: false }), sb.from('usuarios').select('id,nome,nome_exibicao,handle'), sb.from('acoes_admin').select('*').like('acao', 'associacao_%').order('criado_em', { ascending: false }).limit(200)]);
+    assoc = a || []; usuariosMapa = {}; (u || []).forEach(x => usuariosMapa[x.id] = x); historico = h || []; desenharClube();
+  }
+  function desenharClube(){
+    const pend = assoc.filter(a => a.status === 'pendente' && casaClube(usuariosMapa[a.usuario_id] || {}));
+    const memb = assoc.filter(a => a.status !== 'pendente' && casaClube(usuariosMapa[a.usuario_id] || {}));
+    $('resumoClube').textContent = `${assoc.filter(a => a.status === 'pendente').length} pendente(s) · ${assoc.filter(a => a.status === 'aprovada').length} membro(s)`;
+    $('tbPendentes').innerHTML = pend.map(a => `<tr><td class="nome">${nomeU(a.usuario_id)}</td><td data-r="@">@${esc((usuariosMapa[a.usuario_id] || {}).handle || '')}</td><td class="num" data-r="Pedido">${fmtQuando(a.solicitada_em)}</td><td data-r="Mensagem">${esc(a.mensagem || '')}</td><td><div class="acoes-linha"><button data-aprovar="${a.usuario_id}">Aprovar</button><button class="perigo" data-recusar="${a.usuario_id}">Recusar</button></div></td></tr>`).join('') || '<tr><td colspan="5">Nenhuma solicitação pendente.</td></tr>';
+    const ST = { aprovada: 'Membro', recusada: 'Recusada', cancelada: 'Cancelada', encerrada: 'Encerrada' };
+    $('tbMembros').innerHTML = memb.map(a => `<tr><td class="nome">${nomeU(a.usuario_id)}</td><td data-r="@">@${esc((usuariosMapa[a.usuario_id] || {}).handle || '')}</td><td class="num" data-r="Desde">${a.membro_desde ? fmtQuando(a.membro_desde) : '—'}</td><td data-r="Situação"><span class="pill ${a.status === 'aprovada' ? 'on' : 'off'}">${ST[a.status] || a.status}</span>${a.motivo ? ` <small>${esc(a.motivo)}</small>` : ''}</td><td><div class="acoes-linha">${a.status === 'aprovada' ? `<button class="perigo" data-encerrar="${a.usuario_id}">Encerrar</button>` : ''}</div></td></tr>`).join('') || '<tr><td colspan="5">Nenhum membro ainda.</td></tr>';
+    $('tbHistorico').innerHTML = historico.map(h => `<tr><td class="num">${fmtQuando(h.criado_em)}</td><td data-r="Ação">${esc(h.acao.replace('associacao_', ''))}</td><td data-r="Alvo">${nomeU(h.alvo_usuario_id)}</td><td data-r="Por">${nomeU(h.admin_id)}</td><td data-r="Motivo">${esc(h.motivo || '')}</td></tr>`).join('') || '<tr><td colspan="5">Sem decisões ainda.</td></tr>';
+  }
+  $('buscaClube').addEventListener('input', desenharClube);
+  document.getElementById('aba-clube').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.aprovar) { if (!confirm('Aprovar a associação? Isso não libera pista nem ingresso.')) return; const { data, error } = await sb.rpc('decidir_associacao', { alvo: b.dataset.aprovar, aprovar: true, motivo_txt: null }); if (error || !data.ok) alert('Não deu pra aprovar: ' + (error ? error.message : data.motivo)); await carregarClube(); }
+    if (b.dataset.recusar) { const m = prompt('Motivo da recusa (obrigatório, o solicitante vê):'); if (!m || m.trim().length < 3) return; const { data, error } = await sb.rpc('decidir_associacao', { alvo: b.dataset.recusar, aprovar: false, motivo_txt: m.trim() }); if (error || !data.ok) alert('Não deu pra recusar.'); await carregarClube(); }
+    if (b.dataset.encerrar) { const m = prompt('Motivo do encerramento (obrigatório):'); if (!m || m.trim().length < 3) return; const { data, error } = await sb.rpc('encerrar_associacao', { alvo: b.dataset.encerrar, motivo_txt: m.trim() }); if (error || !data.ok) alert('Não deu pra encerrar.'); await carregarClube(); }
+  });
+  $('csvClube').addEventListener('click', () => baixaCsv('membros-clube.csv', [['nome','handle','status','membro_desde','solicitada_em','decidida_em','motivo'], ...assoc.map(a => { const u = usuariosMapa[a.usuario_id] || {}; return [u.nome, u.handle, a.status, a.membro_desde, a.solicitada_em, a.decidida_em, a.motivo]; })]));
+
+  // ---------- Usuários e capacidades ----------
+  let usuarios = [], caps = [];
+  async function carregarUsuarios(){
+    if (!CD.CONTAS_DISPONIVEIS) { $('tbUsuarios').innerHTML = '<tr><td colspan="6">O módulo de contas ainda não está ativo neste ambiente.</td></tr>'; return; }
+    const [{ data: u }, { data: c }, { data: o }] = await Promise.all([sb.from('usuarios').select('id,nome,nome_exibicao,handle,estado_cadastro,perfil_publico,criado_em').order('criado_em', { ascending: false }), sb.from('capacidades').select('*'), sb.rpc('origem_admin')]);
+    usuarios = u || []; caps = c || []; $('origemAdmin').textContent = o || '—'; desenharUsuarios();
+  }
+  function desenharUsuarios(){
+    const q = normaliza($('buscaUsuarios').value.trim());
+    const lista = usuarios.filter(u => !q || normaliza(u.nome + ' ' + u.nome_exibicao).includes(q) || (u.handle || '').includes(q));
+    $('resumoUsuarios').textContent = `${lista.length} de ${usuarios.length}`;
+    $('tbUsuarios').innerHTML = lista.map(u => { const cu = caps.filter(c => c.usuario_id === u.id); const ativas = cu.filter(c => !c.revogada_em).map(c => c.capacidade);
+      return `<tr><td class="nome">${esc(u.nome_exibicao)} <small>${esc(u.nome)}</small></td><td data-r="@">@${esc(u.handle || '…')}</td><td data-r="Cadastro"><span class="pill ${u.estado_cadastro === 'completo' ? 'on' : 'off'}">${u.estado_cadastro === 'completo' ? 'Completo' : '@ pendente'}</span></td><td data-r="Perfil">${u.perfil_publico ? 'Público' : 'Privado'}</td><td data-r="Capacidades">${ativas.map(c => `<span class="pill on">${c}</span>`).join(' ') || '—'}</td><td><div class="acoes-linha">${['admin','fotografo'].map(c => ativas.includes(c) ? `<button class="perigo" data-rev="${u.id}" data-cap="${c}">Revogar ${c}</button>` : `<button data-con="${u.id}" data-cap="${c}">Conceder ${c}</button>`).join('')}</div></td></tr>`; }).join('') || '<tr><td colspan="6">Nenhum usuário.</td></tr>';
+  }
+  $('buscaUsuarios').addEventListener('input', desenharUsuarios);
+  $('tbUsuarios').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b) return; const cap = b.dataset.cap;
+    if (b.dataset.con) { const m = prompt(`Motivo para conceder "${cap}" (fica no histórico):`); if (m === null) return; const { error } = await sb.rpc('conceder_capacidade', { alvo: b.dataset.con, cap, motivo_txt: m || null }); if (error) alert('Não deu: ' + error.message); await carregarUsuarios(); }
+    if (b.dataset.rev) { const m = prompt(`Motivo para revogar "${cap}" (fica no histórico):`); if (m === null) return; const { error } = await sb.rpc('revogar_capacidade', { alvo: b.dataset.rev, cap, motivo_txt: m || null }); if (error) alert('Não deu: ' + error.message); await carregarUsuarios(); }
+  });
+
+  // ---------- modo demonstração do painel (só localhost, ?demo=clube|usuarios): visual sem login nem banco ----------
+  if (CD.DEMO) {
+    const estado = new URLSearchParams(location.search).get('demo');
+    $('login').hidden = true; $('app').hidden = false; $('quem').textContent = 'demonstração';
+    usuariosMapa = { a: { nome: 'Ana Souza', nome_exibicao: 'Ana', handle: 'ana_souza' }, b: { nome: 'Bruno Lima', nome_exibicao: 'Bruno', handle: 'bruno_e36' }, c: { nome: 'Carla Reis', nome_exibicao: 'Carla', handle: 'carlarj' }, t: { nome: 'Thiago', nome_exibicao: 'Thiago', handle: 'thiago' } };
+    assoc = [{ usuario_id: 'a', status: 'pendente', solicitada_em: '2026-09-17T14:10:00Z', mensagem: 'Ando desde 2023, quero fazer parte.' }, { usuario_id: 'b', status: 'pendente', solicitada_em: '2026-09-17T12:00:00Z', mensagem: '' }, { usuario_id: 'c', status: 'aprovada', membro_desde: '2026-09-16T20:00:00Z', solicitada_em: '2026-09-16T18:00:00Z' }];
+    historico = [{ criado_em: '2026-09-16T20:00:00Z', acao: 'associacao_aprovada', alvo_usuario_id: 'c', admin_id: 't', motivo: null }];
+    if (estado === 'usuarios') { usuarios = [{ id: 'a', nome: 'Ana Souza', nome_exibicao: 'Ana', handle: 'ana_souza', estado_cadastro: 'completo', perfil_publico: true }, { id: 'b', nome: 'Bruno Lima', nome_exibicao: 'Bruno', handle: null, estado_cadastro: 'handle_pendente', perfil_publico: false }, { id: 'c', nome: 'Carla Reis', nome_exibicao: 'Carla', handle: 'carlarj', estado_cadastro: 'completo', perfil_publico: false }]; caps = [{ usuario_id: 'c', capacidade: 'fotografo', revogada_em: null }]; $('origemAdmin').textContent = 'capacidades'; document.querySelector('[data-aba=usuarios]').click(); desenharUsuarios(); }
+    else { document.querySelector('[data-aba=clube]').click(); desenharClube(); }
+    const faixa = document.createElement('div'); faixa.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:50;background:#FF0000;color:#fff;font:700 12px/1 var(--ui);letter-spacing:.14em;text-transform:uppercase;text-align:center;padding:6px'; faixa.textContent = 'Demonstração visual do painel · sem login · sem banco'; document.body.prepend(faixa);
+  }
+
   $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','origem','pacote','mensagem','quando'], ...escl.filter(casaBusca).map(c => [c.nome, c.telefone, 'site-escolinha', c.pacote || '', c.mensagem || '', c.criado_em])]));
 })();
 </script>

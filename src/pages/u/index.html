@@ -1,0 +1,74 @@
+---
+title: Perfil | Carioca Drift
+desc: Perfil público na plataforma Carioca Drift.
+og_title: Perfil · Carioca Drift
+nav: conta
+extra_head: <meta name="robots" content="noindex, noarchive">
+---
+<style>
+.perfil{padding-block:40px 72px}
+.perfil .cab{display:grid;gap:18px;align-items:center}
+.perfil .foto-p{width:132px;height:132px;border-radius:50%;background:var(--grafite);border:1px solid var(--linha-forte);overflow:hidden;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:52px;color:var(--cinza)}
+.perfil .foto-p img{width:100%;height:100%;object-fit:cover}
+.perfil h1{font-size:clamp(44px,8vw,72px)}
+.perfil .tags{display:flex;gap:8px;flex-wrap:wrap}
+.perfil .tag{display:inline-block;padding:4px 10px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--linha-forte);color:var(--cinza)}
+.perfil .tag.membro{border-color:var(--amarelo);color:var(--amarelo)}
+.perfil .apres{max-width:60ch;color:var(--gelo);font-size:17px;line-height:1.5;margin-top:8px}
+.perfil .insta{font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--amarelo);text-decoration:none}
+.indisp{padding:80px 0;text-align:center}
+.indisp h1{font-size:clamp(40px,8vw,72px)}
+.indisp p{color:var(--cinza);margin-top:12px}
+@media (min-width:700px){.perfil .cab{grid-template-columns:132px 1fr;gap:28px}}
+</style>
+
+<main id="conteudo">
+  <div class="wrap perfil" id="perfil" hidden>
+    <div class="cab">
+      <div class="foto-p" id="pFoto">?</div>
+      <div>
+        <span class="rot am" id="pArroba"></span>
+        <h1 id="pNome"></h1>
+        <div class="tags" id="pTags"></div>
+        <p class="apres" id="pApres"></p>
+        <p style="margin-top:10px"><a class="insta" id="pInsta" href="#" target="_blank" rel="noopener" hidden></a></p>
+      </div>
+    </div>
+  </div>
+  <div class="wrap indisp" id="indisp" hidden>
+    <span class="rot am">Perfil</span>
+    <h1>Perfil não disponível</h1>
+    <p>Esse perfil não existe ou não está público.</p>
+    <div class="acoes" style="justify-content:center;margin-top:24px"><a class="btn btn-linha" href="/">Ir para a home</a></div>
+  </div>
+  <div class="wrap indisp" id="carregando"><span class="rot am">Carregando…</span></div>
+</main>
+
+<script>
+(async () => {
+  const $ = id => document.getElementById(id), { esc } = CD;
+  const h = (new URLSearchParams(location.search).get('h') || (location.pathname.match(/^\/u\/([a-z0-9_]{3,24})\/?$/) || [])[1] || '').toLowerCase();
+  const mostra = (p) => {
+    $('carregando').hidden = true;
+    if (!p) { $('indisp').hidden = false; document.title = 'Perfil não disponível | Carioca Drift'; return; }
+    document.title = `${p.nome_exibicao} (@${p.handle}) | Carioca Drift`;
+    $('pArroba').textContent = '@' + p.handle; $('pNome').textContent = p.nome_exibicao;
+    $('pTags').innerHTML = `<span class="tag">${p.preferencia === 'piloto' ? 'Piloto' : 'Espectador'}</span>` + (p.membro ? '<span class="tag membro">Membro do Clube</span>' : '');
+    $('pApres').textContent = p.apresentacao || '';
+    if (p.instagram) { $('pInsta').hidden = false; $('pInsta').textContent = '@' + p.instagram; $('pInsta').href = 'https://www.instagram.com/' + encodeURIComponent(p.instagram) + '/'; }
+    $('pFoto').innerHTML = p.avatar_url ? `<img src="${esc(p.avatar_url)}" alt="">` : esc((p.nome_exibicao || '?')[0].toUpperCase());
+    $('perfil').hidden = false;
+  };
+  if (CD.DEMO) {
+    const estado = new URLSearchParams(location.search).get('demo');
+    return mostra(estado === 'indisponivel' ? null : { handle: 'ana_souza', nome_exibicao: 'Ana', preferencia: 'piloto', apresentacao: 'Piloto de E36 desde 2023. Treino no RJ Race Park.', instagram: 'ana.drift', membro: estado === 'membro' });
+  }
+  if (!CD.CONTAS_DISPONIVEIS || !h) return mostra(null);
+  try {
+    const r = await fetch(`${CD.SB_URL}/rest/v1/rpc/perfil_publico`, { method: 'POST', headers: { apikey: CD.SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ entrada: h }) });
+    const p = r.ok ? await r.json() : null;
+    if (p && p.avatar_path) { const s = await fetch(`${CD.SB_URL}/storage/v1/object/sign/avatares/${p.avatar_path}`, { method: 'POST', headers: { apikey: CD.SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 600 }) }).then(x => x.ok ? x.json() : null).catch(() => null); if (s && s.signedURL) p.avatar_url = CD.SB_URL + '/storage/v1' + s.signedURL; }
+    mostra(p);
+  } catch (e) { mostra(null); }
+})();
+</script>
