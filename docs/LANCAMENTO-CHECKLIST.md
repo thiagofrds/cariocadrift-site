@@ -190,3 +190,15 @@ Roteiros: `capturas-e2.js` 241 verificações, `qa-lancamento.js` 64, zero falha
 | Suíte isolada | **35 de 35 passaram** | `sh supabase/tests/rodar-local.sh` + `supabase/tests/concorrencia-carona.sh` |
 
 **Depende de validação no Supabase real (após a migration):** códigos HTTP do PostgREST (201/409/400/403), `return=minimal` sem SELECT, mensagens do gatilho chegando ao formulário, aba Carona Radical no painel de ponta a ponta com registro de teste apagado ao final, e o comportamento do role `postgres` do Supabase como dono (esperado igual ao testado).
+
+## 17. Migration da Carona Radical: manipulação de dados e oráculo de telefone (16/09, noite)
+
+| Ponto | Correção | Verificação isolada |
+|---|---|---|
+| Visitante definir `id` ou `criado_em` | privilégio de INSERT restrito às colunas do formulário (evento, nome, telefone, consentimento, origem); o gatilho ainda força `criado_em = now()` | enviar `criado_em` antigo, `criado_em` futuro ou `id` escolhido → erro de privilégio; nenhuma linha gravada |
+| Oráculo de telefone nos limites | limites passam a contar **tentativas** numa tabela interna sem acesso pela API, verificados antes da duplicidade; duplicata continua silenciosa e conta como tentativa | janela cheia: telefone novo e telefone cadastrado recebem a mesma resposta; limite por telefone: 3 tentativas ok e 4ª barrada, com a mesma mensagem para novo e cadastrado; tentativas barradas não gravam |
+| Apagar treino gera interesses gerais repetidos | documentado no SQL (item 7); painel marca "Interesse geral · repetido" quando o mesmo telefone tem mais de um registro sem treino | teste 2b: apagar treino com telefone presente no treino e na geral → sucesso, nenhum registro perdido |
+| Suíte isolada | **46 de 46**, dono das tabelas sem superusuário e sem contorno de RLS | `docs/capturas/testes-carona-resultado.txt` |
+| Concorrência | 50 na janela + 40 simultâneos: exatamente 10 entram; 6 simultâneos do mesmo telefone: exatamente 3 | idem |
+
+Ainda não aplicada. Formulário oculto. Sem merge.
