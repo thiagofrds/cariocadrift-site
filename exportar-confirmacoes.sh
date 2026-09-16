@@ -8,4 +8,4 @@ baixa() {  # tabela colunas arquivo
   echo "Salvo em $3 ($(($(grep -c . "$3") - 1)) registros)"
 }
 baixa confirmacoes nome,telefone,evento,criado_em "confirmacoes-treino-$DIA.csv"
-baixa interessados_escolinha nome,telefone,mensagem,criado_em "interessados-escolinha-$DIA.csv"
+baixa interessados_escolinha nome,telefone,pacote,mensagem,criado_em "interessados-escolinha-$DIA.csv"

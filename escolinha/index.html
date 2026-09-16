@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Escolinha de Drift | Carioca Drift</title>
-<meta name="description" content="Escolinha de Drift da Carioca Drift com o Fabinho Drift Show. Deixa seu contato e a gente te chama no WhatsApp quando abrirem as turmas.">
+<meta name="description" content="Escolinha de Drift da Carioca Drift com o Fabinho Drift Show. Experiência individual de 2 horas ou curso completo básico em 8 módulos, com carro, pista, pneus e combustível inclusos.">
 <meta name="theme-color" content="#1B1A1F">
 <link rel="canonical" href="https://cariocadrift.com.br/escolinha/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Carioca Drift">
 <meta property="og:title" content="Escolinha de Drift com Fabinho Drift Show">
-<meta property="og:description" content="Escolinha de Drift da Carioca Drift com o Fabinho Drift Show. Deixa seu contato e a gente te chama no WhatsApp quando abrirem as turmas.">
+<meta property="og:description" content="Escolinha de Drift da Carioca Drift com o Fabinho Drift Show. Experiência individual de 2 horas ou curso completo básico em 8 módulos, com carro, pista, pneus e combustível inclusos.">
 <meta property="og:url" content="https://cariocadrift.com.br/escolinha/">
 <meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -48,17 +48,73 @@
 .capa h1 small{display:block;font-size:.42em;color:var(--faisca);letter-spacing:.01em;margin-top:.1em}
 .capa .prosa{margin-top:16px}
 .capa .acoes{margin-top:26px}
+.capa .destaques{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.capa .destaques span{font-family:var(--rotulo);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--borracha);background:var(--asfalto);color:var(--fumaca)}
 @media (min-width:900px){.capa{padding:88px 0 80px}}
 
-.como{padding-block:56px 40px}
+/* pacotes */
+.pacotes{padding-block:56px 24px}
+.pacotes .grade{display:grid;gap:16px;margin-top:26px}
+.pacote{display:grid;gap:16px;align-content:start;padding:24px 22px 26px;border-radius:12px;background:var(--pneu);border:1px solid var(--borracha);position:relative;overflow:hidden}
+.pacote.curso{border-color:var(--faisca)}
+.pacote .faixa{position:absolute;inset:0 0 auto;height:6px;background:var(--borracha)}
+.pacote.curso .faixa{background:repeating-linear-gradient(90deg,var(--faisca) 0 28px,var(--asfalto) 28px 56px)}
+.pacote .topo{display:grid;gap:4px}
+.pacote .tag{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
+.pacote h3{font-size:clamp(34px,6vw,46px)}
+.pacote .resumo{color:var(--cinza)}
+.preco{display:grid;gap:2px}
+.preco b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(44px,8vw,60px);line-height:1;color:var(--faisca);font-variant-numeric:tabular-nums}
+.preco small{font-family:var(--rotulo);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+.precos{display:grid;gap:10px}
+.precos .opcao{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--raio);background:var(--asfalto);border:1px solid var(--borracha)}
+.precos .opcao b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;line-height:1;text-transform:uppercase}
+.precos .opcao span{display:block;color:var(--cinza);font-size:14px;margin-top:2px}
+.precos .opcao .v{font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;color:var(--faisca);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.inclui{list-style:none;padding:0;display:grid;gap:8px}
+.inclui li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:16px}
+.inclui li::before{content:"";width:22px;height:22px;border-radius:50%;background:var(--faisca) center/12px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B1A1F' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12l5 5L20 6'/%3E%3C/svg%3E");margin-top:1px}
+.inclui b{color:var(--fumaca)}
+.inclui span{color:var(--cinza)}
+.pacote .nota-p{font-size:14px;color:var(--cinza);padding-top:12px;border-top:1px solid var(--borracha)}
+.pacote .btn{justify-self:start}
+.pagamento{display:flex;align-items:center;gap:14px;margin-top:16px;padding:16px 18px;border-radius:10px;background:var(--asfalto);border:1px dashed var(--borracha);color:var(--cinza)}
+.pagamento b{color:var(--fumaca)}
+.pagamento i{font-style:normal;width:40px;height:40px;border-radius:var(--raio);background:var(--pneu);display:grid;place-items:center;color:var(--faisca);flex:none}
+.pagamento svg{width:20px;height:20px}
+@media (min-width:900px){.pacotes .grade{grid-template-columns:1fr 1.15fr;gap:24px;align-items:start}.pacote{padding:30px 30px 32px}}
+
+/* formato do curso */
+.formato{background:var(--pneu)}
+.formato .grade{display:grid;gap:12px;margin-top:22px}
+.formato .card{padding:20px;border-radius:10px;background:var(--asfalto);border:1px solid var(--borracha);border-top:4px solid var(--faisca);display:grid;gap:6px;align-content:start}
+.formato .card b{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;text-transform:uppercase}
+.formato .card span{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--faisca)}
+.formato .card p{color:var(--cinza);font-size:16px}
+@media (min-width:900px){.formato .grade{grid-template-columns:repeat(3,1fr);gap:20px}}
+
+/* carros */
+.carros{padding-block:56px 24px}
+.carros .grade{display:grid;gap:12px;margin-top:22px}
+.carro{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:20px;border-radius:10px;background:var(--pneu);border:1px solid var(--borracha)}
+.carro .cor{width:56px;height:56px;border-radius:var(--raio);display:grid;place-items:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;color:var(--asfalto)}
+.carro b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1;text-transform:uppercase}
+.carro p{color:var(--cinza);font-size:15px;margin-top:4px}
+@media (min-width:900px){.carros .grade{grid-template-columns:1fr 1fr;gap:20px}}
+
+/* como funciona */
+.como{padding-block:24px 40px}
 .como ul{list-style:none;padding:0;margin-top:22px;display:grid;gap:12px}
 .como li{padding:20px;border-radius:10px;background:var(--pneu);border:1px solid var(--borracha);border-left:5px solid var(--faisca)}
 .como b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;text-transform:uppercase;line-height:1}
 .como p{color:var(--cinza);margin-top:6px}
 @media (min-width:900px){.como ul{grid-template-columns:repeat(3,1fr);gap:20px}}
 
+/* interesse */
 .interesse{padding-block:24px 72px}
 .interesse .chamada{display:none}
+.campo select{width:100%;margin-top:8px;padding:15px 14px;font:500 18px var(--texto);border:2px solid #CFCCC6;border-radius:var(--raio);background:#fff;color:var(--asfalto)}
+.campo select:focus{border-color:var(--asfalto);outline:none}
 @media (min-width:900px){
   .interesse .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
   .interesse .chamada{display:block}
@@ -73,22 +129,86 @@
   <div class="wrap">
     <p class="eyebrow">Escolinha de Drift</p>
     <h1>Aprende com quem vive isso<small>com Fabinho Drift Show</small></h1>
-    <p class="prosa">A Escolinha de Drift da Carioca Drift é pra quem quer sair do zero ou evoluir na pista com acompanhamento de verdade. Formato, turmas e valores serão divulgados em breve.</p>
+    <p class="prosa">Pista, carro de drift, pneus e combustível inclusos. Você entra no carro com o Fabinho do lado, aprende o básico e vai evoluindo no seu ritmo, do zero até fechar a curva de lado.</p>
+    <div class="destaques">
+      <span>Carro incluso</span><span>Pneus inclusos</span><span>Instrutor ao lado</span><span>Datas a combinar</span>
+    </div>
     <div class="acoes">
       <a class="btn btn-fogo" href="#interesse">Tenho interesse</a>
+      <a class="btn btn-linha" href="#pacotes">Ver pacotes</a>
     </div>
   </div>
 </section>
 
-<!-- Quando o Thiago mandar as informações do Fabinho e das aulas, entram aqui:
-     seção "Quem é o Fabinho" (foto + texto), "Como são as aulas" (formato, duração, carro), "Turmas e valores". -->
+<section class="wrap pacotes" id="pacotes">
+  <p class="eyebrow">Pacotes</p>
+  <h2>Dois jeitos de entrar na pista</h2>
+  <div class="grade">
+
+    <article class="pacote">
+      <div class="faixa"></div>
+      <div class="topo"><span class="tag">Pra sentir o drift</span><h3>Experiência Drift individual</h3><p class="resumo">Duas horas de pista e carro. Você começa com 10 minutos ao lado do Fabinho pra aprender o básico do carro e depois segue o tempo restante de pista fazendo o seu percurso, com dicas de drift.</p></div>
+      <div class="preco"><b>R$ 2.000</b><small>por pessoa</small></div>
+      <ul class="inclui">
+        <li><div><b>2 horas de pista</b> <span>ou até acabar os pneus, de qualquer lado</span></div></li>
+        <li><div><b>Carro de drift</b> <span>Chevette amarelo</span></div></li>
+        <li><div><b>1 par de pneus</b></div></li>
+        <li><div><b>10 minutos com o instrutor no carro</b> <span>pra pegar o básico</span></div></li>
+      </ul>
+      <a class="btn btn-linha" href="#interesse" data-pacote="experiencia">Quero a experiência</a>
+    </article>
+
+    <article class="pacote curso">
+      <div class="faixa"></div>
+      <div class="topo"><span class="tag">Pra aprender de verdade</span><h3>Curso completo básico</h3><p class="resumo">8 módulos, do zero ao drift. Tudo incluso: pista, carro, dois tanques de combustível e dois pares de pneus novos. Você escolhe o carro.</p></div>
+      <div class="precos">
+        <div class="opcao"><div><b>Com o Chevette</b><span>Aspirado, o carro pra aprender a base</span></div><span class="v">R$ 4.500</span></div>
+        <div class="opcao"><div><b>Com o Nissan Z</b><span>Mais potência pra evoluir mais rápido</span></div><span class="v">R$ 8.500</span></div>
+      </div>
+      <ul class="inclui">
+        <li><div><b>8 módulos</b> <span>do básico até fechar a curva</span></div></li>
+        <li><div><b>Pista e carro de drift</b></div></li>
+        <li><div><b>2 tanques de combustível</b></div></li>
+        <li><div><b>2 pares de pneus novos</b></div></li>
+      </ul>
+      <p class="nota-p"><b>Formato:</b> em dois dias, das 12h às 18h, ou tudo em um dia só, das 8h às 18h. O dia único rende, mas é bem mais cansativo pro aluno. Datas a combinar.</p>
+      <a class="btn btn-fogo" href="#interesse" data-pacote="curso-chevette">Quero o curso</a>
+    </article>
+  </div>
+  <div class="pagamento">
+    <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></i>
+    <div><b>Cartão em até 10x sem juros.</b> Fecha o curso pelo WhatsApp e escolhe o carro na hora.</div>
+  </div>
+</section>
+
+<section class="secao formato">
+  <div class="wrap">
+    <p class="eyebrow">Curso completo</p>
+    <h2>Como é o curso</h2>
+    <div class="grade">
+      <div class="card"><span>Formato 1</span><b>Dois dias</b><p>Das 12h às 18h em cada dia. Ritmo bom pra absorver os módulos e descansar entre um e outro.</p></div>
+      <div class="card"><span>Formato 2</span><b>Um dia só</b><p>Das 8h às 18h, tudo de uma vez. Rende, mas é bem mais cansativo pro aluno.</p></div>
+      <div class="card"><span>Conteúdo</span><b>8 módulos</b><p>Do controle básico do carro até manter o drift na curva, com o Fabinho acompanhando cada etapa.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap carros">
+  <p class="eyebrow">Os carros</p>
+  <h2>Escolhe o seu</h2>
+  <div class="grade">
+    <div class="carro"><div class="cor" style="background:var(--faisca)">CH</div><div><b>Chevette amarelo</b><p>Motor aspirado, leve e honesto. É o carro da Experiência e a opção mais em conta do curso: perfeito pra aprender a base sem sustos.</p></div></div>
+    <div class="carro"><div class="cor" style="background:var(--fogo);color:#fff">Z</div><div><b>Nissan Z</b><p>Mais potência e mais resposta. A opção do curso pra quem quer evoluir mais rápido e sentir um carro de drift de verdade.</p></div></div>
+  </div>
+</section>
+<!-- Fotos do Fabinho, dos carros e história da escolinha entram aqui quando o Thiago mandar. -->
 
 <section class="wrap como">
-  <p class="eyebrow">Como vai funcionar</p>
+  <p class="eyebrow">Como funciona</p>
   <h2>Do interesse à pista</h2>
   <ul>
-    <li><b>1. Deixa seu contato</b><p>Nome e telefone no formulário abaixo. Leva 10 segundos.</p></li>
-    <li><b>2. A gente te chama</b><p>Quando as turmas abrirem, você recebe as informações direto no WhatsApp.</p></li>
+    <li><b>1. Deixa seu contato</b><p>Nome, WhatsApp e o pacote que te interessa. Leva 10 segundos.</p></li>
+    <li><b>2. A gente te chama</b><p>Você recebe os detalhes no WhatsApp e combina a data e o carro.</p></li>
     <li><b>3. Você entra na pista</b><p>Com o Fabinho do lado, no seu ritmo, do básico até fechar a curva.</p></li>
   </ul>
 </section>
@@ -98,16 +218,23 @@
     <div class="chamada">
       <p class="eyebrow">Lista de interesse</p>
       <h2>Quer aprender?</h2>
-      <p>Deixa seu contato e a gente te chama no WhatsApp assim que as turmas abrirem.</p>
+      <p>Deixa seu contato e a gente te chama no WhatsApp pra combinar data, carro e pagamento.</p>
     </div>
     <div class="cartao">
       <div id="formulario">
         <h2>Tenho interesse</h2>
-        <p class="sub">Deixa seu contato e a gente te chama no WhatsApp quando as turmas abrirem.</p>
+        <p class="sub">Deixa seu contato e a gente te chama no WhatsApp pra combinar tudo.</p>
         <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
         <div class="erro" id="erroNome"></div>
         <label class="campo" for="tel"><span>Seu WhatsApp</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
         <div class="erro" id="erroTel"></div>
+        <label class="campo" for="pacote"><span>O que te interessa</span>
+          <select id="pacote">
+            <option value="nao-sei">Ainda não sei, quero conversar</option>
+            <option value="experiencia">Experiência Drift individual · R$ 2.000</option>
+            <option value="curso-chevette">Curso completo com o Chevette · R$ 4.500</option>
+            <option value="curso-nissan">Curso completo com o Nissan Z · R$ 8.500</option>
+          </select></label>
         <label class="campo" for="msg"><span>Conta um pouco (opcional)</span><textarea id="msg" maxlength="500" placeholder="Já andou de drift? Tem carro? O que quer aprender?"></textarea></label>
         <button class="btn btn-fogo" id="enviar" type="button">Quero ser chamado</button>
         <p class="nota">Seus dados ficam só com a Carioca Drift. Sem spam.</p>
@@ -115,7 +242,7 @@
       <div class="ok" id="ok">
         <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
         <h3 id="okTitulo">Tá na lista!</h3>
-        <p>Assim que as turmas abrirem, a gente te chama no WhatsApp. Enquanto isso, cola no próximo treino.</p>
+        <p>A gente te chama no WhatsApp pra combinar data, carro e pagamento. Enquanto isso, cola no próximo treino.</p>
         <div class="acoes">
           <a class="btn btn-linha" href="/treinos/">Ver os treinos</a>
         </div>
@@ -133,6 +260,10 @@ const tel = document.getElementById('tel');
 const btn = document.getElementById('enviar');
 const erroNome = document.getElementById('erroNome');
 const erroTel = document.getElementById('erroTel');
+const pacote = document.getElementById('pacote');
+
+// botões dos pacotes pré-selecionam a opção no formulário
+document.querySelectorAll('[data-pacote]').forEach(a => a.addEventListener('click', () => { pacote.value = a.dataset.pacote; }));
 
 tel.addEventListener('input', () => {
   let d = tel.value.replace(/\D/g,'').slice(0,11);
@@ -162,7 +293,7 @@ btn.addEventListener('click', async () => {
     const r = await fetch(`${SB_URL}/rest/v1/interessados_escolinha`, {
       method: 'POST',
       headers: {'apikey': SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
-      body: JSON.stringify({nome, telefone: digits, mensagem})
+      body: JSON.stringify({nome, telefone: digits, mensagem, pacote: pacote.value})
     });
     if (r.status === 201) { mostrarOk(); return; }
     if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }

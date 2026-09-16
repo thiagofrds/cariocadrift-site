@@ -147,7 +147,7 @@ extra_head: <meta name="robots" content="noindex">
       <!-- ESCOLINHA -->
       <section class="aba" id="aba-escolinha" hidden>
         <div class="barra"><h2>Interessados na escolinha</h2><button class="btn btn-cinza btn-p" id="csvEsc" type="button">Baixar CSV</button></div>
-        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Mensagem</th><th>Quando</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
+        <div class="rolagem"><table class="tabela"><thead><tr><th>Nome</th><th>WhatsApp</th><th>Pacote</th><th>Mensagem</th><th>Quando</th><th></th></tr></thead><tbody id="tbEsc"></tbody></table></div>
       </section>
     </div>
   </div>
@@ -328,9 +328,10 @@ extra_head: <meta name="robots" content="noindex">
     const { data, error } = await sb.from('interessados_escolinha').select('*').order('criado_em', {ascending:false});
     if (error) { $('tbEsc').innerHTML = `<tr><td colspan="5">${esc(error.message)}</td></tr>`; return; }
     escl = data;
-    $('tbEsc').innerHTML = escl.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(c.mensagem || '')}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="5">Ninguém ainda.</td></tr>';
+    const PAC = {experiencia:'Experiência', 'curso-chevette':'Curso · Chevette', 'curso-nissan':'Curso · Nissan Z', 'nao-sei':'Não sabe'};
+    $('tbEsc').innerHTML = escl.map(c => `<tr><td>${esc(c.nome)}</td><td class="num"><a href="${wa(c.telefone)}" target="_blank" rel="noopener">${fmtTel(c.telefone)}</a></td><td>${esc(PAC[c.pacote] || '')}</td><td>${esc(c.mensagem || '')}</td><td class="num">${fmtQuando(c.criado_em)}</td><td><div class="acoes-linha"><button class="perigo" data-del="${c.id}">Apagar</button></div></td></tr>`).join('') || '<tr><td colspan="6">Ninguém ainda.</td></tr>';
   }
   $('tbEsc').addEventListener('click', async e => { const b = e.target.closest('[data-del]'); if (!b || !confirm('Apagar esse interessado?')) return; await sb.from('interessados_escolinha').delete().eq('id', +b.dataset.del); await carregarEsc(); });
-  $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','mensagem','quando'], ...escl.map(c => [c.nome, c.telefone, c.mensagem, c.criado_em])]));
+  $('csvEsc').addEventListener('click', () => baixaCsv('interessados-escolinha.csv', [['nome','whatsapp','pacote','mensagem','quando'], ...escl.map(c => [c.nome, c.telefone, c.pacote, c.mensagem, c.criado_em])]));
 })();
 </script>
