@@ -1,0 +1,375 @@
+---
+title: Open Drift Session 20.09 | Carioca Drift
+desc: Primeiro treino de drift aberto ao público da Carioca Drift. Domingo, 20 de setembro, das 9h às 18h, no RJ Race Park, em Santa Cruz.
+og_title: Open Drift Session · 20.09 · RJ Race Park
+nav: treinos
+---
+<style>
+/* ===== HERO ===== */
+.hero{position:relative;isolation:isolate;padding:56px 0 44px;min-height:520px;display:flex;align-items:flex-end;overflow:hidden}
+.hero .fundo{position:absolute;inset:0;z-index:-2}
+.hero .fundo img{width:100%;height:100%;object-fit:cover;object-position:62% 50%;filter:saturate(.9) contrast(1.05)}
+.hero .veu{position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(90deg, rgba(27,26,31,.94) 0%, rgba(27,26,31,.72) 45%, rgba(27,26,31,.35) 100%),
+  linear-gradient(180deg, rgba(27,26,31,.75) 0%, rgba(27,26,31,.15) 35%, rgba(27,26,31,.92) 100%)}
+.hero .grao{position:absolute;inset:0;z-index:-1;opacity:.18;mix-blend-mode:overlay;pointer-events:none}
+.hero .conteudo{position:relative}
+.titulo{font-family:var(--display);font-style:italic;font-weight:900;line-height:.82;letter-spacing:-.01em;text-transform:uppercase;margin-top:16px}
+.titulo .dia{display:block;font-size:clamp(132px,36vw,300px);color:var(--faisca);text-shadow:.04em .04em 0 var(--fogo);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.titulo .nome{display:block;font-size:clamp(48px,11vw,116px);margin-top:.08em;color:var(--fumaca)}
+.lead{margin-top:18px;font-size:clamp(17px,2.2vw,21px);max-width:34ch}
+.hero .acoes{margin-top:26px}
+.contagem{display:flex;gap:10px;margin-top:34px;align-items:stretch;flex-wrap:wrap}
+.contagem .rotulo{flex-basis:100%;font-family:var(--rotulo);font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
+.contagem .bloco{min-width:72px;padding:10px 12px 8px;border-radius:var(--raio);background:rgba(38,37,44,.8);border:1px solid rgba(239,237,232,.12);text-align:center;backdrop-filter:blur(6px)}
+.contagem .bloco b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:40px;line-height:1;color:var(--faisca);font-variant-numeric:tabular-nums}
+.contagem .bloco small{display:block;font-family:var(--rotulo);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);margin-top:4px}
+.contagem .estado{align-self:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:34px;color:var(--faisca);text-transform:uppercase}
+@media (min-width:900px){
+  .hero{padding:96px 0 72px;min-height:min(88vh,820px)}
+  .hero .fundo img{object-position:70% 50%}
+  .hero .veu{background:
+    linear-gradient(90deg, rgba(27,26,31,.96) 0%, rgba(27,26,31,.82) 38%, rgba(27,26,31,.18) 75%, rgba(27,26,31,.05) 100%),
+    linear-gradient(180deg, rgba(27,26,31,.6) 0%, rgba(27,26,31,0) 30%, rgba(27,26,31,.9) 100%)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .titulo .dia{animation:derrapa .7s cubic-bezier(.2,.9,.2,1) both}
+  .titulo .nome,.lead,.hero .acoes{animation:sobe .6s .15s ease both}
+  @keyframes derrapa{from{transform:translateX(-40px) skewX(-12deg);opacity:0}to{transform:none;opacity:1}}
+}
+
+/* ===== TICKER ===== */
+.ticker-caixa{overflow:hidden;position:relative;z-index:2}
+.ticker{background:var(--faisca);color:var(--asfalto);overflow:hidden;white-space:nowrap;border-block:3px solid var(--asfalto);font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;text-transform:uppercase;letter-spacing:.02em;padding-block:8px;transform:rotate(-1.2deg) scale(1.02);margin-block:-6px 8px}
+.ticker .faixa{display:inline-flex;will-change:transform}
+.ticker span{padding-inline:22px}
+.ticker span::after{content:"◆";margin-left:44px;color:var(--fogo);font-style:normal;font-size:.55em;vertical-align:middle}
+@media (prefers-reduced-motion:no-preference){
+  .ticker .faixa{animation:corre 40s linear infinite}
+  @keyframes corre{to{transform:translateX(-50%)}}
+}
+
+/* ===== FICHA ===== */
+.ficha .cabeca{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.agenda{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--faisca);border-bottom:2px solid transparent;padding-bottom:2px}
+.agenda:hover{border-color:var(--faisca)}
+.agenda svg{width:18px;height:18px}
+.ficha .grade{display:grid;border:1px solid var(--borracha);border-radius:8px;overflow:hidden;background:var(--pneu)}
+.item{padding:22px 22px 24px;border-top:1px solid var(--borracha);display:grid;gap:8px;align-content:start}
+.item:first-child{border-top:0}
+.item dt{font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
+.item dd .g{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;line-height:1;text-transform:uppercase}
+.item dd .p{display:block;margin-top:6px;color:var(--cinza);font-size:16px}
+.rotas{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.rota{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--asfalto);border:1px solid var(--borracha);text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
+.rota:hover{border-color:var(--faisca)}
+.rota svg{width:16px;height:16px;color:var(--faisca)}
+.item.alerta{background:repeating-linear-gradient(135deg,var(--faisca) 0 14px,var(--asfalto) 14px 28px) left/12px 100% no-repeat,var(--pneu);padding-left:34px}
+.item.alerta dt{color:var(--faisca)}
+@media (min-width:700px){
+  .ficha .grade{grid-template-columns:1fr 1fr}
+  .item{border-top:0;border-left:1px solid var(--borracha)}
+  .item:nth-child(odd){border-left:0}
+  .item:nth-child(n+3){border-top:1px solid var(--borracha)}
+}
+
+/* ===== O QUE ROLA ===== */
+.rola{background:var(--pneu)}
+.rola .lista{list-style:none;padding:0;margin-top:26px;display:grid}
+.rola li{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding:22px 0;border-top:1px solid var(--borracha)}
+.rola li:last-child{border-bottom:1px solid var(--borracha)}
+.rola .icone{width:46px;height:46px;border-radius:var(--raio);background:var(--asfalto);display:grid;place-items:center;color:var(--faisca)}
+.rola .icone svg{width:24px;height:24px}
+.rola b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1;text-transform:uppercase}
+.rola p{color:var(--cinza);margin-top:6px;max-width:50ch}
+@media (min-width:900px){
+  .rola .lista{grid-template-columns:repeat(3,1fr);gap:0 40px}
+  .rola li{grid-template-columns:1fr;border-top:2px solid var(--faisca);padding-top:20px}
+  .rola li:last-child{border-bottom:0}
+}
+
+/* ===== PISTA ===== */
+.pista .duas{display:grid;gap:26px;margin-top:26px}
+.mapa{border-radius:8px;overflow:hidden;border:1px solid var(--borracha);background:#000}
+.pista .legenda{display:grid;gap:14px;align-content:start}
+.pista .legenda p{color:var(--cinza);max-width:48ch}
+.secoes{list-style:none;padding:0;display:grid;gap:8px;margin-top:4px}
+.secoes li{display:grid;grid-template-columns:10px 1fr;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--borracha)}
+.secoes li:last-child{border-bottom:1px solid var(--borracha)}
+.secoes i{display:block;width:10px;height:36px;border-radius:2px}
+.secoes b{font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;text-transform:uppercase;line-height:1}
+.secoes span{display:block;color:var(--cinza);font-size:15px}
+.video{display:flex;align-items:center;gap:14px;margin-top:6px;padding:16px 18px;border-radius:8px;background:var(--pneu);border:1px solid var(--borracha);text-decoration:none;font-weight:600}
+.video:hover{border-color:var(--faisca)}
+.video i{font-style:normal;width:44px;height:44px;border-radius:50%;background:var(--fogo);display:grid;place-items:center;flex:none;color:#fff}
+.video i svg{width:18px;height:18px;margin-left:2px}
+.video small{display:block;color:var(--cinza);font-weight:400;font-size:14px}
+@media (min-width:900px){.pista .duas{grid-template-columns:1.25fr 1fr;gap:44px;align-items:start}}
+
+/* ===== CONFIRMAR ===== */
+.confirmar{padding-block:20px 64px}
+.confirmar .chamada{display:none}
+@media (min-width:900px){
+  .confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .confirmar .chamada{display:block}
+  .confirmar .chamada h2{font-size:80px}
+  .confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}
+  .cartao{justify-self:end}
+}
+
+/* ===== CTA FIXA (celular) ===== */
+.cta-fixa{position:fixed;inset:auto 0 0;z-index:20;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(27,26,31,.9) 30%);transform:translateY(110%);transition:transform .25s ease}
+.cta-fixa.on{transform:none}
+.cta-fixa .btn{width:100%;padding-block:16px;box-shadow:0 5px 0 var(--fogo-escuro),0 10px 30px rgba(0,0,0,.5)}
+@media (min-width:900px){.cta-fixa{display:none}}
+footer{padding-bottom:110px}
+@media (min-width:900px){footer{padding-bottom:40px}}
+</style>
+
+<main>
+<section class="hero">
+  <div class="fundo"><img src="{{root}}assets/carro.jpg" alt="" fetchpriority="high"></div>
+  <div class="veu"></div>
+  <svg class="grao" aria-hidden="true"><filter id="ruido"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#ruido)"/></svg>
+  <div class="wrap conteudo">
+    <p class="eyebrow">Domingo · RJ Race Park · Santa Cruz, RJ</p>
+    <h1 class="titulo"><span class="dia">20.09</span><span class="nome">Open Drift Session</span></h1>
+    <p class="lead">O primeiro treino de drift aberto ao público da Carioca Drift. Um domingo inteiro de pista, carros e gente boa.</p>
+    <div class="acoes">
+      <a class="btn btn-fogo" href="#confirmar">Confirmar presença</a>
+      <a class="btn btn-linha" href="#onde">Como chegar</a>
+      <button class="btn btn-linha" id="compartilhar" type="button">Chamar a galera</button>
+    </div>
+    <div class="contagem" id="contagem" aria-live="polite">
+      <span class="rotulo">Faltam</span>
+      <div class="bloco"><b id="cd-d">--</b><small>dias</small></div>
+      <div class="bloco"><b id="cd-h">--</b><small>horas</small></div>
+      <div class="bloco"><b id="cd-m">--</b><small>min</small></div>
+      <div class="bloco"><b id="cd-s">--</b><small>seg</small></div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-caixa" aria-hidden="true"><div class="ticker"><div class="faixa" id="faixa"></div></div></div>
+
+<section class="secao ficha" id="info">
+  <div class="wrap">
+    <div class="cabeca">
+      <div><p class="eyebrow">Ficha do treino</p><h2>O essencial</h2></div>
+      <a class="agenda" id="calendario" href="#" download="open-drift-session.ics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        Salvar no calendário
+      </a>
+    </div>
+    <dl class="grade">
+      <div class="item">
+        <dt>Quando</dt>
+        <dd><span class="g">Domingo, 20 de setembro</span><span class="p">Das 9h às 18h. Chega cedo pra pegar o dia inteiro.</span></dd>
+      </div>
+      <div class="item" id="onde">
+        <dt>Onde</dt>
+        <dd><span class="g">RJ Race Park</span><span class="p">Estrada do Frutuoso, 320 · Santa Cruz, Rio de Janeiro</span>
+          <div class="rotas">
+            <a class="rota" href="https://www.google.com/maps/search/?api=1&query=RJ%20Race%20Park%20Estrada%20do%20Frutuoso%20320%20Santa%20Cruz%20RJ" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Google Maps</a>
+            <a class="rota" href="https://waze.com/ul?q=RJ%20Race%20Park%20Estrada%20do%20Frutuoso%20320%20Santa%20Cruz&navigate=yes" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12l18-8-8 18-2-8-8-2z"/></svg>Waze</a>
+          </div>
+        </dd>
+      </div>
+      <div class="item">
+        <dt>Entrada</dt>
+        <dd><span class="g">Ingressos no local</span><span class="p">Venda direto na portaria do RJ Race Park, no dia.</span></dd>
+      </div>
+      <div class="item alerta">
+        <dt>Pista</dt>
+        <dd><span class="g">Capacete obrigatório</span><span class="p">Pra quem for entrar na pista ou andar de carona. Sem capacete, não roda.</span></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="secao rola">
+  <div class="wrap">
+    <p class="eyebrow">Programação</p>
+    <h2>O que rola</h2>
+    <ul class="lista">
+      <li>
+        <span class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15l2-5h14l2 5"/><path d="M5 10l1.5-4h11L19 10"/><rect x="2" y="15" width="20" height="5" rx="1.5"/><circle cx="7" cy="17.5" r="1"/><circle cx="17" cy="17.5" r="1"/></svg></span>
+        <div><b>Pilotos locais na pista</b><p>A galera do drift carioca andando o dia todo, do treino de iniciação até a pista completa.</p></div>
+      </li>
+      <li>
+        <span class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></span>
+        <div><b>Carona radical</b><p>Sente a adrenalina do banco do carona com um piloto de verdade. Leva o capacete.</p></div>
+      </li>
+      <li>
+        <span class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5c3 0 6.5 1.8 6.5 5.5"/></svg></span>
+        <div><b>Todos são bem-vindos</b><p>Traz a família, os amigos e o seu carro. É treino aberto: vem assistir, conhecer a cena ou andar.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="secao pista">
+  <div class="wrap">
+    <p class="eyebrow">RJ Race Park</p>
+    <h2>A pista</h2>
+    <div class="duas">
+      <figure class="mapa"><img src="{{root}}assets/pista.jpg" alt="Vista aérea do traçado do RJ Race Park com as três seções marcadas" loading="lazy"></figure>
+      <div class="legenda">
+        <p>Traçado em três seções encadeadas. A zona de iniciação fica ao lado do estacionamento, pra quem está começando.</p>
+        <ul class="secoes">
+          <li><i style="background:var(--fogo)"></i><div><b>1ª seção</b><span>Largada e primeiro clipe interno</span></div></li>
+          <li><i style="background:var(--faisca)"></i><div><b>2ª seção</b><span>Zona externa e touch and go</span></div></li>
+          <li><i style="background:var(--verde)"></i><div><b>3ª seção</b><span>Fechamento até a chegada</span></div></li>
+        </ul>
+        <a class="video" href="https://www.instagram.com/reel/DdJv7ePKg-R/" target="_blank" rel="noopener">
+          <i><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></i>
+          <span>Assista ao reel do treino<small>No Instagram da Carioca Drift</small></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="secao confirmar" id="confirmar">
+  <div class="wrap">
+    <div class="chamada">
+      <p class="eyebrow">Lista de presença</p>
+      <h2>Vai colar?</h2>
+      <p>Confirma aqui pra gente dimensionar pista, carona e estrutura. Leva 10 segundos.</p>
+    </div>
+    <div class="cartao">
+      <div id="formulario">
+        <h2>Vai colar?</h2>
+        <p class="sub">Confirme sua presença pra gente se organizar. Leva 10 segundos.</p>
+        <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
+        <div class="erro" id="erroNome"></div>
+        <label class="campo" for="tel"><span>Seu telefone</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
+        <div class="erro" id="erroTel"></div>
+        <button class="btn btn-fogo" id="enviar" type="button">Confirmar presença</button>
+        <p class="nota">Seus dados ficam só com a organização do evento.</p>
+      </div>
+      <div class="ok" id="ok">
+        <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
+        <h3 id="okTitulo">Presença confirmada!</h3>
+        <p>Te esperamos domingo, 20 de setembro, no RJ Race Park. Se for pra pista ou de carona, leva o capacete.</p>
+        <div class="acoes">
+          <a class="btn btn-linha" id="calendario2" href="#" download="open-drift-session.ics">Salvar no calendário</a>
+          <button class="btn btn-linha" id="compartilhar2" type="button">Chamar a galera</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="cta-fixa" id="ctaFixa"><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div>
+
+<script>
+// ===== Supabase (chave pública: só permite inserir, ninguém lê por ela) =====
+const SB_URL = "https://trkwfwvqzfvscqwwldpv.supabase.co";
+const SB_KEY = "sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm";
+const EVENTO = "open-drift-session-2026-09-20";
+
+// ===== Evento =====
+const INICIO = new Date("2026-09-20T09:00:00-03:00");
+const FIM    = new Date("2026-09-20T18:00:00-03:00");
+const URL_PAGINA = "https://cariocadrift.com.br/treinos/open-drift-session/";
+const TITULO = "Open Drift Session · Carioca Drift";
+const LOCAL = "RJ Race Park, Estrada do Frutuoso, 320, Santa Cruz, Rio de Janeiro";
+
+// ----- Ticker -----
+const itens = ["Open Drift Session","Domingo 20.09","9h às 18h","RJ Race Park · Santa Cruz","Ingressos no local","Capacete obrigatório","Todos são bem-vindos"];
+document.getElementById('faixa').innerHTML = (itens.map(t=>`<span>${t}</span>`).join('')).repeat(4);
+
+// ----- Contagem regressiva -----
+const cd = {d:document.getElementById('cd-d'),h:document.getElementById('cd-h'),m:document.getElementById('cd-m'),s:document.getElementById('cd-s')};
+const contagem = document.getElementById('contagem');
+function tick(){
+  const agora = new Date();
+  if (agora >= FIM) { contagem.innerHTML = '<span class="estado">Valeu, galera. Até a próxima.</span>'; return; }
+  if (agora >= INICIO) { contagem.innerHTML = '<span class="estado">Rolando agora no RJ Race Park</span>'; return; }
+  let t = Math.floor((INICIO - agora)/1000);
+  const d = Math.floor(t/86400); t -= d*86400;
+  const h = Math.floor(t/3600);  t -= h*3600;
+  const m = Math.floor(t/60);    const s = t - m*60;
+  cd.d.textContent = d; cd.h.textContent = String(h).padStart(2,'0');
+  cd.m.textContent = String(m).padStart(2,'0'); cd.s.textContent = String(s).padStart(2,'0');
+  setTimeout(tick, 1000 - (Date.now() % 1000));
+}
+tick();
+
+// ----- Calendário (.ics) -----
+function ics(){
+  const f = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const txt = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Carioca Drift//Open Drift Session//PT","BEGIN:VEVENT",
+    "UID:open-drift-session-2026-09-20@cariocadrift.com.br",`DTSTAMP:${f(new Date())}`,`DTSTART:${f(INICIO)}`,`DTEND:${f(FIM)}`,
+    `SUMMARY:${TITULO}`,`LOCATION:${LOCAL}`,`DESCRIPTION:Primeiro treino de drift aberto ao público. Capacete obrigatório pra pista e carona. ${URL_PAGINA}`,
+    `URL:${URL_PAGINA}`,"END:VEVENT","END:VCALENDAR"].join("\r\n");
+  return "data:text/calendar;charset=utf-8," + encodeURIComponent(txt);
+}
+for (const id of ['calendario','calendario2']) document.getElementById(id).href = ics();
+
+// ----- Compartilhar -----
+async function compartilhar(ev){
+  const dados = {title: TITULO, text: "Open Drift Session, domingo 20.09 das 9h às 18h no RJ Race Park. Bora?", url: URL_PAGINA};
+  try {
+    if (navigator.share) { await navigator.share(dados); return; }
+    await navigator.clipboard.writeText(URL_PAGINA);
+    const b = ev.currentTarget; const antes = b.textContent;
+    b.textContent = 'Link copiado'; setTimeout(()=>b.textContent = antes, 1800);
+  } catch (e) { /* usuário cancelou */ }
+}
+document.getElementById('compartilhar').addEventListener('click', compartilhar);
+document.getElementById('compartilhar2').addEventListener('click', compartilhar);
+
+// ----- CTA fixa no celular -----
+const ctaFixa = document.getElementById('ctaFixa');
+let heroVisivel = true, confirmarVisivel = false;
+function atualizaCta(){ ctaFixa.classList.toggle('on', !heroVisivel && !confirmarVisivel); }
+new IntersectionObserver(([e]) => { heroVisivel = e.isIntersecting; atualizaCta(); }).observe(document.querySelector('.hero .acoes'));
+new IntersectionObserver(([e]) => { confirmarVisivel = e.isIntersecting; atualizaCta(); }, {threshold:.2}).observe(document.getElementById('confirmar'));
+
+// ----- Formulário -----
+const tel = document.getElementById('tel');
+const btn = document.getElementById('enviar');
+const erroNome = document.getElementById('erroNome');
+const erroTel = document.getElementById('erroTel');
+
+tel.addEventListener('input', () => {
+  let d = tel.value.replace(/\D/g,'').slice(0,11);
+  if (d.length > 6) tel.value = `(${d.slice(0,2)}) ${d.slice(2,d.length-4)}-${d.slice(-4)}`;
+  else if (d.length > 2) tel.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+  else tel.value = d;
+});
+
+function mostrarOk(titulo){
+  if (titulo) document.getElementById('okTitulo').textContent = titulo;
+  document.getElementById('formulario').style.display = 'none';
+  const ok = document.getElementById('ok');
+  ok.classList.add('on');
+  ok.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+btn.addEventListener('click', async () => {
+  const nome = document.getElementById('nome').value.trim();
+  const digits = tel.value.replace(/\D/g,'');
+  erroNome.textContent = nome.length < 2 ? 'Digite seu nome.' : '';
+  erroTel.textContent = digits.length < 10 ? 'Digite o telefone com DDD.' : '';
+  if (nome.length < 2 || digits.length < 10) return;
+
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/confirmacoes`, {
+      method: 'POST',
+      headers: {'apikey': SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+      body: JSON.stringify({evento: EVENTO, nome, telefone: digits})
+    });
+    if (r.status === 201) { mostrarOk(); return; }
+    if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }
+    throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    erroTel.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+    btn.disabled = false; btn.textContent = 'Confirmar presença';
+  }
+});
+</script>
