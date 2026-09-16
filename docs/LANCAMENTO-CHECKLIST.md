@@ -145,3 +145,12 @@ Roteiros: `capturas-e2.js` 241 verificações, `qa-lancamento.js` 64, zero falha
 | Navegação e links | aprovado | 7 páginas × 4 larguras sem erro de console nem rolagem horizontal; `caronas/` no rodapé |
 | Formulário do treino e painel | aprovado | 3 confirmações + duplicado + validação; painel completo com upload, publicação, CSVs; registros de teste apagados |
 | Não testado | — | prévia de link nas redes, produção real (dependem do merge) |
+
+## 13. Capa provisória e estacionamento (16/09, noite)
+
+| Item | Resultado | Detalhe |
+|---|---|---|
+| Capa provisória com a marca oficial | **aprovado** | Com sua autorização, `treinos.capa_url` do Open Drift Session passou de `/assets/carro.jpg` para `/assets/capa-marca-open-drift-session.jpg` (única alteração no banco, via API com a chave de serviço, equivalente ao painel). Hero do evento mostra a peça em 1440/390/375/360 com a legenda "Capa · Open Drift Session · RJ Race Park", sem crédito de fotógrafo porque não é fotografia. A prévia (`og:image`) da página estática do evento passa a apontar para a peça. Render conceitual continua bloqueado no código. Foto 3132 não utilizada |
+| Efeito em produção | registrado | A produção atual lê a capa do banco em tempo real: a página do evento no ar deixou de mostrar o render e passou a mostrar a peça da marca como fundo do hero antigo. A prévia estática de produção só muda após o merge |
+| Estacionamento R$ 15 por carro | **aprovado** | Home: "Ingresso R$ 30, vendido no local, no dia. Estacionamento R$ 15 por carro."; evento: bloco "Quanto custa" com "Por carro." Público R$ 30 e piloto convidado R$ 80 mantidos |
+| QA dos elementos alterados | aprovado | `capturas-e2.js` nas 4 larguras, zero falhas; recortes `home-*-participar.png` e `evento-*-valores.png` |
