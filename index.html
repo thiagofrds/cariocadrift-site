@@ -210,7 +210,7 @@
     <div class="tres">
       <div class="item"><span class="rot">Público</span><b id="partPublicoTitulo">Ingressos no local</b><p id="partPublico"></p></div>
       <div class="item"><span class="rot">Pilotos</span><b>Só convidados</b><p id="partPilotos"></p></div>
-      <div class="item"><span class="rot">Caronas</span><b>Caronas pagas</b><p id="partCaronas"></p><a href="/caronas/">Consultar caronas →</a></div>
+      <div class="item"><span class="rot">Caronas</span><b>Caronas pagas</b><p id="partCaronas"></p><a id="partCaronasLink" href="/caronas/">Consultar caronas →</a></div>
     </div>
     <div class="seg" id="partSeg" hidden><span class="rot">Segurança</span><span id="partSegTexto"></span></div>
   </div>
@@ -317,6 +317,7 @@
       document.getElementById('partPublico').textContent = val['Público'] ? `Ingresso ${val['Público'].valor}, vendido no local, no dia.${val['Estacionamento'] ? ` Estacionamento ${val['Estacionamento'].valor} por carro.` : ''}` : part.publico;
       document.getElementById('partPilotos').textContent = val['Pilotos'] ? `${part.pilotos} ${val['Pilotos'].valor} por piloto convidado. Não há inscrição pública.` : `${part.pilotos} Não há inscrição pública.`;
       document.getElementById('partCaronas').textContent = part.caronas;
+      document.getElementById('partCaronasLink').href = `/caronas/?treino=${esc(prox.slug)}`;
       document.getElementById('partLink').href = url;
       if (prox.regra_titulo) { document.getElementById('partSegTexto').textContent = `${prox.regra_titulo}${prox.regra_texto ? ' · ' + prox.regra_texto : ''}`; document.getElementById('partSeg').hidden = false; }
       document.getElementById('participar').hidden = false;

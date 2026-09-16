@@ -1,7 +1,7 @@
 ---
-title: Caronas | Carioca Drift
-desc: Como funciona a carona nos treinos de drift da Carioca Drift: experiência paga, sujeita a disponibilidade e confirmação da organização. Consulte pelo direct.
-og_title: Caronas · Carioca Drift
+title: Carona Radical | Carioca Drift
+desc: Lista de interesse da Carona Radical nos treinos de drift da Carioca Drift. Caronas pagas, sujeitas a disponibilidade e confirmação da organização.
+og_title: Carona Radical · Carioca Drift
 nav: treinos
 ---
 <style>
@@ -14,26 +14,33 @@ nav: treinos
 .pontos b{display:block;font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
 .pontos p{color:var(--cinza);margin-top:6px;font-size:15px;max-width:38ch}
 @media (min-width:900px){.pontos ul{grid-template-columns:repeat(3,1fr);gap:40px}}
-.contato{padding-block:56px 72px}
-.contato .prosa{max-width:48ch}
-.contato .acoes{margin-top:22px}
-.contato .nota-c{margin-top:14px;font-size:13px;color:var(--cinza);max-width:48ch}
 .foto-caronas{padding-block:0 56px}
 .foto-caronas .foto img{aspect-ratio:16/9;object-fit:cover;object-position:center bottom}
+.interesse{padding-block:48px 72px}
+.interesse .chamada{display:none}
+.interesse .treino-alvo{display:inline-block;margin-top:8px;font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo)}
+.cartao .consent{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;margin-top:16px;font-size:14px;color:var(--cinza);line-height:1.45}
+.cartao .consent input{width:22px;height:22px;margin-top:1px;accent-color:var(--amarelo)}
+.cartao .consent a{color:var(--gelo)}
+.cartao .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.cartao .na-hora{margin-top:18px;padding-top:12px;border-top:1px solid var(--linha-forte);font-size:13px;color:var(--cinza);line-height:1.45}
+.cartao .na-hora b{color:var(--gelo);font-weight:600}
+@media (min-width:900px){
+  .interesse{padding-block:80px 88px}
+  .interesse .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .interesse .chamada{display:block}
+  .interesse .chamada h2{font-size:72px}
+  .interesse .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:18px}
+  .cartao{justify-self:end}
+}
 </style>
 
 <main id="conteudo">
 <section class="cabecalho">
   <div class="wrap">
-    <span class="rot am">Caronas</span>
+    <span class="rot am">Carona Radical</span>
     <h1>Carona no drift</h1>
     <p class="prosa">O banco do carona ao lado de um piloto, na pista, durante o treino. É a forma mais direta de sentir o drift sem estar ao volante.</p>
-  </div>
-</section>
-
-<section class="wrap caronas-intro">
-  <div class="prosa">
-    <p>Com capacete e cinto, você entra no carro de um piloto convidado e faz uma volta no traçado, com o carro de lado. Dura pouco e marca muito.</p>
   </div>
 </section>
 
@@ -46,24 +53,97 @@ nav: treinos
     <span class="rot am">Como funciona</span>
     <h2>O que você precisa saber</h2>
     <ul>
-      <li><b>É paga</b><p>A carona é uma experiência paga. O valor é informado pela organização na consulta.</p></li>
-      <li class="vm"><b>Depende de disponibilidade</b><p>Cada treino tem um número limitado de caronas, conforme os pilotos e carros disponíveis no dia. Não há reserva garantida.</p></li>
-      <li><b>Confirmação da organização</b><p>Toda carona é confirmada pela organização. Sem confirmação, não há vaga.</p></li>
+      <li><b>É paga</b><p>A carona é uma experiência paga. O valor é informado pela organização.</p></li>
+      <li class="vm"><b>Depende de disponibilidade</b><p>Cada treino tem um número limitado de caronas, conforme os pilotos e carros do dia. Não há reserva garantida.</p></li>
+      <li><b>Confirmação da organização</b><p>Toda carona é confirmada pela organização. Entrar na lista não garante vaga.</p></li>
       <li><b>Capacete obrigatório</b><p>Pra entrar na pista como carona, capacete é obrigatório. A organização orienta no dia.</p></li>
-      <li><b>No dia do treino</b><p>Combine pelo direct e apresente-se na organização ao chegar. As caronas rodam dentro do horário do treino.</p></li>
+      <li><b>Também no evento</b><p>Você pode consultar a disponibilidade de caronas diretamente com a organização, no dia do treino.</p></li>
       <li><b>Só nos treinos abertos</b><p>A carona existe apenas nos treinos abertos ao público organizados pela Carioca Drift.</p></li>
     </ul>
   </div>
 </section>
 
-<section class="wrap contato">
-  <span class="rot am">Consultar</span>
-  <h2>Quer uma carona?</h2>
-  <p class="prosa">Chama a organização no direct do Instagram com o treino que você quer e a gente responde com valor, disponibilidade e como confirmar.</p>
-  <div class="acoes">
-    <a class="btn am" href="https://www.instagram.com/cariocadriftculture/" target="_blank" rel="noopener">Chamar no direct @cariocadriftculture</a>
-    <a class="btn btn-linha" href="{{root}}treinos/">Ver os treinos</a>
+<section class="interesse" id="interesse">
+  <div class="wrap">
+    <div class="chamada">
+      <span class="rot am">Lista de interesse</span>
+      <h2>Quer uma carona?</h2>
+      <p>Deixa nome e telefone. A organização poderá entrar em contato para passar valores e disponibilidade.</p>
+      <span class="treino-alvo" id="treinoAlvo" hidden></span>
+    </div>
+    <div class="cartao">
+      <div id="formulario">
+        <h2>Entrar na lista</h2>
+        <p class="sub">Carona paga, sujeita à disponibilidade. Entrar na lista não é reserva.</p>
+        <span class="treino-alvo" id="treinoAlvoForm" hidden></span>
+        <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
+        <div class="erro" id="erroNome"></div>
+        <label class="campo" for="tel"><span>Seu telefone com DDD</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
+        <div class="erro" id="erroTel"></div>
+        <label class="hp" aria-hidden="true">Não preencha este campo<input id="site" name="site" tabindex="-1" autocomplete="off"></label>
+        <label class="consent" for="consent"><input id="consent" type="checkbox"><span>Autorizo a Carioca Drift a entrar em contato pelo telefone informado sobre caronas. Seus dados ficam só com a organização, não são publicados nem repassados, e você pode pedir a exclusão pelo direct do Instagram.</span></label>
+        <div class="erro" id="erroConsent"></div>
+        <button class="btn am" id="enviar" type="button">Entrar na lista de interesse</button>
+        <p class="na-hora"><b>Prefere decidir na hora?</b> Você também pode consultar a disponibilidade de caronas diretamente com a organização no evento.</p>
+      </div>
+      <div class="ok" id="ok">
+        <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
+        <h3 id="okTitulo">Interesse registrado!</h3>
+        <p>A organização poderá entrar em contato pelo telefone informado para passar valores e disponibilidade. O cadastro não garante vaga.</p>
+        <div class="acoes"><a class="btn btn-linha" href="{{root}}treinos/">Ver os treinos</a></div>
+      </div>
+    </div>
   </div>
-  <p class="nota-c">O direct do Instagram é o canal oficial de contato da Carioca Drift. Não informamos valores nem confirmamos caronas por outros canais.</p>
 </section>
 </main>
+
+<script>
+(async () => {
+  const { esc, dataCurta } = CD;
+  // Treino de origem: /caronas/?treino=<slug>. Só associa se for um treino publicado; nunca cria inscrição nem ingresso.
+  const slugParam = (new URLSearchParams(location.search).get('treino') || '').toLowerCase();
+  let treinoAlvo = null;
+  if (/^[a-z0-9-]{1,80}$/.test(slugParam)) {
+    try { treinoAlvo = (await CD.treinosPublicados()).find(t => t.slug === slugParam) || null; } catch (e) {}
+  }
+  if (treinoAlvo) {
+    for (const id of ['treinoAlvo', 'treinoAlvoForm']) { const el = document.getElementById(id); el.textContent = `Treino: ${treinoAlvo.titulo} · ${dataCurta(treinoAlvo.data)}`; el.hidden = false; }
+  }
+
+  const tel = document.getElementById('tel'), btn = document.getElementById('enviar');
+  const erroNome = document.getElementById('erroNome'), erroTel = document.getElementById('erroTel'), erroConsent = document.getElementById('erroConsent');
+  tel.addEventListener('input', () => {
+    let d = tel.value.replace(/\D/g,'').slice(0,11);
+    if (d.length > 6) tel.value = `(${d.slice(0,2)}) ${d.slice(2,d.length-4)}-${d.slice(-4)}`;
+    else if (d.length > 2) tel.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+    else tel.value = d;
+  });
+  const mostrarOk = titulo => {
+    if (titulo) document.getElementById('okTitulo').textContent = titulo;
+    document.getElementById('formulario').style.display = 'none';
+    const ok = document.getElementById('ok'); ok.classList.add('on'); ok.scrollIntoView({behavior:'smooth', block:'center'});
+  };
+  let ultimoEnvio = 0;
+  btn.addEventListener('click', async () => {
+    const nome = document.getElementById('nome').value.trim(), digits = tel.value.replace(/\D/g,'');
+    const consent = document.getElementById('consent').checked;
+    erroNome.textContent = nome.length < 2 ? 'Digite seu nome.' : '';
+    erroTel.textContent = !/^[1-9][0-9]([2-9][0-9]{7}|9[0-9]{8})$/.test(digits) ? 'Digite um telefone válido com DDD.' : '';
+    erroConsent.textContent = consent ? '' : 'Marque a autorização de contato pra entrar na lista.';
+    if (erroNome.textContent || erroTel.textContent || erroConsent.textContent) return;
+    if (document.getElementById('site').value) { mostrarOk(); return; }          // honeypot: parece sucesso, não grava
+    if (Date.now() - ultimoEnvio < 10000) return;                                   // no máximo um envio a cada 10 s por página
+    ultimoEnvio = Date.now();
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      const r = await fetch(`${CD.SB_URL}/rest/v1/interessados_carona`, { method:'POST', headers:{apikey: CD.SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'}, body: JSON.stringify({ nome, telefone: digits, consentimento: true, origem: 'site', evento: treinoAlvo ? treinoAlvo.slug : null }) });
+      if (r.status === 201) { mostrarOk(); return; }
+      if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }
+      throw new Error('HTTP ' + r.status);
+    } catch (e) {
+      erroConsent.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+      btn.disabled = false; btn.textContent = 'Entrar na lista de interesse';
+    }
+  });
+})();
+</script>

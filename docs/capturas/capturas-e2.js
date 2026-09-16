@@ -57,7 +57,7 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         Math.abs(mapa.nat - mapa.ren) < 0.01 && mapa.fit !== 'cover' ? ok(`${tag}: mapa inteiro, proporção preservada (${mapa.ren.toFixed(3)} vs ${mapa.nat.toFixed(3)})`) : falha(`${tag}: mapa cortado: ${JSON.stringify(mapa)}`);
         const esc = await p.locator('.escola').textContent();
         !/R\$|10x|módulos|Chevette|Nissan/.test(esc) && /estruturação/.test(esc) && /sob consulta/i.test(esc) ? ok(`${tag}: escolinha na home sem preços, com "em estruturação" e "Valores sob consulta"`) : falha(`${tag}: bloco da escolinha na home ainda comercial`);
-        (await p.locator('#participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas não aponta para /caronas/`);
+        (await p.locator('#participar a[href^="/caronas/?treino=open-drift-session"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/ com o treino de origem`) : falha(`${tag}: link de caronas não aponta para /caronas/`);
         const part = await p.locator('#participar').textContent();
         /R\$ 30/.test(part) && /R\$ 15 por carro/.test(part) && /R\$ 80/.test(part) && /sob consulta/i.test(part) && /no local/i.test(part) ? ok(`${tag}: resumo de valores (30/15/80, caronas sob consulta, venda no local)`) : falha(`${tag}: resumo de valores incompleto`);
         await p.locator('.onde').screenshot({ path: path.join(out, `${tag}-mapa.png`) });
@@ -67,12 +67,18 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         capa && /capa-marca-open-drift-session\.jpg$/.test(capa.src) && capa.ok && /Capa/.test(capa.leg) && !/Sergio/.test(capa.leg) ? ok(`${tag}: capa provisória com a marca oficial carregada, legenda "Capa" sem crédito de foto`) : falha(`${tag}: capa inesperada: ${JSON.stringify(capa)}`);
         const val = await p.locator('#valores').textContent().catch(() => '');
         /R\$ 30/.test(val) && /R\$ 15/.test(val) && /R\$ 80/.test(val) && /Sob consulta/.test(val) && /somente no local/i.test(val) && /exclusiva para pilotos convidados/i.test(val) && /R\$ 15[\s\S]{0,40}Por carro/.test(val) ? ok(`${tag}: bloco de valores completo, estacionamento R$ 15 por carro`) : falha(`${tag}: bloco de valores incompleto`);
-        (await p.locator('.participar a[href="/caronas/"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/`) : falha(`${tag}: link de caronas do evento errado`);
+        (await p.locator('.participar a[href^="/caronas/?treino=open-drift-session"]').count()) === 1 ? ok(`${tag}: "Consultar caronas" leva a /caronas/ com o treino de origem`) : falha(`${tag}: link de caronas do evento errado`);
       }
       if (pn === 'caronas') {
         const t = await p.locator('main').textContent();
         /paga/i.test(t) && /disponibilidade/i.test(t) && /confirma/i.test(t) && /direct/i.test(t) && !/R\$/.test(t) && !/garantid[ao] /i.test(t.replace('Não há reserva garantida','')) ? ok(`${tag}: caronas pagas, sujeitas a disponibilidade e confirmação, sem preço nem reserva garantida`) : falha(`${tag}: texto de caronas fora da regra`);
-        (await p.locator('a.btn.am[href="https://www.instagram.com/cariocadriftculture/"]').count()) === 1 ? ok(`${tag}: CTA de contato pelo canal oficial`) : falha(`${tag}: CTA de contato ausente`);
+        (await p.locator('#enviar').count()) === 1 && /Entrar na lista de interesse/.test(await p.locator('#enviar').textContent()) && (await p.locator('#consent').count()) === 1 && /decidir na hora/i.test(t) && /não garante vaga|não é reserva/i.test(t) ? ok(`${tag}: formulário de interesse com consentimento, botão certo e aviso "decidir na hora"`) : falha(`${tag}: formulário de carona incompleto`);
+        await p.click('#enviar'); await p.waitForTimeout(300);
+        (await p.locator('#erroNome').textContent()).length && (await p.locator('#erroTel').textContent()).length && (await p.locator('#erroConsent').textContent()).length ? ok(`${tag}: validação de nome, telefone e consentimento`) : falha(`${tag}: validação do formulário de carona falhou`);
+        await p.fill('#nome', 'Teste'); await p.fill('#tel', '2112345'); await p.check('#consent'); await p.click('#enviar'); await p.waitForTimeout(300);
+        /válido/.test(await p.locator('#erroTel').textContent()) ? ok(`${tag}: telefone curto rejeitado`) : falha(`${tag}: telefone curto aceito`);
+        (await p.evaluate(() => { const l = document.getElementById('site').closest('label'); const r = l.getBoundingClientRect(); return getComputedStyle(l).opacity === '0' && r.right < 0; })) ? ok(`${tag}: campo honeypot invisível`) : falha(`${tag}: honeypot visível`);
+        if (vn === 'd1440') { await p.goto(base + '/caronas/?treino=open-drift-session', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500); /Open Drift Session/.test(await p.locator('#treinoAlvoForm').textContent()) ? ok(`${tag}: interesse associado ao treino de origem`) : falha(`${tag}: treino de origem não associado`); await p.screenshot({ path: path.join(out, `${tag}-treino.png`) }); }
       }
       if (pn === 'naoexiste') (await p.locator('#naoAchado').isVisible()) ? ok(`${tag}: slug inexistente mostra "Treino não encontrado"`) : falha(`${tag}: slug inexistente sem estado de erro`);
       await p.screenshot({ path: path.join(out, `${tag}-dobra.png`) });

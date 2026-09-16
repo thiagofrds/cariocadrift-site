@@ -197,7 +197,7 @@ ${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pis
 
 ${part && part.valores ? `<section class="secao valores" id="valores"><div class="wrap">
   <span class="rot am">Valores</span><h2>Quanto custa</h2>
-  <div class="grade">${part.valores.map(v => `<div class="v"><span class="rot">${esc(v.rotulo)}</span><b>${esc(v.nome)}</b><span class="preco${/^R\$/.test(v.valor) ? '' : ' sc'}">${esc(v.valor)}</span><p>${esc(v.nota)}</p>${v.link ? `<a href="${esc(v.link)}">Como funciona →</a>` : ''}</div>`).join('')}</div>
+  <div class="grade">${part.valores.map(v => `<div class="v"><span class="rot">${esc(v.rotulo)}</span><b>${esc(v.nome)}</b><span class="preco${/^R\$/.test(v.valor) ? '' : ' sc'}">${esc(v.valor)}</span><p>${esc(v.nota)}</p>${v.link ? `<a href="${esc(v.link)}?treino=${esc(t.slug)}">Como funciona →</a>` : ''}</div>`).join('')}</div>
   <p class="aviso"><b>Ingressos do público vendidos somente no local, no dia.</b> Não há venda online. A pista é exclusiva para pilotos convidados; não há inscrição pública de pilotos.</p>
 </div></section>` : ''}
 
@@ -206,7 +206,7 @@ ${part ? `<section class="secao participar" id="participar"><div class="wrap">
   <div class="grade">
     <div class="bloco"><span class="rotulo">Público</span><b>Vem assistir</b><p>${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}${t.entrada_texto ? `: ${esc(t.entrada_texto)}` : '.'}` : ''}</p><p>${esc(part.publico)}</p><div class="acoes"><a class="btn am" href="#confirmar">Confirmar presença</a></div></div>
     <div class="bloco pilotos"><span class="rotulo">Pilotos</span><b>Pista só pra convidados</b><p>${esc(part.pilotos)}</p><p>Não há inscrição pública para pilotos.</p></div>
-    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="/caronas/">Consultar caronas</a></div></div>
+    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="/caronas/?treino=${esc(t.slug)}">Consultar caronas</a></div></div>
   </div>
   ${t.regra_titulo ? `<div class="seguranca"><b>Segurança</b><span>${esc(t.regra_titulo)}${t.regra_texto ? ` · ${esc(t.regra_texto)}` : ''}</span></div>` : ''}
 </div></section>` : ''}

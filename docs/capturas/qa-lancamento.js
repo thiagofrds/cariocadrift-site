@@ -31,7 +31,7 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
     (await p.locator('#treino').isVisible().catch(() => false)) ? ok(`[${nome}] página estática /treinos/open-drift-session/ renderiza o evento`) : falha(`[${nome}] página estática do evento não renderizou`);
     // versão com query (mesma página, usada pelo restante do roteiro)
     await p.goto(base + '/treinos/evento/?t=open-drift-session', { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
-    (await p.locator('.participar .bloco.caronas .btn').getAttribute('href')) === '/caronas/' ? ok(`[${nome}] "Consultar caronas" leva à página interna /caronas/`) : falha(`[${nome}] botão de caronas errado`);
+    (await p.locator('.participar .bloco.caronas .btn').getAttribute('href')) === '/caronas/?treino=open-drift-session' ? ok(`[${nome}] "Consultar caronas" leva à página interna /caronas/`) : falha(`[${nome}] botão de caronas errado`);
     // 3. confirmar interesse com telefone de teste
     const tel = nome === 'desktop' ? '21900000201' : nome === '390' ? '21900000202' : '21900000203';
     await p.fill('#nome', 'TESTE QA visitante'); await p.fill('#tel', tel);
@@ -109,11 +109,15 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
       const linha = p.locator('#tbTreinos tr', { hasText: 'TESTE QA Treino' });
       await linha.locator('button[data-pub]').click(); await p.waitForTimeout(2000);
       (await p.locator('#tbTreinos tr', { hasText: 'TESTE QA Treino' }).textContent()).includes('Rascunho') ? ok('painel: despublicar pela lista') : falha('painel: despublicar falhou');
-      await p.click('[data-aba=confirmacoes]'); await p.waitForTimeout(2000);
+      await p.click('[data-aba=leads]'); await p.waitForTimeout(2000);
+      (await p.locator('#tbConf').textContent()).includes('Site · confirmação') ? ok('painel: aba Leads › Treinos com origem e treino') : falha('painel: origem ausente em Leads');
+      await p.fill('#buscaLeads', 'TESTE QA'); await p.waitForTimeout(300); (await p.locator('#tbConf tr').count()) >= 1 && !(await p.locator('#tbConf').textContent()).includes('Nenhuma') ? ok('painel: pesquisa por nome filtra') : falha('painel: pesquisa não filtra'); await p.fill('#buscaLeads', ''); await p.waitForTimeout(300);
       (await p.locator('#tbConf').textContent()).includes('TESTE QA') ? ok('painel: confirmações listam os registros de teste') : falha('painel: confirmações não listam');
       const [dl] = await Promise.all([p.waitForEvent('download', { timeout: 5000 }).catch(() => null), p.click('#csvConf')]);
       dl ? ok(`painel: CSV de confirmações baixa (${dl.suggestedFilename()})`) : falha('painel: CSV não baixou');
-      await p.click('[data-aba=escolinha]'); await p.waitForTimeout(2000);
+      await p.click('[data-sub=carona]'); await p.waitForTimeout(1500);
+      /ainda não foi ativada|Ninguém na lista|Site · Carona/.test(await p.locator('#tbCarona').textContent()) ? ok('painel: aba Carona Radical responde (' + ((await p.locator('#tbCarona').textContent()).includes('ainda não') ? 'migration pendente' : 'tabela ativa') + ')') : falha('painel: aba Carona com erro');
+      await p.click('[data-sub=escolinha]'); await p.waitForTimeout(2000);
       (await p.locator('#tbEsc').textContent()).includes('TESTE QA') ? ok('painel: interessados da escolinha listam com pacote') : falha('painel: escolinha não lista');
       const [dl2] = await Promise.all([p.waitForEvent('download', { timeout: 5000 }).catch(() => null), p.click('#csvEsc')]);
       dl2 ? ok(`painel: CSV da escolinha baixa (${dl2.suggestedFilename()})`) : falha('painel: CSV escolinha não baixou');
