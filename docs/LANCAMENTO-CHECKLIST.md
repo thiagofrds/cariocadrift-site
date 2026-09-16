@@ -213,3 +213,18 @@ Ainda não aplicada. Formulário oculto. Sem merge.
 | QA no navegador, formulário → painel | **22 de 22** | mobile 390 pela página do Open Drift Session e desktop 1440 pela página geral: formulário visível, treino de origem identificado, validação dos três campos, envio com a mensagem exata "Interesse registrado! … O cadastro não garante vaga.", registro gravado com treino e consentimento, reenvio mostra a mesma confirmação sem gravar linha nova, sem erros de console. Painel › Leads › Carona Radical: os dois registros com origem e treino/geral, pesquisa por nome e por telefone, filtro por treino, CSV com cabeçalho e registros, exclusão refletida no banco. Registros e tentativas apagados ao final |
 | Capturas gerais | 252 verificações, zero falhas | página de caronas com formulário ativo: consentimento, botão, aviso "decidir na hora", honeypot invisível, associação ao treino |
 | Não feito | — | teste de carga em produção; merge; publicação |
+
+## 19. Publicação (16/09, 22:04 UTC)
+
+| Item | Resultado | Detalhe |
+|---|---|---|
+| Merge e deploy | **aprovado** | `fase-01-home` → `main` (commit 4fcfdbd, 45 commits, sem arquivos de segredo, sem etapa B). GitHub Pages construiu o commit do merge em cerca de 30 s |
+| Domínio real, HTTPS | **aprovado** | todas as páginas e assets em 200 com certificado válido; `http://` → 301 → `https://`; `www` → 301 → domínio principal |
+| Marcadores da E.2 em produção | **aprovado** | tema #0B0B0B, logo PNG, `@cariocadriftculture` (zero ocorrências do antigo), escolinha sem preços, prévia do evento com a capa provisória, chave da Carona Radical ligada |
+| Capturas e medições no domínio real | **252 verificações, zero falhas** | desktop 1440 e mobile 390/375/360: navegação, primeira dobra, valores 30/15 por carro/80, caronas sob consulta, capa, créditos, mapa inteiro, Instagram, sem checkout, sem erros de console |
+| Visitante e painel no domínio real | **62 verificações, zero falhas reais** | confirmação de presença em 3 larguras (envio, duplicado, validação, compartilhar), escolinha (envio sem pacote), painel: login, criação de treino em rascunho com upload, Leads › Treinos com origem e pesquisa, CSVs, apagar, sair. A publicação do treino de teste foi pulada de propósito para não aparecer na agenda pública. A única linha de falha é o 400 do próprio teste de login errado |
+| Carona Radical no domínio real | **22 verificações** | formulário no celular pela página do evento e no desktop como interesse geral, mensagem exata, gravação, reenvio silencioso, painel com pesquisa, filtro, CSV e exclusão. Uma linha de falha do roteiro ("pesquisa por telefone") foi reproduzida manualmente cinco vezes em produção e o filtro funciona em todas; é instabilidade do roteiro, não do painel |
+| Limpeza | feita | conta de QA, treino de teste, confirmações, escolinha, carona, tentativas e arquivo do storage apagados |
+| Não feito | — | teste de carga; publicação de treino de teste; qualquer migration nova; etapa B |
+
+**Site novo no ar em https://cariocadrift.com.br.**

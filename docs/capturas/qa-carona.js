@@ -2,7 +2,7 @@
 // Uso: QA_EMAIL=... QA_SENHA=... node docs/capturas/qa-carona.js   (registros "TESTE QA carona*" apagados por qa-conta.js apagar)
 const { chromium } = require('/Users/thiagofrds/DTC APP/web/node_modules/playwright-core');
 const fs = require('fs'), path = require('path');
-const base = 'http://localhost:8765', out = path.join(__dirname, 'e2');
+const base = process.env.QA_BASE || 'http://localhost:8765', out = path.join(__dirname, 'e2');
 const env = {}; for (const l of fs.readFileSync(path.join(__dirname, '..', '..', '.env.local'), 'utf8').split('\n')) { const m = l.match(/^\s*([A-Z_]+)\s*=\s*(.*)$/); if (m) env[m[1]] = m[2].replace(/^["']|["']$/g, ''); }
 const S = env.SUPABASE_SECRET_KEY, URL = 'https://trkwfwvqzfvscqwwldpv.supabase.co/rest/v1';
 const R = { ok: [], falha: [] }; const ok = m => R.ok.push(m), falha = m => R.falha.push(m);

@@ -2,7 +2,7 @@
 // Uso: QA_EMAIL=... QA_SENHA=... node docs/capturas/qa-lancamento.js   (servidor local em :8765)
 // Nunca imprime senhas. Dados criados são marcados "TESTE QA" e removidos pelo chamador.
 const { chromium } = require('/Users/thiagofrds/DTC APP/web/node_modules/playwright-core');
-const base = 'http://localhost:8765';
+const base = process.env.QA_BASE || 'http://localhost:8765';
 const out = __dirname + '/';
 const R = { ok: [], falha: [], pendente: [] };
 const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
@@ -94,6 +94,7 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
       const pub = await p.request.get('https://trkwfwvqzfvscqwwldpv.supabase.co/rest/v1/treinos?select=slug&slug=eq.teste-qa-treino', { headers: { apikey: 'sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm' } });
       (await pub.json()).length === 0 ? ok('painel: rascunho invisível para o público') : falha('painel: rascunho vazou para o público');
       // editar e publicar
+      if (process.env.QA_SEM_PUBLICAR) { R.pendente.push('painel: publicação do treino de teste pulada em produção (não expor na agenda pública)'); } else {
       await p.fill('[name=chamada]', 'Treino de teste do QA, editado.'); await p.check('[name=publicado]'); await p.click('#salvar'); await p.waitForTimeout(3000);
       /publicado/i.test(await p.locator('#msgForm').textContent()) ? ok('painel: edição e publicação') : falha('painel: publicar falhou');
       const pub2 = await (await p.request.get('https://trkwfwvqzfvscqwwldpv.supabase.co/rest/v1/treinos?select=slug,chamada&slug=eq.teste-qa-treino', { headers: { apikey: 'sb_publishable_CYYZ-iAogWrOfkRlKuROWg_KiAp2Jhm' } })).json();
@@ -109,6 +110,8 @@ const ok = (m) => R.ok.push(m); const falha = (m) => R.falha.push(m);
       const linha = p.locator('#tbTreinos tr', { hasText: 'TESTE QA Treino' });
       await linha.locator('button[data-pub]').click(); await p.waitForTimeout(2000);
       (await p.locator('#tbTreinos tr', { hasText: 'TESTE QA Treino' }).textContent()).includes('Rascunho') ? ok('painel: despublicar pela lista') : falha('painel: despublicar falhou');
+      }
+      if (process.env.QA_SEM_PUBLICAR) { await p.click('#voltar'); await p.waitForTimeout(1500); }
       await p.click('[data-aba=leads]'); await p.waitForTimeout(2000);
       (await p.locator('#tbConf').textContent()).includes('Site · confirmação') ? ok('painel: aba Leads › Treinos com origem e treino') : falha('painel: origem ausente em Leads');
       await p.fill('#buscaLeads', 'TESTE QA'); await p.waitForTimeout(300); (await p.locator('#tbConf tr').count()) >= 1 && !(await p.locator('#tbConf').textContent()).includes('Nenhuma') ? ok('painel: pesquisa por nome filtra') : falha('painel: pesquisa não filtra'); await p.fill('#buscaLeads', ''); await p.waitForTimeout(300);

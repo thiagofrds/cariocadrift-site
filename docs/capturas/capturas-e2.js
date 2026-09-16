@@ -2,8 +2,8 @@
 // Uso: node docs/capturas/capturas-e2.js   → docs/capturas/e2/*.png e relatório JSON no stdout
 const { chromium } = require('/Users/thiagofrds/DTC APP/web/node_modules/playwright-core');
 const fs = require('fs'), path = require('path');
-const base = 'http://localhost:8765';
-const out = path.join(__dirname, 'e2'); fs.mkdirSync(out, { recursive: true });
+const base = process.env.QA_BASE || 'http://localhost:8765';
+const out = path.join(__dirname, process.env.QA_BASE ? 'prod' : 'e2'); fs.mkdirSync(out, { recursive: true });
 for (const f of fs.readdirSync(out)) if (f.endsWith('.png')) fs.unlinkSync(path.join(out, f));
 const R = { ok: [], falha: [] };
 const ok = m => R.ok.push(m), falha = m => R.falha.push(m);
