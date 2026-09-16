@@ -80,3 +80,19 @@ Legenda: **aprovado** / **falhou** / **não testado**.
 4. **Site URL e Redirect URLs** do Supabase Auth de produção.
 5. **Senha do administrador**: rodar `scripts/trocar-senha-admin.js` (revisão do script em `LANCAMENTO-E2-INVENTARIO.md`, seção 1, e na mensagem de entrega).
 6. Após o merge: prévia real no WhatsApp, formulários reais em produção, `og.jpg` novo em cache das redes.
+
+---
+
+## 10. Fechamento (16/09, fim do dia)
+
+| Item | Resultado | Detalhe |
+|---|---|---|
+| Senha do administrador | **aprovado** | Trocada por você pelo `scripts/trocar-senha-admin.js` (duas tentativas recusadas pelo script, terceira concluída). API de administração confirma `updated_at` e `last_sign_in_at` às 19:02 UTC. Logout global executado. Linha `ADMIN_SENHA_INICIAL` removida de `.env.local`. Zip antigo em `~/Downloads/cariocadrift-site.zip` ainda existe: apagar |
+| Sessões antigas | **parcial** | Refresh tokens revogados. Access tokens já emitidos valem até expirar (até 1 h). Verificação final: recarregar o painel na aba antiga depois desse prazo e confirmar que pede login |
+| Enforce HTTPS | **aprovado** | Ativado após confirmar certificado `CN=cariocadrift.com.br` válido até 15/12/2026 e HTTPS 200 nos dois domínios. Testes: `www` → 301 para `https://cariocadrift.com.br/`; `/treinos/` em HTTP → 301 HTTPS; raiz em HTTP → ver linha abaixo. DNS e domínio não tocados |
+| Raiz em HTTP → HTTPS | ver mensagem de entrega | CDN devolveu 200 em cache (`Age` 390 s, `max-age` 600 s) logo após ativar; retestado após expirar |
+| Capa do evento | **aguardando escolha** | Render bloqueado. Prévias com fotos do acervo ainda não usadas no site: `capa-3132`, `capa-3142`, `capa-3127` (desktop e mobile). Crédito "Foto Sergio Photos RJ · Registro de treino anterior" automático para fotos do acervo. Banco não alterado |
+| Supabase Auth | **aguardando aceite** | Painel usa `resetPasswordForEmail` com retorno `origem + /admin/` e trata `PASSWORD_RECOVERY`. Configuração proposta na mensagem de entrega. Nada salvo |
+| Merge | não autorizado | `fase-01-home` pronto, 3 commits desde o QA (E.2, checklist, crédito da capa) |
+
+**Só testável após a publicação:** prévia de link no WhatsApp e Instagram com o novo `og.jpg`; formulários e painel no domínio real; página `/treinos/open-drift-session/` com 200 no GitHub Pages; recuperação de senha por e-mail (depende da configuração do Auth).
