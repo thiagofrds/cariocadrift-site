@@ -149,7 +149,7 @@ footer{padding-bottom:110px}
         <div class="bloco"><b id="cd-s">--</b><small>seg</small></div>
       </div>
     </div>
-    ${t.capa_url ? `<figure class="foto"><div class="quadro"><img src="${esc(foto(t.capa_url))}" alt="" width="1320" height="880" fetchpriority="high"></div><figcaption><span><b>Capa</b> ${esc(t.titulo)}</span><span>${esc(t.local_nome)}</span></figcaption></figure>` : ''}
+    ${t.capa_url ? `<figure class="foto"><div class="quadro"><img src="${esc(foto(t.capa_url))}" alt="" width="1320" height="880" fetchpriority="high"></div><figcaption>${/^\/assets\/fotos\//.test(t.capa_url) ? `<span><b>Foto</b> Sergio Photos RJ</span><span>Registro de treino anterior</span>` : `<span><b>Capa</b> ${esc(t.titulo)}</span><span>${esc(t.local_nome)}</span>`}</figcaption></figure>` : ''}
   </div>
   <div class="largada"></div>
 </section>
