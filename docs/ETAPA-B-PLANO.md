@@ -1,6 +1,6 @@
 # Etapa B — Contas e perfis: plano de execução
 
-Branch `etapa-b-contas`, criado a partir de `fase-01-home` em 16/09/2026. Segue `ARQUITETURA-CONSOLIDADA.md` (aprovada). Este arquivo é o roteiro operacional; não contém SQL nem código. **Nada aqui é executado antes da conclusão da etapa A e da sua autorização expressa.** Tudo roda exclusivamente no projeto `carioca-drift-dev`; produção não é tocada.
+Branch `etapa-b-contas`, criado a partir de `fase-01-home` em 16/09/2026. Revisão de 16/09 (quatro dependências técnicas): publicação por artefato sem HTML gerado em commit, lista de perfis para o build por Edge Function com segredo de automação, `acoes_usuario` criada em B1, inventário de privilégios antes da revogação geral com testes de regressão. Segue `ARQUITETURA-CONSOLIDADA.md` (aprovada). Este arquivo é o roteiro operacional; não contém SQL nem código. **Nada aqui é executado antes da conclusão da etapa A e da sua autorização expressa.** Tudo roda exclusivamente no projeto `carioca-drift-dev`; produção não é tocada.
 
 ## 0. Decisões registradas para a etapa
 
@@ -24,16 +24,37 @@ Cada uma é um arquivo em `supabase/migrations/`, escrito e revisado antes de ap
 
 | # | Arquivo | Conteúdo | Reversão |
 |---|---|---|---|
-| B1 | `..._usuarios.sql` | `usuarios` com colunas, checks e trigger de `atualizado_em`; `handles_reservados` com semente; RLS: SELECT própria linha e admin; UPDATE própria linha com `estado_cadastro = 'completo'` e checagem de `avatar_path`; GRANT UPDATE por coluna para `authenticated`; nenhum privilégio para anon | drop das tabelas |
+| B1 | `..._usuarios.sql` | `usuarios` com colunas, checks e trigger de `atualizado_em`; `handles_reservados` com semente; **`acoes_usuario`** (`id`, `usuario_id`, `acao`, `contexto` jsonb, `criado_em`; RLS SELECT só das próprias linhas; nenhuma escrita direta; só funções gravam), criada aqui porque `definir_handle` (B3) e `definir_perfil_publico` (B6) dependem dela; RLS de `usuarios`: SELECT própria linha e admin; UPDATE própria linha com `estado_cadastro = 'completo'` e checagem de `avatar_path`; **REVOKE ALL** dos privilégios padrão de `anon` e `authenticated` nas três tabelas, depois GRANT SELECT e GRANT UPDATE por coluna só onde a seção 3.1 manda | drop das tabelas |
 | B2 | `..._trigger_perfil.sql` | trigger em `auth.users` (insert) que cria `usuarios` a partir do metadado, com captura de colisão de handle → `handle_pendente`, e `on conflict (id) do nothing` | drop do trigger e da função |
-| B3 | `..._handle.sql` | `normalizar_handle`, `handle_disponivel` (EXECUTE só para o role da Edge Function), `definir_handle` (authenticated) | drop das funções |
+| B3 | `..._handle.sql` | `normalizar_handle`, `handle_disponivel` (EXECUTE só para `service_role`, chamada pela Edge Function), `definir_handle` (authenticated; grava em `acoes_usuario`) | drop das funções |
 | B4 | `..._capacidades.sql` | `capacidades`, `acoes_admin`; `conceder_capacidade` e `revogar_capacidade` (recusam alvo = chamador; revogar remove e-mail de `admins` na mesma transação); RLS SELECT próprias linhas e admin; nenhuma escrita direta | drop |
 | B5 | `..._eh_admin_modo_duplo.sql` | novo corpo de `eh_admin()` com precedência de `capacidades`; `origem_admin()` | restaurar o corpo anterior, guardado no próprio arquivo como comentário e em migration de reversão |
-| B6 | `..._perfil_publico.sql` | `definir_perfil_publico(bool)` com auditoria em `acoes_usuario`; `perfil_publico(handle)` com projeção fixa; EXECUTE de `perfil_publico` para anon e authenticated; revogação de EXECUTE de PUBLIC em todas as funções novas | drop |
+| B6 | `..._perfil_publico.sql` | `definir_perfil_publico(bool)` com auditoria em `acoes_usuario` (já existente desde B1); `perfil_publico(handle)` com projeção fixa; `perfis_publicos_para_build()` devolvendo só `handle` e `nome_exibicao` de perfis públicos e completos, paginada, EXECUTE **só para `service_role`**; EXECUTE de `perfil_publico` para anon e authenticated; revogação de EXECUTE de PUBLIC em todas as funções desta migration | drop |
 | B7 | `..._storage_avatares.sql` | bucket privado `avatares`; policies de INSERT/UPDATE/DELETE na própria pasta; SELECT conforme seção 4.5.1 | remover bucket e policies |
-| B8 | `..._privilegios.sql` | revogação geral de EXECUTE de PUBLIC/anon no schema `public`, com lista de exceções explícita (`perfil_publico`) | reconceder (não desejável; existe só formalmente) |
+| B8 | `..._privilegios.sql` | **só depois do inventário da seção 2.1**: revogação de EXECUTE de PUBLIC/anon/authenticated em cada função listada como indevida no inventário, função por função (não `REVOKE ... ALL FUNCTIONS IN SCHEMA`, para não atingir `eh_admin()` e as funções de policy); alteração dos privilégios padrão do schema para que funções novas nasçam sem EXECUTE para anon/authenticated; lista de exceções explícita e testada (seção 2.1) | migration de reversão gerada a partir do inventário, reconcedendo exatamente o que foi revogado |
 
 Fora desta etapa: `veiculos` e bucket `veiculos` (etapa C), `handles_anteriores` (troca de handle, não autorizada).
+
+Observação sobre privilégios padrão: o Supabase concede, por padrão, todos os privilégios de tabela e EXECUTE de função a `anon` e `authenticated` no schema `public`; RLS é o que bloqueia. Por isso toda migration desta etapa revoga o padrão antes de conceder o mínimo, e a suíte confere o resultado lendo o catálogo.
+
+### 2.1 Inventário de funções e permissões antes de B8
+
+Executado no DEV logo após aplicar as migrations de produção (passo 3 da seção 1) e repetido após B7, antes de escrever B8.
+
+1. Script somente leitura `scripts/inventario-privilegios.js`, com a chave de serviço do DEV, gera `docs/inventarios/privilegios-dev-<data>.md` (sem segredos) listando: toda função do schema `public` com `security definer` ou não, `search_path`, e quem tem EXECUTE (`pg_proc` + `aclexplode`); toda tabela com privilégios por role (`information_schema.table_privileges` e `column_privileges`) e policies (`pg_policies`); policies de `storage.objects`; triggers.
+2. Classificação de cada função, em tabela no relatório, em uma de quatro categorias:
+
+| Categoria | Regra | Exemplos esperados |
+|---|---|---|
+| Pública por desenho | EXECUTE para anon e authenticated, listada como exceção | `perfil_publico` |
+| Usada dentro de policy | precisa de EXECUTE para todo role que passa pela policy (anon e authenticated), senão a policy falha e o site quebra | `eh_admin()` (usada nas policies de `treinos`, `confirmacoes`, `interessados_escolinha`, storage `fotos`) |
+| Só para logados | EXECUTE só para authenticated, verificação de capacidade dentro | `definir_handle`, `definir_perfil_publico`, `conceder_capacidade`, `revogar_capacidade`, `origem_admin` |
+| Só automação | EXECUTE só para `service_role` | `handle_disponivel`, `perfis_publicos_para_build` |
+| Interna | nenhum EXECUTE de API; trigger e auxiliares | função do trigger de perfil, `normalizar_handle` |
+
+3. B8 revoga exatamente o que o relatório marca como indevido. Qualquer função fora dessas categorias é decidida à mão e registrada no relatório com o motivo.
+4. O que não pode quebrar, conferido antes e depois de B8 pela suíte de regressão (seção 5): anon insere em `confirmacoes` e em `interessados_escolinha`; anon lê `treinos` publicados e não lê rascunhos; anon não lê `confirmacoes`; leitura pública do bucket `fotos`; painel `/admin/` inteiro (roteiro 5.2 da arquitetura); `qa-lancamento.js` apontado para o DEV.
+5. O inventário é repetido nas etapas C, D e E, sempre antes de qualquer revogação nova.
 
 ## 3. Script de semente administrativa (passo 2 da migração)
 
@@ -43,8 +64,47 @@ Script Node em `scripts/migrar-admins.js`, executado à mão com a chave de serv
 
 - `conta/index.html`: entrar, criar conta (tela única), código por e-mail, escolha de handle quando pendente, "Minha conta" (perfil, foto, interruptor de visibilidade com o texto sobre prazos e caches).
 - `u/index.html` + tratamento em `404.html` por prefixo `/u/`: renderiza `perfil_publico(handle)`; "perfil não disponível" para nulo; `robots noindex, noarchive`.
-- `src/build.py`: gera `u/<handle>/index.html` para perfis públicos com só `nome_exibicao` e `@handle` no título, descrição fixa, `og:image` da marca; remove os que deixaram de ser públicos.
-- `.github/workflows/build.yml`: build a cada 15 minutos e sob demanda, commit só quando há diferença, usando a chave publishable (a função pública basta).
+- `src/build.py`: gera `u/<handle>/index.html` para perfis públicos com só `nome_exibicao` e `@handle` no título, descrição fixa, `og:image` da marca, **em um diretório de saída (`_site/`) que fica fora do Git**; nada gerado é commitado.
+- `.github/workflows/publicar.yml`: publicação por artefato (seção 4.1), a cada 15 minutos e sob demanda.
+
+### 4.1 Publicação por artefato, sem dados pessoais no histórico
+
+Hoje o GitHub Pages publica o branch `main`, e o build gera `treinos/<slug>/index.html` dentro do repositório. Para perfis isso é inaceitável: um commit público com nome e @ de alguém fica no histórico para sempre, mesmo depois de despublicado.
+
+**Solução: fonte de publicação "GitHub Actions" em vez de "branch".** A troca é uma configuração do repositório, feita só na etapa B com sua autorização, e não afeta a etapa A enquanto não for feita.
+
+1. O workflow roda a cada 15 minutos, sob demanda e a cada push em `main`. Faz checkout, roda `build.py` para `_site/`, sobe `_site/` como artefato de publicação (`actions/upload-pages-artifact`) e publica (`actions/deploy-pages`).
+2. O repositório passa a conter só fonte: `src/`, `assets/`, `docs/`, `supabase/`. As páginas geradas de treinos e de perfis existem apenas no artefato. O `.gitignore` bloqueia `_site/`, `u/` e `treinos/*/`.
+3. Retirar uma página é o build seguinte não a gerar. O artefato anterior é descartado pelo GitHub em 1 dia (`retention-days: 1`) e não é público: só quem tem acesso de escrita ao repositório vê artefatos, e eles expiram.
+4. O CDN do GitHub Pages serve com `Cache-Control: max-age=600`, então uma página retirada pode continuar sendo servida por até 10 minutos após a publicação. Somados aos 15 minutos do agendamento, o teto prático é 25 minutos para o nome sair do ar; a arquitetura fala em "até 15 minutos" para o build, e este parágrafo documenta os 10 minutos adicionais do CDN.
+5. A migração das páginas de treinos para o mesmo mecanismo acontece junto, o que elimina o build manual atual.
+
+**Limites dos caches externos, documentados para o texto do interruptor e para a política de privacidade:**
+
+| Serviço | O que guarda | Por quanto tempo | O que podemos fazer |
+|---|---|---|---|
+| WhatsApp | título, descrição e imagem da prévia, gerados no aparelho de quem colou o link | enquanto a conversa existir | nada; não há API de limpeza |
+| Instagram, Facebook, Messenger | prévia do link | dias a semanas | pedir nova leitura no depurador de compartilhamento da Meta, sem garantia de propagação |
+| Telegram | prévia do link | dias | pedir atualização ao bot oficial de prévias |
+| X | card do link | cerca de uma semana | nada direto |
+| Google, Bing | com `noindex, noarchive`, tendem a não indexar nem guardar cópia | — | pedir remoção de URL no Search Console/Webmaster Tools, que temos por sermos donos do domínio; não é imediato |
+| Internet Archive | pode guardar cópia mesmo com `noarchive` | indefinido | pedir exclusão por e-mail, a critério deles |
+| Navegador de quem visitou | cache local e histórico | a critério do usuário | nada |
+
+Nenhuma dessas limpezas é prometida ao usuário. O que é prometido: os dados sensíveis nunca vão a arquivo, o nome e o @ saem do nosso servidor em até 25 minutos, e o histórico Git nunca os contém.
+
+### 4.2 Como o build obtém a lista de perfis públicos
+
+O build não lê `usuarios` e o site nunca carrega a chave de serviço.
+
+1. Edge Function `lista-perfis-build` no Supabase. Só ela usa a chave de serviço, que fica nos segredos do próprio Supabase e nunca sai dele. Ela chama `perfis_publicos_para_build()` (EXECUTE só para `service_role`), que devolve `handle` e `nome_exibicao` de perfis com `perfil_publico = true` e `estado_cadastro = 'completo'`, paginada por 500.
+2. A Edge Function exige o cabeçalho `x-build-token` e compara em tempo constante com o segredo `BUILD_TOKEN` guardado nos segredos do Supabase. Sem o cabeçalho, ou com valor errado, responde 401 sem corpo. Aplica limite de 60 chamadas por hora e registra cada chamada.
+3. O mesmo `BUILD_TOKEN` fica em GitHub Actions como segredo do ambiente `github-pages`, mascarado nos logs, disponível só a workflows do branch `main` (nunca a pull requests de fork). O workflow o passa ao `build.py` por variável de ambiente; o script nunca o imprime.
+4. Treinos continuam sendo lidos com a chave publishable, porque a policy de `treinos` publicados já é pública.
+5. Rotação: trocar o `BUILD_TOKEN` nos dois lugares; a função antiga para de aceitar na hora. Não há chave de serviço nem senha de banco em GitHub.
+6. Impacto de um vazamento do `BUILD_TOKEN`: lista de handles e nomes de exibição de perfis já públicos, nada além. Mesmo assim ele é rotacionado a cada etapa.
+
+Alternativa descartada: expor a lista por função ao `anon`. Os dados são públicos um a um, mas a enumeração completa de usuários não deve ser gratuita.
 - Painel `/admin/`: aba Usuários (lista, origem da permissão via `origem_admin`, conceder/revogar capacidade com motivo), e indicador "permissão via".
 - Nav: entrada "Conta" (E.2 já prevê).
 
@@ -54,6 +114,9 @@ Script Node em `scripts/migrar-admins.js`, executado à mão com a chave de serv
 - Teste do build: gera um perfil público de teste, roda `build.py`, lê o HTML e confere ausência de apresentação, Instagram, telefone, e-mail e caminhos de foto; despublica, roda de novo, confere remoção.
 - Roteiro de navegador (`docs/capturas/qa-etapa-b.js`, Playwright): cadastro em 390 px, código, handle pendente forçado, "Minha conta", ligar/desligar visibilidade, `/u/<handle>/` nos dois estados.
 - Roteiro 5.2 do painel, executado com o admin migrado do DEV, lado positivo e negativo.
+- **Regressão de privilégios (antes e depois de B8, e a cada migration):** anon insere em `confirmacoes` (201) e em `interessados_escolinha` (201); anon lê `treinos` publicados e recebe zero linhas de rascunho; anon não lê `confirmacoes` nem `interessados_escolinha`; leitura pública do bucket `fotos` continua e escrita anônima continua negada; usuário logado sem capacidade não escreve em `treinos`; `eh_admin()` continua executável por anon e authenticated (indispensável às policies); teste que compara o catálogo de privilégios com a lista de exceções da seção 2.1 e falha em qualquer diferença, nas duas direções; `qa-lancamento.js` apontado para o DEV verde.
+- **Publicação:** teste do workflow em execução manual no DEV confere que `git status` fica limpo após o build, que `_site/u/<handle>/index.html` existe para o perfil de teste e some no build seguinte após despublicar, e que nenhum arquivo em `u/` ou `treinos/*/` entrou em commit (busca no histórico do branch).
+- **Segredos:** teste do workflow confere que o log não contém o valor do `BUILD_TOKEN` (busca pelo valor mascarado) e que uma chamada à Edge Function sem cabeçalho recebe 401.
 
 ## 6. Critérios de aceitação
 
@@ -61,4 +124,4 @@ Os da seção 8.1 (B) da arquitetura, sem alteração. Demonstração no DEV par
 
 ## 7. O que continua proibido nesta etapa
 
-Executar qualquer migration em produção; alterar `admins` ou `eh_admin()` de produção; merge em `main`; publicar; imprimir credenciais; conectar a qualquer banco do NMI.
+Executar qualquer migration em produção; alterar `admins` ou `eh_admin()` de produção; trocar a fonte de publicação do GitHub Pages sem autorização; commitar qualquer arquivo gerado com dados de usuário; colocar chave de serviço ou senha de banco no GitHub ou no site; merge em `main`; publicar; imprimir credenciais; conectar a qualquer banco do NMI.
