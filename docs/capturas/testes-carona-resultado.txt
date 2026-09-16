@@ -86,5 +86,6 @@ DELETE 6
 ----------+----------
        46 |        0
 
-simultâneos: 0 entraram, 40 barrados (40 pelo gatilho) | total na janela: 50 (esperado 60)
+=== CONCORRÊNCIA
+simultâneos: 10 entraram, 30 barrados (30 pelo gatilho) | total na janela: 60 (esperado 60)
 mesmo telefone em paralelo: 3 entraram (esperado 3), 3 barrados (esperado 3)

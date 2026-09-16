@@ -92,5 +92,5 @@ create trigger interessados_carona_limite before insert on public.interessados_c
 -- 3. anon update/delete → 0 linhas afetadas (sem policy).
 -- 4. usuário logado que não é admin → select devolve zero linhas; admin → vê e apaga.
 -- 5. 4ª tentativa do mesmo telefone em 1 hora → erro do gatilho (igual para telefone novo e já cadastrado); 61ª tentativa em 10 minutos → erro do gatilho, igual para telefone novo e já cadastrado; com 40 envios simultâneos e 50 já na janela, exatamente 10 entram e 30 são barrados.
--- 7. apagar um treino pode deixar o mesmo telefone com mais de um interesse geral; o painel mostra cada um e marca os repetidos.
 -- 6. painel: aba Leads → Carona Radical lista, filtra por treino, pesquisa por nome/telefone, exporta CSV; registro de teste apagado ao final.
+-- 7. apagar um treino pode deixar o mesmo telefone com mais de um interesse geral; o painel mostra cada um e marca os repetidos.

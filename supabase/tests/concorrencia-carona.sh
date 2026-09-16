@@ -1,12 +1,12 @@
 #!/bin/sh
 # Envios simultâneos contra o gatilho anti-abuso, no Postgres local isolado (cluster iniciado por rodar-local.sh).
-# Cenário: 50 registros já na janela de 10 min; 40 processos inserem ao mesmo tempo telefones distintos.
+# Cenário: 50 registros já na janela de 10 min (o gatilho registra as 50 tentativas); 40 processos inserem ao mesmo tempo telefones distintos.
 # Esperado com limite 60: exatamente 10 entram e 30 são barrados (contagem exata graças ao bloqueio consultivo).
 set -e; export LC_ALL=en_US.UTF-8
 PG=/opt/homebrew/opt/postgresql@17/bin; S=/tmp/cdpg
 psql() { "$PG/psql" -h "$S" -p 54329 -U harness -q -At "$@"; }
 psql -d cd_teste -c "delete from interessados_carona; delete from tentativas_carona;"
-psql -d cd_teste -c "insert into interessados_carona (evento,nome,telefone,consentimento) select 'base','Base',(21930000000+g)::text,true from generate_series(1,50) g; insert into tentativas_carona (telefone) select (21930000000+g)::text from generate_series(1,50) g;"
+psql -d cd_teste -c "insert into interessados_carona (evento,nome,telefone,consentimento) select 'base','Base',(21930000000+g)::text,true from generate_series(1,50) g;"
 T=$(mktemp -d); i=1
 while [ $i -le 40 ]; do
   ( psql -d cd_teste -c "set role anon; select set_config('request.jwt.claims','{\"role\":\"anon\"}',false); insert into interessados_carona (evento,nome,telefone,consentimento) values ('simult','Simult $i','2194000$(printf %04d $i)',true);" >"$T/$i.out" 2>&1 && echo ok >"$T/$i.res" || echo erro >"$T/$i.res" ) &
