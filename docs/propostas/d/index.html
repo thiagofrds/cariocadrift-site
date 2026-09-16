@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposta D · Largada — Carioca Drift Culture</title>
+<link rel="icon" href="../../../assets/marca/identidade/emblema-cd-circular-conceitual.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@0,700;0,800;1,900&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== PROPOSTA D — "LARGADA": logo original como identificação, grid de largada como hero, composição editorial ===== */
+:root{
+  --preto:#0B0B0B; --grafite:#141416; --linha:#26262B; --linha-forte:#3A3A42;
+  --branco:#FFFFFF; --gelo:#EDEDED; --cinza:#9A9AA2; --amarelo:#FFD100; --vermelho:#FF0000; --chrome:#C0C0C0;
+  --display:"Saira Extra Condensed","Arial Narrow",sans-serif; --ui:"Barlow Condensed","Arial Narrow",sans-serif; --texto:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --g:20px;
+}
+*{box-sizing:border-box;margin:0}
+html{overflow-x:hidden}
+body{background:var(--preto);color:var(--gelo);font-family:var(--texto);font-size:16px;line-height:1.55;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{width:min(100% - 2*var(--g),1200px);margin-inline:auto}
+.rot{font-family:var(--ui);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.rot.am{color:var(--amarelo)}.rot.vm{color:var(--vermelho)}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transform:uppercase;letter-spacing:-.005em}
+.num{font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 24px;text-decoration:none;font-family:var(--ui);font-weight:700;font-size:16px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--linha-forte);color:var(--gelo);transition:background .15s,color .15s,border-color .15s}
+.btn.am{background:var(--amarelo);border-color:var(--amarelo);color:var(--preto)}
+.btn.am:hover{background:var(--branco);border-color:var(--branco)}
+.btn:hover{border-color:var(--gelo)}
+/* régua de largada: amarelo com ponta vermelha (linha CSS, não grafismo recortado) */
+.largada{height:3px;background:linear-gradient(90deg,var(--amarelo) 0 calc(100% - 96px),var(--vermelho) calc(100% - 96px))}
+
+/* ===== componente logo: recorte por CSS pra caixa do desenho (1032x570 dentro de 1254x1254) ===== */
+.logo{display:block;aspect-ratio:1032/570;overflow:hidden;position:relative;flex:none}
+.logo img{position:absolute;width:121.5116%;left:-10.5620%;top:-62.6316%;max-width:none}
+
+/* ===== header ===== */
+.top{position:sticky;top:0;z-index:20;background:rgba(11,11,11,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--linha)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:72px}
+.top .logo{height:48px;width:calc(48px * 1032 / 570)}
+.top nav{margin-left:auto;display:flex;gap:6px}
+.top nav a{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--cinza);padding:10px 12px}
+.top nav a[aria-current]{color:var(--gelo);box-shadow:inset 0 -2px 0 var(--amarelo)}
+.top .cta{font-family:var(--ui);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--preto);background:var(--amarelo);padding:11px 16px;white-space:nowrap}
+.top .menu{display:none;width:44px;height:44px;border:1px solid var(--linha-forte);background:none;position:relative;margin-left:auto}
+.top .menu i{position:absolute;left:11px;right:11px;height:2px;background:var(--gelo);top:50%;transition:transform .2s,opacity .2s}
+.top .menu i:nth-child(1){transform:translateY(-6px)}.top .menu i:nth-child(3){transform:translateY(6px)}
+.top .menu[aria-expanded="true"] i:nth-child(1){transform:rotate(45deg)}.top .menu[aria-expanded="true"] i:nth-child(2){opacity:0}.top .menu[aria-expanded="true"] i:nth-child(3){transform:rotate(-45deg)}
+@media (max-width:900px){.top .wrap{min-height:64px}.top .logo{height:44px;width:calc(44px * 1032 / 570)}.top nav,.top .cta{display:none}.top .menu{display:block}}
+/* menu mobile: logo em cima, links grandes */
+.mm{position:fixed;inset:0;z-index:19;background:var(--preto);padding:96px var(--g) 40px;display:none}
+.mm.on{display:block}
+.mm .logo{height:64px;width:calc(64px * 1032 / 570);margin-bottom:28px}
+.mm ul{list-style:none;padding:0;margin:0;display:grid}
+.mm li a{display:block;padding:14px 0;font-family:var(--display);font-weight:800;font-size:56px;line-height:.95;text-transform:uppercase;text-decoration:none;color:var(--gelo);border-top:1px solid var(--linha)}
+.mm li a[aria-current]{color:var(--amarelo)}
+.mm .ig{display:block;margin-top:26px;font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--amarelo)}
+/* barra fixa mobile: ação principal ao alcance do polegar */
+.dock{position:fixed;inset:auto 0 0;z-index:18;display:none;padding:10px var(--g) calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(11,11,11,.92) 35%)}
+.dock a{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:56px;padding:0 18px;background:var(--amarelo);color:var(--preto);text-decoration:none;font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.dock a b{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:0}
+@media (max-width:900px){.dock{display:block}body{padding-bottom:84px}}
+
+/* ===== hero: marca + frase em cima, grid de largada embaixo ===== */
+.hero{padding:56px 0 0}
+.hero .marca{display:grid;gap:28px;align-items:end}
+.hero .logo{width:min(100%,360px)}
+.hero .frase{max-width:36ch;color:var(--gelo);font-size:18px;line-height:1.5}
+.hero .frase b{color:var(--amarelo);font-weight:600}
+.hero .frase .rot{display:block;margin-bottom:12px}
+.hero .grid{margin-top:44px;padding:28px 0 40px;border-top:1px solid var(--linha);display:grid;gap:22px}
+.hero .data{display:grid;gap:6px}
+.hero .data b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(96px,22vw,200px);line-height:.8;color:var(--amarelo);letter-spacing:-.03em}
+.hero .data span{font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--cinza)}
+.hero .data span em{font-style:normal;color:var(--gelo);margin-left:10px}
+.hero .evento h2{font-size:clamp(40px,7vw,80px)}
+.hero .evento .meta{margin-top:12px;font-family:var(--ui);font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--gelo)}
+.hero .evento .meta i{font-style:normal;color:var(--amarelo);margin:0 8px}
+.hero .evento .part{margin-top:8px;font-size:15px;color:var(--cinza)}
+.hero .evento .part b{color:var(--gelo);font-weight:600}
+.hero .acoes{display:grid;gap:10px;align-content:end}
+.hero .acoes .nota{font-size:12px;color:var(--cinza);line-height:1.45}
+@media (min-width:900px){
+  .hero{padding:88px 0 0}
+  .hero .marca{grid-template-columns:1fr 1fr;gap:64px}
+  .hero .logo{width:min(100%,540px)}
+  .hero .frase{justify-self:end;max-width:34ch;font-size:20px}
+  .hero .grid{margin-top:72px;padding:40px 0 64px;grid-template-columns:auto 1fr 280px;gap:48px;align-items:end}
+  .hero .acoes{padding-bottom:6px}
+}
+@media (max-width:900px){.hero{padding-top:36px}.hero .logo{width:min(100%,272px)}.hero .marca{gap:18px}.hero .frase{font-size:16px;max-width:40ch}.hero .frase .rot{margin-bottom:6px}.hero .grid{margin-top:26px;padding:22px 0 32px;gap:16px}.hero .data b{font-size:clamp(80px,22vw,110px)}.hero .evento .meta{font-size:15px}.hero .acoes .btn.linha{display:none}}
+
+/* ===== ficha: lista editorial, um filete só ===== */
+.ficha{background:var(--grafite);padding:64px 0}
+.ficha .cab{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+.ficha h2{font-size:clamp(44px,7vw,88px)}
+.ficha dl{display:grid;gap:22px 28px}
+.ficha dt{font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--vermelho);margin-bottom:4px}
+.ficha dd b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);line-height:.95;text-transform:uppercase}
+.ficha dd span{display:block;color:var(--cinza);font-size:15px;margin-top:6px;max-width:34ch}
+.ficha dd a{color:var(--amarelo);text-decoration:none;font-weight:600}
+.ficha dd .st{display:inline-block;margin-top:8px;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amarelo);border-bottom:1px solid var(--amarelo);padding-bottom:1px;text-decoration:none}
+@media (min-width:700px){.ficha dl{grid-template-columns:1fr 1fr}}
+@media (min-width:1000px){.ficha dl{grid-template-columns:repeat(3,1fr);gap:36px 40px}}
+
+/* ===== onde: foto real da pista + endereço ===== */
+.onde{padding:72px 0}
+.onde .duas{display:grid;gap:26px}
+.onde figure{margin:0;border:1px solid var(--linha-forte)}
+.onde figure img{width:100%;aspect-ratio:16/10;object-fit:cover;filter:saturate(.8)}
+.onde .txt{display:grid;gap:14px;align-content:center}
+.onde h2{font-size:clamp(44px,7vw,80px)}
+.onde .end{font-size:17px;color:var(--gelo)}
+.onde .end span{display:block;color:var(--cinza);font-size:15px}
+.onde .rotas{display:flex;gap:10px;flex-wrap:wrap}
+.onde .rotas .btn{min-height:46px;font-size:14px;padding:0 18px}
+.onde .secoes{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-family:var(--ui);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza)}
+.onde .secoes i{display:inline-block;width:22px;height:6px;margin-right:8px;transform:skewX(-14deg);vertical-align:middle}
+@media (min-width:900px){.onde .duas{grid-template-columns:1.35fr 1fr;gap:56px;align-items:center}}
+
+/* ===== o que rola: numerais grandes, grade deslocada ===== */
+.rola{padding:24px 0 80px}
+.rola .cab{margin-bottom:8px}
+.rola h2{font-size:clamp(44px,7vw,88px)}
+.rola ol{list-style:none;padding:0;display:grid;gap:0}
+.rola li{padding:30px 0 0;display:grid;gap:8px}
+.rola li .n{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(56px,10vw,96px);line-height:.8;color:var(--amarelo);letter-spacing:-.03em}
+.rola li b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,4.5vw,44px);line-height:.95;text-transform:uppercase}
+.rola li p{color:var(--cinza);max-width:38ch;font-size:15px}
+.rola li .tag{font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--vermelho)}
+@media (min-width:900px){.rola ol{grid-template-columns:repeat(4,1fr);gap:40px}.rola li:nth-child(even){margin-top:56px}}
+
+/* ===== escolinha: manchete + três blocos de preço sem caixas ===== */
+.escola{background:var(--grafite);padding:72px 0}
+.escola .cab{display:grid;gap:18px;margin-bottom:40px}
+.escola h2{font-size:clamp(48px,8vw,104px)}
+.escola h2 em{font-style:italic;font-weight:900;color:var(--amarelo)}
+.escola .cab p{color:var(--cinza);max-width:44ch;font-size:17px}
+.escola .cab .rot{margin-bottom:10px;display:block}
+.escola .pacotes{display:grid;gap:28px}
+.escola .pac{display:grid;gap:6px;padding-top:16px;border-top:2px solid var(--amarelo)}
+.escola .pac .rot{color:var(--cinza)}
+.escola .pac b{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase}
+.escola .pac .v{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(44px,6vw,64px);line-height:1;color:var(--amarelo);margin-top:6px}
+.escola .pac .v small{display:block;font-family:var(--ui);font-style:normal;font-size:11px;letter-spacing:.18em;color:var(--cinza);margin-bottom:2px}
+.escola .pac p{color:var(--cinza);font-size:14px;max-width:30ch}
+.escola .rod{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:36px;color:var(--cinza);font-size:14px}
+@media (min-width:900px){.escola .cab{grid-template-columns:1.2fr .8fr;align-items:end}.escola .cab p{justify-self:end}.escola .pacotes{grid-template-columns:repeat(3,1fr);gap:40px}}
+
+/* ===== comunidade + rodapé ===== */
+.comu{padding:56px 0}
+.comu .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.comu h2{font-size:clamp(30px,4.5vw,48px)}
+.comu p{color:var(--cinza);max-width:48ch;font-size:15px;margin-top:6px}
+footer{border-top:1px solid var(--linha);padding:44px 0 28px;color:var(--cinza);font-size:14px}
+footer .wrap{display:grid;gap:26px}
+footer .emb{display:flex;align-items:center;gap:16px}
+footer .emb img{width:72px;height:72px;border-radius:50%;object-fit:cover}
+footer .emb b{font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:var(--gelo);line-height:1.2}
+footer .emb b small{display:block;font-weight:600;font-size:11px;letter-spacing:.22em;color:var(--amarelo);margin-top:4px}
+footer ul{list-style:none;padding:0;display:grid;gap:8px}
+footer a{text-decoration:none;color:var(--gelo)}
+footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--linha);font-size:12px;letter-spacing:.06em}
+@media (min-width:900px){footer .wrap{grid-template-columns:1.4fr 1fr 1fr}footer .fim{grid-column:1/-1}}
+@media (prefers-reduced-motion:no-preference){.hero .data b{animation:entra .5s cubic-bezier(.2,.9,.2,1) both}@keyframes entra{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="Carioca Drift Culture"><img src="../../../assets/marca/logos/logo-carioca-drift-transparente.png" alt="Carioca Drift Culture"></a>
+    <nav><a href="#" aria-current="page">Home</a><a href="#">Treinos</a><a href="#">Escolinha</a><a href="#">Sobre</a></nav>
+    <a class="cta" href="#treino">Treino 20.09</a>
+    <button class="menu" id="abrirMenu" aria-expanded="false" aria-label="Abrir menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+<div class="mm" id="mm">
+  <a class="logo" href="#"><img src="../../../assets/marca/logos/logo-carioca-drift-transparente.png" alt="Carioca Drift Culture"></a>
+  <ul><li><a href="#" aria-current="page">Home</a></li><li><a href="#">Treinos</a></li><li><a href="#">Escolinha</a></li><li><a href="#">Sobre</a></li></ul>
+  <a class="ig" href="https://www.instagram.com/cariocadrift_/">@cariocadrift_ →</a>
+</div>
+<div class="dock"><a href="#treino"><span>Próximo treino</span><b>20.09 →</b></a></div>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="marca">
+      <a class="logo" href="#"><img src="../../../assets/marca/logos/logo-carioca-drift-transparente.png" alt="Carioca Drift Culture"></a>
+      <p class="frase"><span class="rot am">Rio de Janeiro</span>Treinos abertos no RJ Race Park, escolinha com instrutor e a cena do drift carioca crescendo junto. <b>More than drift. It's a culture.</b></p>
+    </div>
+    <div class="grid num" id="treino">
+      <div class="data"><span>Domingo<em>Set · 2026</em></span><b>20.09</b></div>
+      <div class="evento">
+        <span class="rot am">Próximo treino</span>
+        <h2>Open Drift Session</h2>
+        <p class="meta">9h às 18h<i>//</i>RJ Race Park<i>//</i>Santa Cruz, RJ</p>
+        <p class="part"><b>Ingressos no local.</b> Pista exclusiva para pilotos convidados. Caronas pagas.</p>
+      </div>
+      <div class="acoes">
+        <a class="btn am" href="#">Confirmar presença</a>
+        <a class="btn linha" href="#">Ver o treino</a>
+        <p class="nota">Confirmar presença registra seu interesse. Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona.</p>
+      </div>
+    </div>
+  </div>
+  <div class="largada"></div>
+</section>
+
+<section class="ficha">
+  <div class="wrap">
+    <div class="cab"><div><span class="rot am">Open Drift Session</span><h2>O essencial</h2></div><a class="btn" href="#" style="min-height:46px;font-size:14px">Salvar no calendário</a></div>
+    <dl>
+      <div><dt>Quando</dt><dd><b>Domingo, 20 de setembro</b><span>Das 9h às 18h. Chega cedo pra pegar o dia inteiro.</span></dd></div>
+      <div><dt>Público</dt><dd><b>Ingressos no local</b><span>Venda direto na portaria, no dia. Confirme seu interesse em participar do evento.</span></dd></div>
+      <div><dt>Segurança</dt><dd><b>Capacete obrigatório</b><span>Para entrar na pista e participar das caronas.</span></dd></div>
+      <div><dt>Pilotos</dt><dd><b>Só convidados</b><span>Participação na pista exclusiva para pilotos convidados. Não há inscrição pública.</span></dd></div>
+      <div><dt>Caronas</dt><dd><b>Caronas pagas</b><span>Consulte informações e disponibilidade com a organização.</span><a class="st" href="#">Consultar caronas →</a></dd></div>
+      <div><dt>Compartilhar</dt><dd><b>Chama a galera</b><span>Manda o link do treino no grupo. Quem confirma ajuda a gente a se organizar.</span><a class="st" href="#">Copiar link →</a></dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="onde">
+  <div class="wrap duas">
+    <figure><img src="../../../assets/pista.jpg" alt="Vista aérea do traçado do RJ Race Park"></figure>
+    <div class="txt">
+      <span class="rot am">Onde</span>
+      <h2>RJ Race Park</h2>
+      <p class="end">Estrada do Frutuoso, 320<span>Santa Cruz · Rio de Janeiro</span></p>
+      <div class="rotas"><a class="btn" href="#">Google Maps</a><a class="btn" href="#">Waze</a></div>
+      <div class="secoes"><span><i style="background:var(--vermelho)"></i>1ª seção</span><span><i style="background:var(--amarelo)"></i>2ª seção</span><span><i style="background:#3DBE5B"></i>3ª seção</span><span><i style="background:var(--gelo)"></i>Zona de iniciação</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="rola">
+  <div class="wrap">
+    <div class="cab"><span class="rot am">Programa do dia</span><h2>O que rola</h2></div>
+    <ol class="num">
+      <li><span class="n">01</span><b>Pilotos locais</b><p>A galera do drift carioca andando o dia todo, da iniciação à pista completa.</p><span class="tag">Pista só pra convidados</span></li>
+      <li><span class="n">02</span><b>Carona radical</b><p>O banco do carona com um piloto de verdade. Capacete obrigatório.</p><span class="tag">Caronas pagas</span></li>
+      <li><span class="n">03</span><b>Zona de iniciação</b><p>Ao lado do estacionamento, pra quem está começando andar sem pressão.</p></li>
+      <li><span class="n">04</span><b>Público e comunidade</b><p>Família, amigos e quem só quer assistir. Traz o seu carro e troca ideia com quem vive isso.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="escola">
+  <div class="wrap">
+    <div class="cab">
+      <div><span class="rot am">Escolinha de drift · com Fabinho Drift Show</span><h2>Aprende com quem <em>vive isso.</em></h2></div>
+      <p>Pista, carro de drift, pneus e combustível inclusos. Você entra no carro com o instrutor do lado e evolui no seu ritmo, do zero até fechar a curva de lado.</p>
+    </div>
+    <div class="pacotes num">
+      <div class="pac"><span class="rot">Experiência individual</span><b>Experiência Drift</b><span class="v">R$ 2.000</span><p>2 horas de pista e carro · Chevette · 1 par de pneus · 10 min com instrutor no carro</p></div>
+      <div class="pac"><span class="rot">Curso completo básico</span><b>Com o Chevette</b><span class="v">R$ 4.500</span><p>8 módulos · pista, carro, 2 tanques de combustível, 2 pares de pneus novos</p></div>
+      <div class="pac"><span class="rot">Curso completo básico</span><b>Com o Nissan Z</b><span class="v">R$ 8.500</span><p>8 módulos · mesma estrutura, mais potência</p></div>
+    </div>
+    <div class="rod"><span>Dois dias (12h às 18h) ou um dia (8h às 18h). Cartão em até 10x sem juros. Datas a combinar.</span><a class="btn am" href="#">Conhecer a escolinha</a></div>
+  </div>
+</section>
+
+<section class="comu">
+  <div class="wrap">
+    <div><span class="rot am">Comunidade</span><h2>A cena passa primeiro pelo Instagram.</h2><p>Vídeos dos treinos, bastidores e próximas datas.</p></div>
+    <a class="btn" href="https://www.instagram.com/cariocadrift_/">@cariocadrift_</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="emb"><img src="../../../assets/marca/identidade/emblema-cd-circular-conceitual.jpeg" alt="Emblema CD"><b>Carioca Drift Culture<small>More than drift. It's a culture.</small></b></div>
+    <div><span class="rot">Site</span><ul style="margin-top:10px"><li><a href="#">Home</a></li><li><a href="#">Treinos</a></li><li><a href="#">Escolinha</a></li><li><a href="#">Sobre</a></li></ul></div>
+    <div><span class="rot">Contato</span><ul style="margin-top:10px"><li><a href="#">@cariocadrift_</a></li><li>Direct no Instagram</li><li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li></ul></div>
+    <div class="fim"><span>© 2026 Carioca Drift Culture · Rio de Janeiro</span><span>Protótipo D · Largada</span></div>
+  </div>
+</footer>
+<script>
+const b = document.getElementById('abrirMenu'), m = document.getElementById('mm');
+b.addEventListener('click', () => { const on = !m.classList.contains('on'); m.classList.toggle('on', on); b.setAttribute('aria-expanded', on); document.body.style.overflow = on ? 'hidden' : ''; });
+</script>
+</body>
+</html>
