@@ -70,7 +70,7 @@ Legenda: **aprovado** / **falhou** / **não testado**.
 |---|---|---|
 | DNS | aprovado | 4 A do GitHub Pages, `www` CNAME, sem AAAA/CAA |
 | Certificado | **aprovado** | GitHub emitiu: `CN=cariocadrift.com.br`, válido até 15/12/2026; API: `approved`. `https://cariocadrift.com.br` e `https://www.` respondem 200 com verificação OK |
-| Enforce HTTPS | **falhou** (desligado) | `https_enforced: false`. Agora pode ser ligado em Settings → Pages; é alteração de configuração e aguarda sua autorização. Não é mais necessário remover e readicionar o domínio |
+| Enforce HTTPS | aprovado (ativado depois, ver seção 10) | estava desligado nesta verificação |
 | Supabase Auth Site URL / Redirects | não alterado | atual `http://localhost:3000`, sem redirects; proposta na seção 2 de `LANCAMENTO-E2-INVENTARIO.md` |
 
 ## 9. Pendências que dependem de você
@@ -90,7 +90,7 @@ Legenda: **aprovado** / **falhou** / **não testado**.
 | Senha do administrador | **aprovado** | Trocada por você pelo `scripts/trocar-senha-admin.js` (duas tentativas recusadas pelo script, terceira concluída). API de administração confirma `updated_at` e `last_sign_in_at` às 19:02 UTC. Logout global executado. Linha `ADMIN_SENHA_INICIAL` removida de `.env.local`. Zip antigo em `~/Downloads/cariocadrift-site.zip` ainda existe: apagar |
 | Sessões antigas | **parcial** | Refresh tokens revogados. Access tokens já emitidos valem até expirar (até 1 h). Verificação final: recarregar o painel na aba antiga depois desse prazo e confirmar que pede login |
 | Enforce HTTPS | **aprovado** | Ativado após confirmar certificado `CN=cariocadrift.com.br` válido até 15/12/2026 e HTTPS 200 nos dois domínios. Testes: `www` → 301 para `https://cariocadrift.com.br/`; `/treinos/` em HTTP → 301 HTTPS; raiz em HTTP → ver linha abaixo. DNS e domínio não tocados |
-| Raiz em HTTP → HTTPS | ver mensagem de entrega | CDN devolveu 200 em cache (`Age` 390 s, `max-age` 600 s) logo após ativar; retestado após expirar |
+| Raiz em HTTP → HTTPS | **aprovado** | Logo após ativar, o CDN devolveu 200 em cache (`Age` 390 s, `max-age` 600 s). Após expirar: `http://cariocadrift.com.br/` → 301 → `https://cariocadrift.com.br/` (200) |
 | Capa do evento | **aguardando escolha** | Render bloqueado. Prévias com fotos do acervo ainda não usadas no site: `capa-3132`, `capa-3142`, `capa-3127` (desktop e mobile). Crédito "Foto Sergio Photos RJ · Registro de treino anterior" automático para fotos do acervo. Banco não alterado |
 | Supabase Auth | **aguardando aceite** | Painel usa `resetPasswordForEmail` com retorno `origem + /admin/` e trata `PASSWORD_RECOVERY`. Configuração proposta na mensagem de entrega. Nada salvo |
 | Merge | não autorizado | `fase-01-home` pronto, 3 commits desde o QA (E.2, checklist, crédito da capa) |
