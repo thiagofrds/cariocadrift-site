@@ -24,6 +24,8 @@ window.CD = (() => {
     }
   };
   const participacao = slug => PARTICIPACAO[slug] || null;
+  // Lista de interesse da Carona Radical: só liga depois que a tabela interessados_carona existir e os testes passarem.
+  const CARONA_LISTA_ATIVA = false;
   // Arquivos conceituais (renders) que não podem ser exibidos como fotografia real em nenhuma página.
   const RENDERS_CONCEITUAIS = ["/assets/carro.jpg", "https://cariocadrift.com.br/assets/carro.jpg"];
 
@@ -126,5 +128,5 @@ window.CD = (() => {
   const init = () => { menuMobile(); ctaProximo(); barraProximo(); topoMarca(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  return { SB_URL, SB_KEY, participacao, RENDERS_CONCEITUAIS, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
+  return { SB_URL, SB_KEY, participacao, RENDERS_CONCEITUAIS, CARONA_LISTA_ATIVA, dock, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();

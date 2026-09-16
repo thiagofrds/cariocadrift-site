@@ -72,6 +72,11 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
       if (pn === 'caronas') {
         const t = await p.locator('main').textContent();
         /paga/i.test(t) && /disponibilidade/i.test(t) && /confirma/i.test(t) && /direct/i.test(t) && !/R\$/.test(t) && !/garantid[ao] /i.test(t.replace('Não há reserva garantida','')) ? ok(`${tag}: caronas pagas, sujeitas a disponibilidade e confirmação, sem preço nem reserva garantida`) : falha(`${tag}: texto de caronas fora da regra`);
+        const listaAtiva = await p.evaluate(() => CD.CARONA_LISTA_ATIVA);
+        if (!listaAtiva) {
+          (await p.locator('#cartaoEmBreve').isVisible()) && !(await p.locator('#cartaoLista').isVisible()) && /abre em breve/i.test(t) && /decidir na hora/i.test(t) ? ok(`${tag}: lista de interesse desligada: aviso "em breve" visível, formulário oculto`) : falha(`${tag}: formulário de carona exposto com a lista desligada`);
+          await p.screenshot({ path: path.join(out, `${tag}-embreve.png`) });
+        } else {
         (await p.locator('#enviar').count()) === 1 && /Entrar na lista de interesse/.test(await p.locator('#enviar').textContent()) && (await p.locator('#consent').count()) === 1 && /decidir na hora/i.test(t) && /não garante vaga|não é reserva/i.test(t) ? ok(`${tag}: formulário de interesse com consentimento, botão certo e aviso "decidir na hora"`) : falha(`${tag}: formulário de carona incompleto`);
         await p.click('#enviar'); await p.waitForTimeout(300);
         (await p.locator('#erroNome').textContent()).length && (await p.locator('#erroTel').textContent()).length && (await p.locator('#erroConsent').textContent()).length ? ok(`${tag}: validação de nome, telefone e consentimento`) : falha(`${tag}: validação do formulário de carona falhou`);
@@ -79,6 +84,7 @@ const vps = { d1440: [{ width: 1440, height: 900 }, false], m390: [{ width: 390,
         /válido/.test(await p.locator('#erroTel').textContent()) ? ok(`${tag}: telefone curto rejeitado`) : falha(`${tag}: telefone curto aceito`);
         (await p.evaluate(() => { const l = document.getElementById('site').closest('label'); const r = l.getBoundingClientRect(); return getComputedStyle(l).opacity === '0' && r.right < 0; })) ? ok(`${tag}: campo honeypot invisível`) : falha(`${tag}: honeypot visível`);
         if (vn === 'd1440') { await p.goto(base + '/caronas/?treino=open-drift-session', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500); /Open Drift Session/.test(await p.locator('#treinoAlvoForm').textContent()) ? ok(`${tag}: interesse associado ao treino de origem`) : falha(`${tag}: treino de origem não associado`); await p.screenshot({ path: path.join(out, `${tag}-treino.png`) }); }
+        }
       }
       if (pn === 'naoexiste') (await p.locator('#naoAchado').isVisible()) ? ok(`${tag}: slug inexistente mostra "Treino não encontrado"`) : falha(`${tag}: slug inexistente sem estado de erro`);
       await p.screenshot({ path: path.join(out, `${tag}-dobra.png`) });

@@ -123,10 +123,16 @@
     <div class="chamada">
       <span class="rot am">Lista de interesse</span>
       <h2>Quer uma carona?</h2>
-      <p>Deixa nome e telefone. A organização poderá entrar em contato para passar valores e disponibilidade.</p>
+      <p>Caronas pagas, sujeitas à disponibilidade e à confirmação da organização.</p>
       <span class="treino-alvo" id="treinoAlvo" hidden></span>
     </div>
-    <div class="cartao">
+    <div class="cartao" id="cartaoEmBreve">
+      <h2>Lista de interesse</h2>
+      <p class="sub">A lista de interesse da Carona Radical abre em breve por aqui.</p>
+      <p class="na-hora"><b>Prefere decidir na hora?</b> Você também pode consultar a disponibilidade de caronas diretamente com a organização no evento. Caronas pagas, sujeitas à disponibilidade.</p>
+      <div class="acoes" style="margin-top:18px"><a class="btn btn-linha" href="/treinos/">Ver os treinos</a></div>
+    </div>
+    <div class="cartao" id="cartaoLista" hidden>
       <div id="formulario">
         <h2>Entrar na lista</h2>
         <p class="sub">Carona paga, sujeita à disponibilidade. Entrar na lista não é reserva.</p>
@@ -156,6 +162,8 @@
 (async () => {
   const { esc, dataCurta } = CD;
   // Treino de origem: /caronas/?treino=<slug>. Só associa se for um treino publicado; nunca cria inscrição nem ingresso.
+  if (!CD.CARONA_LISTA_ATIVA) return;                       // gravação ainda não disponível: só o aviso fica visível
+  document.getElementById('cartaoEmBreve').hidden = true; document.getElementById('cartaoLista').hidden = false;
   const slugParam = (new URLSearchParams(location.search).get('treino') || '').toLowerCase();
   let treinoAlvo = null;
   if (/^[a-z0-9-]{1,80}$/.test(slugParam)) {
