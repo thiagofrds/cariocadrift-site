@@ -7,6 +7,17 @@ window.CD = (() => {
   const DIAS = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
   const DIAS_CURTO = ["dom","seg","ter","qua","qui","sex","sáb"];
 
+  // Regras de participação por evento (informadas pela organização). Sem campo no banco nesta fase:
+  // vale só para os slugs listados; outros treinos não exibem estes blocos.
+  const PARTICIPACAO = {
+    "open-drift-session": {
+      publico: "Confirme seu interesse em participar do evento. Ingressos disponíveis no local.",
+      pilotos: "Participação na pista exclusiva para pilotos convidados.",
+      caronas: "Caronas pagas. Consulte informações e disponibilidade com a organização."
+    }
+  };
+  const participacao = slug => PARTICIPACAO[slug] || null;
+
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const paragrafos = s => esc(s).split(/\n{2,}|\n/).filter(Boolean).map(p => `<p>${p}</p>`).join("");
 
@@ -62,8 +73,10 @@ window.CD = (() => {
   // Botão "Próximo treino" no header (todas as páginas)
   async function ctaProximo(){
     try {
-      const t = (await treinosPublicados()).find(x => fim(x) >= new Date()); if (!t) return;
-      for (const id of ['navCta','menuCta']) { const b = document.getElementById(id); if (b) { b.href = `/treinos/${esc(t.slug)}/`; b.textContent = `Treino ${dataCurta(t.data)}`; } }
+      const t = (await treinosPublicados()).find(x => fim(x) >= new Date());
+      const b = document.getElementById('navCta'); if (!b) return;
+      if (!t) { b.textContent = 'Ver treinos'; b.href = '/treinos/'; return; }
+      b.href = `/treinos/${esc(t.slug)}/`; b.textContent = `Treino ${dataCurta(t.data)}`;
     } catch (e) {}
   }
 
@@ -91,5 +104,5 @@ window.CD = (() => {
   const init = () => { menuMobile(); ctaProximo(); barraProximo(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  return { SB_URL, SB_KEY, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
+  return { SB_URL, SB_KEY, participacao, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();

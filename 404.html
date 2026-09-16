@@ -43,7 +43,7 @@
       </ul>
     </nav>
     <a class="btn btn-fogo btn-nav" id="navCta" href="/treinos/">Próximo treino</a>
-    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
   </div>
 </header>
 <div class="menu-mobile" id="menuMobile" hidden>
@@ -54,7 +54,6 @@
       <li><a href="/escolinha/" >Escolinha</a></li>
       <li><a href="/sobre/" >Sobre</a></li>
     </ul>
-    <a class="btn btn-fogo" id="menuCta" href="/treinos/">Próximo treino</a>
     <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
   </nav>
 </div>
@@ -129,10 +128,26 @@
 .video i svg{width:18px;height:18px;margin-left:2px}
 .video small{display:block;color:var(--cinza);font-weight:400;font-size:14px}
 @media (min-width:900px){.pista .duas{grid-template-columns:1.25fr 1fr;gap:44px;align-items:start}}
+/* ===== PARTICIPAR ===== */
+.participar{background:var(--pneu)}
+.participar .grade{display:grid;gap:12px;margin-top:26px}
+.participar .bloco{display:grid;gap:10px;align-content:start;padding:22px;border-radius:10px;background:var(--asfalto);border:1px solid var(--borracha);border-top:4px solid var(--faisca)}
+.participar .bloco.pilotos{border-top-color:var(--fogo)}
+.participar .bloco.caronas{border-top-color:var(--fumaca)}
+.participar .rotulo{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faisca)}
+.participar .bloco.pilotos .rotulo{color:var(--fogo)}
+.participar .bloco.caronas .rotulo{color:var(--fumaca)}
+.participar .bloco b{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;text-transform:uppercase}
+.participar .bloco p{color:var(--cinza);font-size:16px}
+.participar .bloco .acoes{margin-top:4px}
+.participar .bloco .btn{font-size:22px;padding:12px 18px;min-height:48px}
+.participar .seguranca{margin-top:14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--raio);background:repeating-linear-gradient(135deg,var(--faisca) 0 12px,var(--asfalto) 12px 24px) left/10px 100% no-repeat,var(--asfalto);border:1px solid var(--borracha);padding-left:28px;color:var(--fumaca);font-size:15px}
+.participar .seguranca b{font-family:var(--rotulo);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faisca);font-size:13px}
+@media (min-width:800px){.participar .grade{grid-template-columns:repeat(3,1fr);gap:20px}}
 /* ===== CONFIRMAR ===== */
 .confirmar{padding-block:20px 64px}
 .confirmar .chamada{display:none}
-@media (min-width:900px){.confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.confirmar .chamada{display:block}.confirmar .chamada h2{font-size:80px}.confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}.cartao{justify-self:end}}
+@media (min-width:900px){.confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.confirmar .chamada{display:block}.confirmar .chamada h2{font-size:80px}.confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}.confirmar .chamada .mini{font-size:14px;margin-top:8px}.cartao{justify-self:end}}
 /* ===== CTA FIXA ===== */
 .cta-fixa{position:fixed;inset:auto 0 0;z-index:20;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(27,26,31,.9) 30%);transform:translateY(110%);transition:transform .25s ease}
 .cta-fixa.on{transform:none}
@@ -178,6 +193,7 @@ footer{padding-bottom:110px}
   document.querySelector('meta[name="description"]').content = t.chamada || `${t.titulo}, ${dataExtenso(t.data)}, no ${t.local_nome}.`;
   const [dd, mm] = dataCurta(t.data).split(".");
   const atracoes = Array.isArray(t.atracoes) ? t.atracoes : [];
+  const part = CD.participacao(t.slug);
   const ticker = [t.titulo, `${dataExtenso(t.data).split(",")[0]} ${dataCurta(t.data)}`, `${hora(t.hora_inicio)} às ${hora(t.hora_fim)}`, t.local_nome, t.entrada_titulo, t.regra_titulo, ...atracoes.map(a => a.titulo)].filter(Boolean);
 
   document.getElementById('treino').innerHTML = `
@@ -234,24 +250,34 @@ ${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pis
     ${t.reel_url ? `<a class="video" href="${esc(t.reel_url)}" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></i><span>Assista ao vídeo<small>No Instagram da Carioca Drift</small></span></a>` : ""}
   </div></div></div></section>` : ""}
 
+${part ? `<section class="secao participar" id="participar"><div class="wrap">
+  <p class="eyebrow">Como participar</p><h2>Público, pilotos e caronas</h2>
+  <div class="grade">
+    <div class="bloco"><span class="rotulo">Público</span><b>Vem assistir</b><p>${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}${t.entrada_texto ? `: ${esc(t.entrada_texto)}` : '.'}` : ''}</p><p>${esc(part.publico)}</p><div class="acoes"><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div></div>
+    <div class="bloco pilotos"><span class="rotulo">Pilotos</span><b>Pista só pra convidados</b><p>${esc(part.pilotos)}</p><p>Não há inscrição pública para pilotos.</p></div>
+    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">Consultar caronas</a></div></div>
+  </div>
+  ${t.regra_titulo ? `<div class="seguranca"><b>Segurança</b><span>${esc(t.regra_titulo)}${t.regra_texto ? ` · ${esc(t.regra_texto)}` : ''}</span></div>` : ''}
+</div></section>` : ''}
+
 <section class="secao confirmar" id="confirmar">
   <div class="wrap">
-    <div class="chamada"><p class="eyebrow">Lista de presença</p><h2>Vai colar?</h2><p>Confirma aqui pra gente dimensionar pista, carona e estrutura. Leva 10 segundos.</p></div>
+    <div class="chamada"><p class="eyebrow">Lista de presença</p><h2>Vai colar?</h2><p>${part ? esc(part.publico) : 'Confirma aqui pra gente se organizar. Leva 10 segundos.'}</p><p class="mini">Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona.</p></div>
     <div class="cartao">
       <div id="formulario">
         <h2>Vai colar?</h2>
-        <p class="sub">Confirme sua presença pra gente se organizar. Leva 10 segundos.</p>
+        <p class="sub">${part ? esc(part.publico) : 'Confirme sua presença pra gente se organizar. Leva 10 segundos.'}</p>
         <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
         <div class="erro" id="erroNome"></div>
         <label class="campo" for="tel"><span>Seu telefone</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
         <div class="erro" id="erroTel"></div>
         <button class="btn btn-fogo" id="enviar" type="button">Confirmar presença</button>
-        <p class="nota">Seus dados ficam só com a organização do evento.</p>
+        <p class="nota">Isso registra seu interesse. Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona. Seus dados ficam só com a organização.</p>
       </div>
       <div class="ok" id="ok">
         <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
-        <h3 id="okTitulo">Presença confirmada!</h3>
-        <p>Te esperamos ${esc(dataExtenso(t.data))}, no ${esc(t.local_nome)}.${t.regra_titulo ? " " + esc(t.regra_titulo) + " pra pista e carona." : ""}</p>
+        <h3 id="okTitulo">Interesse registrado!</h3>
+        <p>Te esperamos ${esc(dataExtenso(t.data))}, no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}.` : ''}${t.regra_titulo ? " " + esc(t.regra_titulo) + " pra pista e carona." : ""}</p>
         <div class="acoes">
           <a class="btn btn-linha" id="calendario2" href="#" download="${esc(t.slug)}.ics">Salvar no calendário</a>
           <button class="btn btn-linha" id="compartilhar2" type="button">Chamar a galera</button>

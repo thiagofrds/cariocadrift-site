@@ -24,7 +24,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 h1,h2,h3{font-family:var(--display);font-style:italic;font-weight:900;line-height:.95;text-transform:uppercase;text-wrap:balance}
 h2{font-size:clamp(40px,7vw,64px)}
 h3{font-size:clamp(28px,4vw,36px)}
-.secao{padding-block:56px}
+.secao{padding-block:48px}
 @media (min-width:900px){.secao{padding-block:88px}}
 .prosa{max-width:62ch;color:var(--cinza);font-size:18px}
 .prosa p+p{margin-top:14px}
@@ -40,6 +40,8 @@ h3{font-size:clamp(28px,4vw,36px)}
 .btn-faisca{background:var(--faisca);color:var(--asfalto);box-shadow:0 5px 0 var(--faisca-escura)}
 .btn-faisca:active{transform:translateY(3px);box-shadow:0 2px 0 var(--faisca-escura)}
 .acoes{display:flex;flex-wrap:wrap;gap:12px}
+@media (max-width:640px){.acoes .btn{flex:1 1 100%;width:100%}}
+@media (max-width:420px){.btn{font-size:22px;padding-inline:16px}}
 
 /* ----- Barra de contagem (topo) ----- */
 .barra-contagem{position:sticky;top:0;z-index:31;background:#000;border-bottom:1px solid var(--borracha)}
@@ -75,24 +77,26 @@ html.com-barra .nav{top:38px}
 .menu a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;text-decoration:none;font-family:var(--rotulo);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
 .menu a:hover{color:var(--fumaca)}
 .menu a[aria-current="page"]{color:var(--asfalto);background:var(--faisca)}
-.btn-nav{font-size:20px;padding:10px 16px;min-height:44px;box-shadow:0 3px 0 var(--fogo-escuro)}
-.hamburguer{display:none;width:48px;height:48px;border:1px solid var(--borracha);border-radius:var(--raio);background:transparent;padding:0;place-items:center;gap:5px;flex:none}
-.hamburguer span{display:block;width:22px;height:2px;background:var(--fumaca);transition:transform .2s ease,opacity .2s ease}
-.hamburguer[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.hamburguer[aria-expanded="true"] span:nth-child(2){opacity:0}
-.hamburguer[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.btn-nav{font-size:20px;padding:10px 16px;min-height:44px;box-shadow:0 3px 0 var(--fogo-escuro);white-space:nowrap}
+.hamburguer{display:none;position:relative;width:48px;height:48px;border:1px solid var(--borracha);border-radius:var(--raio);background:transparent;padding:0;flex:none}
+.hamburguer i{position:absolute;left:12px;top:50%;width:24px;height:2px;margin-top:-1px;background:var(--fumaca);transform-origin:center;transition:transform .2s ease,opacity .2s ease}
+.hamburguer i:nth-child(1){transform:translateY(-7px)}
+.hamburguer i:nth-child(3){transform:translateY(7px)}
+.hamburguer[aria-expanded="true"] i:nth-child(1){transform:rotate(45deg)}
+.hamburguer[aria-expanded="true"] i:nth-child(2){opacity:0}
+.hamburguer[aria-expanded="true"] i:nth-child(3){transform:rotate(-45deg)}
 .menu-mobile{position:fixed;inset:0;z-index:29;background:rgba(27,26,31,.97);padding:96px var(--gutter) 40px;overflow:auto}
 .menu-mobile nav{display:grid;gap:8px;max-width:520px}
 .menu-mobile ul{list-style:none;padding:0;margin:0 0 18px;display:grid}
 .menu-mobile li a{display:block;padding:12px 0;font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(44px,12vw,64px);line-height:.95;text-transform:uppercase;text-decoration:none;color:var(--fumaca);border-bottom:1px solid var(--borracha)}
 .menu-mobile li a[aria-current="page"]{color:var(--faisca)}
-.menu-mobile .btn{min-height:56px}
-.menu-mobile .insta{margin-top:14px;font-family:var(--rotulo);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--faisca);text-decoration:none}
+.menu-mobile .insta{margin-top:6px;font-family:var(--rotulo);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--faisca);text-decoration:none}
 body.menu-aberto{overflow:hidden}
 @media (max-width:899px){
   .nav-desktop{display:none}
   .marca .tagline{display:none}
-  .btn-nav{margin-left:auto;font-size:18px;padding:8px 12px}
+  .btn-nav{margin-left:auto;font-size:18px;padding:8px 12px;min-height:44px}
+  .marca .nome b{font-size:15px}
   .hamburguer{display:grid}
 }
 @media (prefers-reduced-motion:no-preference){.menu-mobile{animation:aparece .18s ease both}@keyframes aparece{from{opacity:0}to{opacity:1}}}

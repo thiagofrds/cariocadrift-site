@@ -43,7 +43,7 @@
       </ul>
     </nav>
     <a class="btn btn-fogo btn-nav" id="navCta" href="/treinos/">Próximo treino</a>
-    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
   </div>
 </header>
 <div class="menu-mobile" id="menuMobile" hidden>
@@ -54,7 +54,6 @@
       <li><a href="/escolinha/" >Escolinha</a></li>
       <li><a href="/sobre/" >Sobre</a></li>
     </ul>
-    <a class="btn btn-fogo" id="menuCta" href="/treinos/">Próximo treino</a>
     <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
   </nav>
 </div>
@@ -71,7 +70,7 @@
 .hero-home h1 .a{display:block;color:var(--fumaca)}
 .hero-home h1 .b{display:block;color:var(--faisca);text-shadow:.035em .035em 0 var(--fogo)}
 .hero-home .slogan{margin-top:14px;font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(22px,5vw,34px);text-transform:uppercase;color:var(--fumaca);letter-spacing:.02em}
-.hero-home .lead{margin-top:10px;font-size:clamp(16px,2vw,20px);max-width:36ch;color:var(--cinza)}
+.hero-home .lead{margin-top:10px;font-size:clamp(16px,2vw,20px);max-width:36ch;color:var(--fumaca)}
 .hero-home .acoes{margin-top:24px}
 .hero-home .acoes .btn{min-height:56px}
 @media (min-width:900px){
@@ -97,7 +96,7 @@
 .destaque .data span{font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--cinza);line-height:1.3}
 .destaque .data span strong{display:block;color:var(--fumaca);font-size:20px}
 .destaque .tag{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
-.destaque h2{font-size:clamp(38px,8vw,64px);margin-top:4px}
+.destaque h3{font-size:clamp(34px,7vw,50px);margin-top:4px;line-height:.95}
 .destaque .meta{display:grid;gap:6px;margin-top:10px;color:var(--fumaca);font-size:16px}
 .destaque .meta span{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start}
 .destaque .meta svg{width:18px;height:18px;color:var(--faisca);margin-top:2px}
@@ -108,20 +107,24 @@
 .destaque .contagem small{display:block;font-family:var(--rotulo);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);margin-top:3px}
 .destaque .contagem .estado{align-self:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;color:var(--faisca);text-transform:uppercase}
 .destaque .acoes{margin-top:18px}
-.destaque .acoes .btn{min-height:56px;flex:1 1 200px}
+.destaque .acoes{display:grid;gap:10px}
+.destaque .acoes .btn{min-height:56px;width:100%}
 .destaque .avisos{display:grid;gap:8px;margin-top:8px;padding-top:16px;border-top:1px solid var(--borracha)}
-.destaque .avisos span{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;font-size:15px;color:var(--cinza)}
+.destaque .avisos > span{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;font-size:15px;color:var(--fumaca)}
+.destaque .avisos small{color:var(--cinza)}
+.destaque .avisos a{color:var(--faisca);text-decoration:none;font-weight:600}
+.destaque .avisos .mais{display:block;margin-top:4px;font-family:var(--rotulo);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
 .destaque .avisos i{font-style:normal;display:inline-grid;place-items:center;min-width:26px;height:26px;padding-inline:8px;border-radius:999px;font-family:var(--rotulo);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--asfalto);background:var(--faisca)}
 .destaque .avisos i.vermelho{background:var(--fogo);color:#fff}
-.destaque .avisos i.cinza{background:var(--borracha);color:var(--fumaca)}
-.destaque .foto{display:none}
+.destaque .avisos i.cinza{background:var(--fumaca);color:var(--asfalto)}
 .destaque.vazio{color:var(--cinza)}
-@media (min-width:900px){
-  .destaque{grid-template-columns:1fr 1fr 360px;gap:32px;padding:34px 34px 34px 40px;align-items:start}
-  .destaque .foto{display:block;border-radius:var(--raio);overflow:hidden;border:1px solid var(--borracha);align-self:stretch;min-height:280px}
-  .destaque .foto img{width:100%;height:100%;object-fit:cover}
+.destaque .nota-lista{font-size:14px;color:var(--cinza);margin-top:14px;line-height:1.45}
+.destaque .nota-lista a{color:var(--faisca);text-decoration:none;font-weight:600}
+@media (min-width:700px){
+  .destaque{grid-template-columns:1fr 1fr;gap:28px;padding:30px 30px 30px 36px;align-items:start}
   .destaque .col2{padding-top:6px}
 }
+@media (min-width:900px){.destaque{gap:40px;padding:36px 40px 36px 44px}}
 
 /* ===== EXPERIÊNCIA ===== */
 .exp{padding-block:64px 56px}
@@ -132,10 +135,10 @@
 .exp figcaption{position:absolute;inset:auto 0 0;padding:40px 16px 14px;background:linear-gradient(transparent,rgba(27,26,31,.9));font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--fumaca)}
 .exp figcaption b{color:var(--faisca);margin-right:8px}
 .exp .lista{display:grid;border-top:1px solid var(--borracha)}
-.exp .lista div{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--borracha);align-items:start}
+.exp .lista > div{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--borracha);align-items:start}
 .exp .n{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;color:var(--faisca);min-width:40px;font-variant-numeric:tabular-nums}
 .exp .lista b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;line-height:1;text-transform:uppercase}
-.exp .lista p{color:var(--cinza);margin-top:4px;font-size:15px;max-width:40ch}
+.exp .lista p{color:var(--cinza);margin-top:6px;font-size:15px;max-width:44ch}
 @media (min-width:900px){
   .exp .grade{grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto;gap:20px}
   .exp figure.grande{grid-row:1/3}
@@ -160,16 +163,6 @@
 .escola .acoes{margin-top:18px}
 @media (min-width:900px){.escola .wrap{grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}}
 
-/* ===== CULTURA ===== */
-.cultura{padding-block:64px 56px}
-.cultura .grade{display:grid;gap:12px;margin-top:26px}
-.cultura .card{display:grid;gap:8px;align-content:start;padding:22px;border-radius:10px;background:var(--pneu);border:1px solid var(--borracha);min-height:170px}
-.cultura .card .rotulo{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--faisca)}
-.cultura .card .rotulo i{font-style:normal;padding:3px 9px;border-radius:999px;background:var(--borracha);color:var(--cinza);font-size:11px}
-.cultura .card b{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;text-transform:uppercase}
-.cultura .card p{color:var(--cinza);font-size:15px}
-@media (min-width:800px){.cultura .grade{grid-template-columns:repeat(3,1fr);gap:20px}}
-
 /* ===== JÁ ROLOU ===== */
 .rolou{padding-block:8px 64px}
 .rolou .grade{display:grid;gap:12px;margin-top:22px}
@@ -183,6 +176,8 @@
 .insta-bloco{background:var(--pneu)}
 .insta-bloco .wrap{display:grid;gap:18px}
 .insta-bloco .prosa{max-width:44ch}
+.insta-bloco .breve{margin-top:14px;font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza)}
+.insta-bloco .breve b{color:var(--faisca)}
 @media (min-width:900px){.insta-bloco .wrap{grid-template-columns:1fr auto;align-items:center}}
 </style>
 
@@ -246,17 +241,6 @@
   </div>
 </section>
 
-<section class="wrap cultura">
-  <p class="eyebrow">Cultura</p>
-  <h2>Além da pista</h2>
-  <div class="grade">
-    <!-- Estrutura preparada. Conteúdo entra na próxima fase pelo painel; nada fictício é exibido. -->
-    <div class="card"><span class="rotulo">Notícias <i>Em breve</i></span><b>O drift no Brasil e no mundo</b><p>Matérias, resultados e bastidores da cena, direto na home.</p></div>
-    <div class="card"><span class="rotulo">Calendário nacional <i>Em breve</i></span><b>Eventos oficiais de drift</b><p>As datas do circuito brasileiro, com local e link oficial.</p></div>
-    <div class="card"><span class="rotulo">Brasileiro de Drift <i>Em breve</i></span><b>Classificação</b><p>A tabela do campeonato atualizada a cada etapa.</p></div>
-  </div>
-</section>
-
 <section class="wrap rolou" id="rolou" hidden>
   <p class="eyebrow">Galeria</p>
   <h2>Já rolou</h2>
@@ -269,6 +253,7 @@
       <p class="eyebrow">Instagram</p>
       <h2>Acompanha a cena</h2>
       <p class="prosa">Vídeos dos treinos, bastidores e as próximas datas saem primeiro no <strong>@cariocadrift_</strong>.</p>
+      <p class="breve"><b>Em breve por aqui</b> · notícias, calendário nacional e classificação do Brasileiro de Drift</p>
     </div>
     <a class="btn btn-linha" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">Seguir no Instagram</a>
   </div>
@@ -302,18 +287,20 @@
 
   if (!prox) {
     caixa.classList.add('vazio');
-    caixa.innerHTML = `<div><span class="tag">Agenda</span><h2>Próximo treino em breve</h2><p class="meta"><span>As novas datas saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></p></div>`;
+    document.getElementById('heroCta').textContent = 'Ver treinos';
+    caixa.innerHTML = `<div><span class="tag">Agenda</span><h3>Próximo treino em breve</h3><p class="meta"><span>As novas datas saem primeiro no <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>.</span></p></div>`;
   } else {
     const x = CD.dataLocal(prox.data);
     const url = `/treinos/${esc(prox.slug)}/`;
-    for (const id of ['heroCta','navCta','menuCta']) { const b = document.getElementById(id); if (b) b.href = url; }
+    const part = CD.participacao(prox.slug);
+    for (const id of ['heroCta','navCta']) { const b = document.getElementById(id); if (b) b.href = url; }
     document.getElementById('heroCta').textContent = `Próximo treino · ${dataCurta(prox.data)}`;
     const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
     caixa.innerHTML = `
       <div>
         <div class="data"><b>${x.getDate()}</b><span>${esc(dataExtenso(prox.data).split(',')[0])}<strong>${esc(CD.mesDia(prox.data).split(' · ')[0])} · ${x.getFullYear()}</strong></span></div>
         <span class="tag">${esc(prox.tipo)}</span>
-        <h2>${esc(prox.titulo)}</h2>
+        <h3>${esc(prox.titulo)}</h3>
         <div class="contagem" id="contagemCard">
           <div><b id="c-d">--</b><small>dias</small></div><div><b id="c-h">--</b><small>horas</small></div><div><b id="c-m">--</b><small>min</small></div>
         </div>
@@ -327,13 +314,15 @@
           <a class="btn btn-fogo" href="${url}#confirmar">Confirmar presença</a>
           <a class="btn btn-linha" href="${url}">Ver o treino</a>
         </div>
+        <p class="nota-lista">Confirmar presença registra seu interesse. Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona.</p>
         <div class="avisos">
-          ${prox.entrada_titulo ? `<span><i class="cinza">Entrada</i>${esc(prox.entrada_titulo)}${prox.entrada_texto ? ' · ' + esc(prox.entrada_texto) : ''}</span>` : ''}
-          ${prox.regra_titulo ? `<span><i class="vermelho">Pista</i>${esc(prox.regra_titulo)}${prox.regra_texto ? ' · ' + esc(prox.regra_texto) : ''}</span>` : ''}
-          <span><i>Carona</i>Carona radical com pilotos locais, capacete obrigatório</span>
+          ${prox.entrada_titulo ? `<span><i class="cinza">Público</i><span>${esc(prox.entrada_titulo)}${prox.entrada_texto ? ` <small>· ${esc(prox.entrada_texto)}</small>` : ''}</span></span>` : ''}
+          ${part ? `<span><i class="vermelho">Pilotos</i><span>Só pilotos convidados <small>· sem inscrição pública</small></span></span>` : ''}
+          ${part ? `<span><i>Caronas</i><span>Caronas pagas <small>· <a href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">consulte no direct</a></small></span></span>` : ''}
+          ${prox.regra_titulo ? `<span><i class="cinza">Segurança</i><span>${esc(prox.regra_titulo)}${prox.regra_texto ? ` <small>· ${esc(prox.regra_texto)}</small>` : ''}</span></span>` : ''}
+          <span class="mais"><a href="${url}">Todos os detalhes do treino →</a></span>
         </div>
-      </div>
-      ${prox.pista_foto_url ? `<div class="foto"><img src="${esc(foto(prox.pista_foto_url))}" alt="" width="870" height="545" loading="lazy"></div>` : ''}`;
+      </div>`;
 
     const INICIO = inicio(prox), FIM = fim(prox), cont = document.getElementById('contagemCard');
     (function tick(){

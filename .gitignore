@@ -2,3 +2,4 @@
 *.csv
 .DS_Store
 supabase/.temp/
+docs/capturas/*.png
