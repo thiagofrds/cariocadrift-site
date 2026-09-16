@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Open Drift Session 20.09 | Carioca Drift</title>
+<meta name="description" content="O primeiro treino de drift aberto ao público da Carioca Drift. Um domingo inteiro de pista, carros e gente boa.">
+<meta name="theme-color" content="#1B1A1F">
+<link rel="canonical" href="https://cariocadrift.com.br/treinos/open-drift-session/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Carioca Drift">
+<meta property="og:title" content="Open Drift Session · 20.09 · RJ Race Park">
+<meta property="og:description" content="O primeiro treino de drift aberto ao público da Carioca Drift. Um domingo inteiro de pista, carros e gente boa.">
+<meta property="og:url" content="https://cariocadrift.com.br/treinos/open-drift-session/">
+<meta property="og:image" content="https://cariocadrift.com.br/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg">
+<link rel="apple-touch-icon" href="/assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/cd.js"></script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<div class="barra-contagem" id="barraContagem" hidden></div>
+<header class="nav" id="topo">
+  <div class="wrap">
+    <a class="marca" href="/" aria-label="Carioca Drift, início">
+      <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
+      <span class="nome"><b>Carioca Drift</b><span class="tagline">More than drift. It's a culture.</span></span>
+    </a>
+    <nav class="nav-desktop" aria-label="Principal">
+      <ul class="menu">
+        <li><a href="/" >Home</a></li>
+        <li><a href="/treinos/" aria-current="page">Treinos</a></li>
+        <li><a href="/escolinha/" >Escolinha</a></li>
+        <li><a href="/sobre/" >Sobre</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-fogo btn-nav" id="navCta" href="/treinos/">Próximo treino</a>
+    <button class="hamburguer" id="abrirMenu" type="button" aria-expanded="false" aria-controls="menuMobile" aria-label="Abrir menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+<div class="menu-mobile" id="menuMobile" hidden>
+  <nav aria-label="Menu">
+    <ul>
+      <li><a href="/" >Home</a></li>
+      <li><a href="/treinos/" aria-current="page">Treinos</a></li>
+      <li><a href="/escolinha/" >Escolinha</a></li>
+      <li><a href="/sobre/" >Sobre</a></li>
+    </ul>
+    <a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a>
+  </nav>
+</div>
+<style>
+/* ===== HERO ===== */
+.hero{position:relative;isolation:isolate;padding:56px 0 44px;min-height:520px;display:flex;align-items:flex-end;overflow:hidden}
+.hero .fundo{position:absolute;inset:0;z-index:-2;background:var(--pneu)}
+.hero .fundo img{width:100%;height:100%;object-fit:cover;object-position:62% 50%;filter:saturate(.9) contrast(1.05)}
+.hero .veu{position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(90deg, rgba(27,26,31,.94) 0%, rgba(27,26,31,.72) 45%, rgba(27,26,31,.35) 100%),
+  linear-gradient(180deg, rgba(27,26,31,.75) 0%, rgba(27,26,31,.15) 35%, rgba(27,26,31,.92) 100%)}
+.hero .grao{position:absolute;inset:0;z-index:-1;opacity:.18;mix-blend-mode:overlay;pointer-events:none}
+.hero .conteudo{position:relative}
+.titulo{font-family:var(--display);font-style:italic;font-weight:900;line-height:.82;letter-spacing:-.01em;text-transform:uppercase;margin-top:16px}
+.titulo .dia{display:block;font-size:clamp(132px,36vw,300px);color:var(--faisca);text-shadow:.04em .04em 0 var(--fogo);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.titulo .nome{display:block;font-size:clamp(48px,11vw,116px);margin-top:.08em;color:var(--fumaca)}
+.lead{margin-top:18px;font-size:clamp(17px,2.2vw,21px);max-width:34ch}
+.hero .acoes{margin-top:26px}
+.contagem{display:flex;gap:10px;margin-top:34px;align-items:stretch;flex-wrap:wrap}
+.contagem .rotulo{flex-basis:100%;font-family:var(--rotulo);font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza)}
+.contagem .bloco{min-width:72px;padding:10px 12px 8px;border-radius:var(--raio);background:rgba(38,37,44,.8);border:1px solid rgba(239,237,232,.12);text-align:center;backdrop-filter:blur(6px)}
+.contagem .bloco b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:40px;line-height:1;color:var(--faisca);font-variant-numeric:tabular-nums}
+.contagem .bloco small{display:block;font-family:var(--rotulo);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);margin-top:4px}
+.contagem .estado{align-self:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:34px;color:var(--faisca);text-transform:uppercase}
+@media (min-width:900px){
+  .hero{padding:96px 0 72px;min-height:min(88vh,820px)}
+  .hero .fundo img{object-position:70% 50%}
+  .hero .veu{background:
+    linear-gradient(90deg, rgba(27,26,31,.96) 0%, rgba(27,26,31,.82) 38%, rgba(27,26,31,.18) 75%, rgba(27,26,31,.05) 100%),
+    linear-gradient(180deg, rgba(27,26,31,.6) 0%, rgba(27,26,31,0) 30%, rgba(27,26,31,.9) 100%)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .titulo .dia{animation:derrapa .7s cubic-bezier(.2,.9,.2,1) both}
+  .titulo .nome,.lead,.hero .acoes{animation:sobe .6s .15s ease both}
+  @keyframes derrapa{from{transform:translateX(-40px) skewX(-12deg);opacity:0}to{transform:none;opacity:1}}
+}
+/* ===== FICHA ===== */
+.ficha .cabeca{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.agenda{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--faisca);border-bottom:2px solid transparent;padding-bottom:2px}
+.agenda:hover{border-color:var(--faisca)}
+.agenda svg{width:18px;height:18px}
+.ficha .grade{display:grid;border:1px solid var(--borracha);border-radius:8px;overflow:hidden;background:var(--pneu)}
+.item{padding:22px 22px 24px;border-top:1px solid var(--borracha);display:grid;gap:8px;align-content:start}
+.item:first-child{border-top:0}
+.item dt{font-family:var(--rotulo);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--fogo)}
+.item dd .g{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:36px;line-height:1;text-transform:uppercase}
+.item dd .p{display:block;margin-top:6px;color:var(--cinza);font-size:16px}
+.rotas{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.rota{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--asfalto);border:1px solid var(--borracha);text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
+.rota:hover{border-color:var(--faisca)}
+.rota svg{width:16px;height:16px;color:var(--faisca)}
+.item.alerta{background:repeating-linear-gradient(135deg,var(--faisca) 0 14px,var(--asfalto) 14px 28px) left/12px 100% no-repeat,var(--pneu);padding-left:34px}
+.item.alerta dt{color:var(--faisca)}
+@media (min-width:700px){.ficha .grade{grid-template-columns:1fr 1fr}.item{border-top:0;border-left:1px solid var(--borracha)}.item:nth-child(odd){border-left:0}.item:nth-child(n+3){border-top:1px solid var(--borracha)}}
+/* ===== O QUE ROLA ===== */
+.rola{background:var(--pneu)}
+.rola .lista{list-style:none;padding:0;margin-top:26px;display:grid}
+.rola li{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding:22px 0;border-top:1px solid var(--borracha)}
+.rola li:last-child{border-bottom:1px solid var(--borracha)}
+.rola .icone{width:46px;height:46px;border-radius:var(--raio);background:var(--asfalto);display:grid;place-items:center;color:var(--faisca);font-family:var(--display);font-style:italic;font-weight:900;font-size:26px}
+.rola b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1;text-transform:uppercase}
+.rola p{color:var(--cinza);margin-top:6px;max-width:50ch}
+@media (min-width:900px){.rola .lista{grid-template-columns:repeat(3,1fr);gap:0 40px}.rola li{grid-template-columns:1fr;border-top:2px solid var(--faisca);padding-top:20px}.rola li:last-child{border-bottom:0}}
+/* ===== PISTA ===== */
+.pista .duas{display:grid;gap:26px;margin-top:26px}
+.mapa{border-radius:8px;overflow:hidden;border:1px solid var(--borracha);background:#000}
+.pista .legenda{display:grid;gap:14px;align-content:start}
+.pista .legenda p{color:var(--cinza);max-width:48ch}
+.video{display:flex;align-items:center;gap:14px;margin-top:6px;padding:16px 18px;border-radius:8px;background:var(--pneu);border:1px solid var(--borracha);text-decoration:none;font-weight:600}
+.video:hover{border-color:var(--faisca)}
+.video i{font-style:normal;width:44px;height:44px;border-radius:50%;background:var(--fogo);display:grid;place-items:center;flex:none;color:#fff}
+.video i svg{width:18px;height:18px;margin-left:2px}
+.video small{display:block;color:var(--cinza);font-weight:400;font-size:14px}
+@media (min-width:900px){.pista .duas{grid-template-columns:1.25fr 1fr;gap:44px;align-items:start}}
+/* ===== PARTICIPAR ===== */
+.participar{background:var(--pneu)}
+.participar .grade{display:grid;gap:12px;margin-top:26px}
+.participar .bloco{display:grid;gap:10px;align-content:start;padding:22px;border-radius:10px;background:var(--asfalto);border:1px solid var(--borracha);border-top:4px solid var(--faisca)}
+.participar .bloco.pilotos{border-top-color:var(--fogo)}
+.participar .bloco.caronas{border-top-color:var(--fumaca)}
+.participar .rotulo{font-family:var(--rotulo);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faisca)}
+.participar .bloco.pilotos .rotulo{color:var(--fogo)}
+.participar .bloco.caronas .rotulo{color:var(--fumaca)}
+.participar .bloco b{font-family:var(--display);font-style:italic;font-weight:900;font-size:30px;line-height:1;text-transform:uppercase}
+.participar .bloco p{color:var(--cinza);font-size:16px}
+.participar .bloco .acoes{margin-top:4px}
+.participar .bloco .btn{font-size:22px;padding:12px 18px;min-height:48px}
+.participar .seguranca{margin-top:14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--raio);background:repeating-linear-gradient(135deg,var(--faisca) 0 12px,var(--asfalto) 12px 24px) left/10px 100% no-repeat,var(--asfalto);border:1px solid var(--borracha);padding-left:28px;color:var(--fumaca);font-size:15px}
+.participar .seguranca b{font-family:var(--rotulo);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faisca);font-size:13px}
+@media (min-width:800px){.participar .grade{grid-template-columns:repeat(3,1fr);gap:20px}}
+/* ===== CONFIRMAR ===== */
+.confirmar{padding-block:20px 64px}
+.confirmar .chamada{display:none}
+@media (min-width:900px){.confirmar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.confirmar .chamada{display:block}.confirmar .chamada h2{font-size:80px}.confirmar .chamada p{margin-top:14px;color:var(--cinza);max-width:36ch;font-size:19px}.confirmar .chamada .mini{font-size:14px;margin-top:8px}.cartao{justify-self:end}}
+/* ===== CTA FIXA ===== */
+.cta-fixa{position:fixed;inset:auto 0 0;z-index:20;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(27,26,31,.9) 30%);transform:translateY(110%);transition:transform .25s ease}
+.cta-fixa.on{transform:none}
+.cta-fixa .btn{width:100%;padding-block:16px;box-shadow:0 5px 0 var(--fogo-escuro),0 10px 30px rgba(0,0,0,.5)}
+@media (min-width:900px){.cta-fixa{display:none}}
+footer{padding-bottom:110px}
+@media (min-width:900px){footer{padding-bottom:40px}}
+/* ===== estados ===== */
+.carregando,.nao-achado{padding:80px 0;text-align:center}
+.nao-achado h1{font-size:clamp(48px,10vw,96px)}
+.nao-achado p{color:var(--cinza);margin-top:12px}
+.nao-achado .acoes{justify-content:center;margin-top:24px}
+[hidden]{display:none!important}
+</style>
+
+<script>window.SEM_BARRA = true;</script>
+<main id="pagina">
+  <div class="carregando wrap" id="carregando"><p class="eyebrow">Carregando treino…</p></div>
+  <div class="nao-achado wrap" id="naoAchado" hidden>
+    <p class="eyebrow">Ops</p>
+    <h1>Treino não encontrado</h1>
+    <p>Esse link não existe ou o treino ainda não foi publicado.</p>
+    <div class="acoes"><a class="btn btn-fogo" href="/treinos/">Ver os treinos</a></div>
+  </div>
+  <div id="treino" hidden></div>
+</main>
+
+<div class="cta-fixa" id="ctaFixa" hidden><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div>
+
+<script>
+(async () => {
+  const { esc, paragrafos, rest, inicio, fim, hora, dataExtenso, dataCurta, foto } = CD;
+  const m = location.pathname.match(/^\/treinos\/([a-z0-9-]+)\/?$/);
+  const slug = (m && m[1] !== "evento" ? m[1] : null) || new URLSearchParams(location.search).get("t");
+  const carregando = document.getElementById('carregando');
+  let t = null;
+  try { if (slug) t = (await rest(`treinos?select=*&slug=eq.${encodeURIComponent(slug)}&limit=1`))[0]; } catch (e) {}
+  carregando.hidden = true;
+  if (!t) { document.getElementById('naoAchado').hidden = false; return; }
+
+  const URL_PAGINA = `https://cariocadrift.com.br/treinos/${t.slug}/`;
+  document.title = `${t.titulo} ${dataCurta(t.data)} | Carioca Drift`;
+  document.querySelector('meta[name="description"]').content = t.chamada || `${t.titulo}, ${dataExtenso(t.data)}, no ${t.local_nome}.`;
+  const [dd, mm] = dataCurta(t.data).split(".");
+  const atracoes = Array.isArray(t.atracoes) ? t.atracoes : [];
+  const part = CD.participacao(t.slug);
+  const ticker = [t.titulo, `${dataExtenso(t.data).split(",")[0]} ${dataCurta(t.data)}`, `${hora(t.hora_inicio)} às ${hora(t.hora_fim)}`, t.local_nome, t.entrada_titulo, t.regra_titulo, ...atracoes.map(a => a.titulo)].filter(Boolean);
+
+  document.getElementById('treino').innerHTML = `
+<section class="hero">
+  <div class="fundo">${t.capa_url ? `<img src="${esc(foto(t.capa_url))}" alt="" fetchpriority="high">` : ""}</div>
+  <div class="veu"></div>
+  <svg class="grao" aria-hidden="true"><filter id="ruido"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#ruido)"/></svg>
+  <div class="wrap conteudo">
+    <p class="eyebrow">${esc(dataExtenso(t.data).split(",")[0])} · ${esc(t.local_nome)}</p>
+    <h1 class="titulo"><span class="dia">${dd}.${mm}</span><span class="nome">${esc(t.titulo)}</span></h1>
+    ${t.chamada ? `<p class="lead">${esc(t.chamada)}</p>` : ""}
+    <div class="acoes">
+      <a class="btn btn-fogo" href="#confirmar">Confirmar presença</a>
+      <a class="btn btn-linha" href="#onde">Como chegar</a>
+      <button class="btn btn-linha" id="compartilhar" type="button">Chamar a galera</button>
+    </div>
+    <div class="contagem" id="contagem" aria-live="polite">
+      <span class="rotulo">Faltam</span>
+      <div class="bloco"><b id="cd-d">--</b><small>dias</small></div>
+      <div class="bloco"><b id="cd-h">--</b><small>horas</small></div>
+      <div class="bloco"><b id="cd-m">--</b><small>min</small></div>
+      <div class="bloco"><b id="cd-s">--</b><small>seg</small></div>
+    </div>
+  </div>
+</section>
+<div class="ticker-caixa" aria-hidden="true"><div class="ticker"><div class="faixa">${ticker.map(x => `<span>${esc(x)}</span>`).join("").repeat(4)}</div></div></div>
+
+<section class="secao ficha" id="info">
+  <div class="wrap">
+    <div class="cabeca">
+      <div><p class="eyebrow">Ficha do treino</p><h2>O essencial</h2></div>
+      <a class="agenda" id="calendario" href="#" download="${esc(t.slug)}.ics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Salvar no calendário</a>
+    </div>
+    <dl class="grade">
+      <div class="item"><dt>Quando</dt><dd><span class="g">${esc(dataExtenso(t.data))}</span><span class="p">Das ${hora(t.hora_inicio)} às ${hora(t.hora_fim)}.</span></dd></div>
+      <div class="item" id="onde"><dt>Onde</dt><dd><span class="g">${esc(t.local_nome)}</span><span class="p">${esc(t.endereco)}</span>
+        <div class="rotas">
+          ${t.maps_url ? `<a class="rota" href="${esc(t.maps_url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Google Maps</a>` : ""}
+          ${t.waze_url ? `<a class="rota" href="${esc(t.waze_url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12l18-8-8 18-2-8-8-2z"/></svg>Waze</a>` : ""}
+        </div></dd></div>
+      ${t.entrada_titulo ? `<div class="item"><dt>Entrada</dt><dd><span class="g">${esc(t.entrada_titulo)}</span><span class="p">${esc(t.entrada_texto || "")}</span></dd></div>` : ""}
+      ${t.regra_titulo ? `<div class="item alerta"><dt>Pista</dt><dd><span class="g">${esc(t.regra_titulo)}</span><span class="p">${esc(t.regra_texto || "")}</span></dd></div>` : ""}
+    </dl>
+  </div>
+</section>
+
+${atracoes.length ? `<section class="secao rola"><div class="wrap"><p class="eyebrow">Programação</p><h2>O que rola</h2><ul class="lista">
+  ${atracoes.map((a, i) => `<li><span class="icone">${String(i+1).padStart(2,"0")}</span><div><b>${esc(a.titulo)}</b>${a.texto ? `<p>${esc(a.texto)}</p>` : ""}</div></li>`).join("")}
+</ul></div></section>` : ""}
+
+${(t.pista_texto || t.pista_foto_url || t.reel_url) ? `<section class="secao pista"><div class="wrap"><p class="eyebrow">${esc(t.local_nome)}</p><h2>A pista</h2><div class="duas">
+  ${t.pista_foto_url ? `<figure class="mapa"><img src="${esc(foto(t.pista_foto_url))}" alt="Traçado da pista" loading="lazy"></figure>` : "<div></div>"}
+  <div class="legenda">${t.pista_texto ? paragrafos(t.pista_texto) : ""}
+    ${t.reel_url ? `<a class="video" href="${esc(t.reel_url)}" target="_blank" rel="noopener"><i><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg></i><span>Assista ao vídeo<small>No Instagram da Carioca Drift</small></span></a>` : ""}
+  </div></div></div></section>` : ""}
+
+${part ? `<section class="secao participar" id="participar"><div class="wrap">
+  <p class="eyebrow">Como participar</p><h2>Público, pilotos e caronas</h2>
+  <div class="grade">
+    <div class="bloco"><span class="rotulo">Público</span><b>Vem assistir</b><p>${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}${t.entrada_texto ? `: ${esc(t.entrada_texto)}` : '.'}` : ''}</p><p>${esc(part.publico)}</p><div class="acoes"><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div></div>
+    <div class="bloco pilotos"><span class="rotulo">Pilotos</span><b>Pista só pra convidados</b><p>${esc(part.pilotos)}</p><p>Não há inscrição pública para pilotos.</p></div>
+    <div class="bloco caronas"><span class="rotulo">Caronas</span><b>Carona radical</b><p>${esc(part.caronas)}</p><div class="acoes"><a class="btn btn-linha" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">Consultar caronas</a></div></div>
+  </div>
+  ${t.regra_titulo ? `<div class="seguranca"><b>Segurança</b><span>${esc(t.regra_titulo)}${t.regra_texto ? ` · ${esc(t.regra_texto)}` : ''}</span></div>` : ''}
+</div></section>` : ''}
+
+<section class="secao confirmar" id="confirmar">
+  <div class="wrap">
+    <div class="chamada"><p class="eyebrow">Lista de presença</p><h2>Vai colar?</h2><p>${part ? esc(part.publico) : 'Confirma aqui pra gente se organizar. Leva 10 segundos.'}</p><p class="mini">Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona.</p></div>
+    <div class="cartao">
+      <div id="formulario">
+        <h2>Vai colar?</h2>
+        <p class="sub">${part ? esc(part.publico) : 'Confirme sua presença pra gente se organizar. Leva 10 segundos.'}</p>
+        <label class="campo" for="nome"><span>Seu nome</span><input id="nome" autocomplete="name" placeholder="Nome e sobrenome" required></label>
+        <div class="erro" id="erroNome"></div>
+        <label class="campo" for="tel"><span>Seu telefone</span><input id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(21) 99999-9999" maxlength="15" required></label>
+        <div class="erro" id="erroTel"></div>
+        <button class="btn btn-fogo" id="enviar" type="button">Confirmar presença</button>
+        <p class="nota">Isso registra seu interesse. Não é ingresso, vaga garantida, inscrição de piloto nem reserva de carona. Seus dados ficam só com a organização.</p>
+      </div>
+      <div class="ok" id="ok">
+        <div class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></div>
+        <h3 id="okTitulo">Interesse registrado!</h3>
+        <p>Te esperamos ${esc(dataExtenso(t.data))}, no ${esc(t.local_nome)}.${t.entrada_titulo ? ` ${esc(t.entrada_titulo)}.` : ''}${t.regra_titulo ? " " + esc(t.regra_titulo) + " pra pista e carona." : ""}</p>
+        <div class="acoes">
+          <a class="btn btn-linha" id="calendario2" href="#" download="${esc(t.slug)}.ics">Salvar no calendário</a>
+          <button class="btn btn-linha" id="compartilhar2" type="button">Chamar a galera</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+  document.getElementById('treino').hidden = false;
+  document.getElementById('ctaFixa').hidden = false;
+
+  // ----- Contagem -----
+  const INICIO = inicio(t), FIM = fim(t);
+  const cd = {d:document.getElementById('cd-d'),h:document.getElementById('cd-h'),m:document.getElementById('cd-m'),s:document.getElementById('cd-s')};
+  const contagem = document.getElementById('contagem');
+  (function tick(){
+    const agora = new Date();
+    if (agora >= FIM) { contagem.innerHTML = '<span class="estado">Valeu, galera. Até a próxima.</span>'; return; }
+    if (agora >= INICIO) { contagem.innerHTML = `<span class="estado">Rolando agora no ${esc(t.local_nome)}</span>`; return; }
+    let s = Math.floor((INICIO - agora)/1000);
+    const d = Math.floor(s/86400); s -= d*86400; const h = Math.floor(s/3600); s -= h*3600; const mi = Math.floor(s/60); s -= mi*60;
+    cd.d.textContent = d; cd.h.textContent = String(h).padStart(2,'0'); cd.m.textContent = String(mi).padStart(2,'0'); cd.s.textContent = String(s).padStart(2,'0');
+    setTimeout(tick, 1000 - (Date.now() % 1000));
+  })();
+
+  // ----- Calendário -----
+  const f = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const ics = "data:text/calendar;charset=utf-8," + encodeURIComponent(["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Carioca Drift//Treinos//PT","BEGIN:VEVENT",
+    `UID:${t.slug}@cariocadrift.com.br`,`DTSTAMP:${f(new Date())}`,`DTSTART:${f(INICIO)}`,`DTEND:${f(FIM)}`,`SUMMARY:${t.titulo} · Carioca Drift`,
+    `LOCATION:${t.local_nome}, ${t.endereco.replace(/·/g,",")}`,`DESCRIPTION:${(t.chamada||"").replace(/\n/g," ")} ${URL_PAGINA}`,`URL:${URL_PAGINA}`,"END:VEVENT","END:VCALENDAR"].join("\r\n"));
+  for (const id of ['calendario','calendario2']) document.getElementById(id).href = ics;
+
+  // ----- Compartilhar -----
+  async function compartilhar(ev){
+    const dados = {title: `${t.titulo} · Carioca Drift`, text: `${t.titulo}, ${dataExtenso(t.data)} das ${hora(t.hora_inicio)} às ${hora(t.hora_fim)} no ${t.local_nome}. Bora?`, url: URL_PAGINA};
+    try {
+      if (navigator.share) { await navigator.share(dados); return; }
+      await navigator.clipboard.writeText(URL_PAGINA);
+      const b = ev.currentTarget, antes = b.textContent; b.textContent = 'Link copiado'; setTimeout(()=>b.textContent = antes, 1800);
+    } catch (e) {}
+  }
+  document.getElementById('compartilhar').addEventListener('click', compartilhar);
+  document.getElementById('compartilhar2').addEventListener('click', compartilhar);
+
+  // ----- CTA fixa -----
+  const ctaFixa = document.getElementById('ctaFixa');
+  let heroVisivel = true, confirmarVisivel = false;
+  const atualizaCta = () => ctaFixa.classList.toggle('on', !heroVisivel && !confirmarVisivel);
+  new IntersectionObserver(([e]) => { heroVisivel = e.isIntersecting; atualizaCta(); }).observe(document.querySelector('.hero .acoes'));
+  new IntersectionObserver(([e]) => { confirmarVisivel = e.isIntersecting; atualizaCta(); }, {threshold:.2}).observe(document.getElementById('confirmar'));
+
+  // ----- Formulário -----
+  const tel = document.getElementById('tel'), btn = document.getElementById('enviar');
+  const erroNome = document.getElementById('erroNome'), erroTel = document.getElementById('erroTel');
+  tel.addEventListener('input', () => {
+    let d = tel.value.replace(/\D/g,'').slice(0,11);
+    if (d.length > 6) tel.value = `(${d.slice(0,2)}) ${d.slice(2,d.length-4)}-${d.slice(-4)}`;
+    else if (d.length > 2) tel.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+    else tel.value = d;
+  });
+  const mostrarOk = titulo => {
+    if (titulo) document.getElementById('okTitulo').textContent = titulo;
+    document.getElementById('formulario').style.display = 'none';
+    const ok = document.getElementById('ok'); ok.classList.add('on'); ok.scrollIntoView({behavior:'smooth', block:'center'});
+  };
+  btn.addEventListener('click', async () => {
+    const nome = document.getElementById('nome').value.trim(), digits = tel.value.replace(/\D/g,'');
+    erroNome.textContent = nome.length < 2 ? 'Digite seu nome.' : '';
+    erroTel.textContent = digits.length < 10 ? 'Digite o telefone com DDD.' : '';
+    if (nome.length < 2 || digits.length < 10) return;
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      const r = await fetch(`${CD.SB_URL}/rest/v1/confirmacoes`, { method:'POST', headers:{apikey: CD.SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'}, body: JSON.stringify({evento: t.slug, nome, telefone: digits}) });
+      if (r.status === 201) { mostrarOk(); return; }
+      if (r.status === 409) { mostrarOk('Você já está na lista!'); return; }
+      throw new Error('HTTP ' + r.status);
+    } catch (e) {
+      erroTel.textContent = 'Não deu pra enviar agora. Tenta de novo em instantes.';
+      btn.disabled = false; btn.textContent = 'Confirmar presença';
+    }
+  });
+})();
+</script>
+<div class="zebra" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <div class="rodape-marca">
+      <a class="marca" href="/">
+        <span class="logo"><img src="/assets/logo.jpg" alt="" width="44" height="44"></span>
+        <span class="nome"><b>Carioca Drift</b><span class="slogan">More than drift. It's a culture.</span></span>
+      </a>
+      <p>Drift e cultura automotiva no Rio de Janeiro. Treinos abertos no RJ Race Park, escolinha de drift e a cena carioca crescendo junto.</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <span class="rotulo">Site</span>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/treinos/">Treinos</a></li>
+        <li><a href="/escolinha/">Escolinha de Drift</a></li>
+        <li><a href="/sobre/">Sobre</a></li>
+      </ul>
+    </nav>
+    <div>
+      <span class="rotulo">Contato</span>
+      <ul>
+        <li><a class="insta" href="https://www.instagram.com/cariocadrift_/" target="_blank" rel="noopener">@cariocadrift_</a></li>
+        <li>Direct no Instagram pra parcerias e dúvidas</li>
+        <li>RJ Race Park · Estrada do Frutuoso, 320 · Santa Cruz, RJ</li>
+      </ul>
+    </div>
+    <div class="rodape-base">
+      <span>© 2026 Carioca Drift · Rio de Janeiro</span>
+      <a href="/admin/">Painel</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
