@@ -159,11 +159,11 @@ Legenda: L = lê, E = escreve, F = só via função, — = nada.
 | `treinos` publicados | L | L | L | L | L/E |
 | `treinos` rascunho | — | — | — | — | L/E |
 | `confirmacoes` | F (inserir) | F | — | — | L, F (apagar) |
-| `usuarios` | — | L/E (exceto id, handle após criação, capacidades) | — | — | L |
+| `usuarios` | — | L (própria linha); UPDATE direto só nas colunas editáveis da seção 3.1; handle e visibilidade por função | — | — | L |
 | Perfil público via `perfil_publico(handle)` | L se `perfil_publico` | L | L se público | L | L |
 | `capacidades` | — | L (próprias) | — | L (próprias) | L; F (conceder/revogar, nunca a si mesmo) |
 | `pedidos_credencial_fotografo` | — | F (criar), L (próprio) | — | L (próprio) | L; F (decidir) |
-| `veiculos` | via função, se público | L/E | via função, se público | via função | L |
+| `veiculos` | via função, se público | L; INSERT/UPDATE/DELETE direto na própria linha, colunas da seção 3.1 | via função, se público | via função | L |
 | `inscricoes_pista` | — | F (inscrever, cancelar), L (próprias) | — | — | L; F (decidir) |
 | `decisoes_inscricao` | — | L (das próprias inscrições) | — | — | L |
 | `acoes_admin` | — | — | — | — | L |
@@ -176,6 +176,21 @@ Legenda: L = lê, E = escreve, F = só via função, — = nada.
 | originais de mídia | — | F (download com licença) | — | F (próprios) | — |
 | `pedidos_media`, `licencas` | — | F (criar), L (próprios) | — | L (vendas próprias) | L |
 | `lancamentos_repasse`, `repasses` | — | — | — | L (próprios) | L/E |
+
+### 3.1 Escrita do próprio usuário: o que é direto e o que é por função
+
+Regra: **campos sem regra de negócio são editados direto na tabela, protegidos por RLS na linha e por privilégio de coluna; campos com regra de negócio só mudam por função.** Nada é editável por anon.
+
+| Tabela | Mecanismo | Colunas que o usuário altera | Colunas que nunca aceitam UPDATE do usuário |
+|---|---|---|---|
+| `usuarios` | UPDATE direto, policy `id = auth.uid()` **e** `estado_cadastro = 'completo'`, com GRANT UPDATE só nessas colunas | `nome`, `nome_exibicao`, `preferencia`, `apresentacao`, `instagram`, `avatar_path` (policy exige caminho começando com o próprio uid), `telefone` | `id`, `handle`, `estado_cadastro`, `perfil_publico`, `aceite_termos_em`, `criado_em`; `atualizado_em` por trigger |
+| `usuarios` | função | `handle` via `definir_handle` (só quando nulo); `perfil_publico` via `definir_perfil_publico(bool)` (verifica estado completo e handle, grava em `acoes_usuario`) | — |
+| `veiculos` | INSERT/UPDATE/DELETE direto, policy `usuario_id = auth.uid()` e dono com `estado_cadastro = 'completo'`; `usuario_id` tem default `auth.uid()` e não aceita UPDATE | `marca`, `modelo`, `ano`, `apelido`, `descricao`, `foto_path` (policy exige caminho na própria pasta e no próprio veículo), `publico` | `id`, `usuario_id`, `criado_em`; `atualizado_em` por trigger |
+| tudo o mais (`capacidades`, `inscricoes_pista`, `decisoes_inscricao`, `pedidos_credencial_fotografo`, `acoes_admin`, bilheteria, mídia) | só função | — | todas |
+
+Sem UPDATE direto de `perfil_publico` porque a mudança é auditada e depende de estado; sem UPDATE de `handle` porque a troca tem política própria ainda não implementada.
+
+**Como se testa (suíte de banco, um caso por célula):** para cada coluna editável, UPDATE como dono passa e como outro usuário afeta zero linhas; para cada coluna protegida, UPDATE como dono falha com erro de privilégio (não 0 linhas silencioso); UPDATE de qualquer coluna com conta `handle_pendente` afeta zero linhas; `avatar_path` fora da própria pasta é recusado pela policy; INSERT em `veiculos` com `usuario_id` de outro é recusado; DELETE de veículo alheio afeta zero linhas; anon recebe erro em qualquer escrita nas duas tabelas; teste que lê `information_schema.column_privileges` e confere que `authenticated` tem UPDATE exatamente nas colunas listadas e nada mais.
 
 **Garantias explícitas:** ninguém aprova a própria inscrição (`decidir_inscricao` recusa `usuario_id = auth.uid()` mesmo para admin); ninguém concede capacidade a si mesmo (`conceder_capacidade` recusa alvo = chamador); revogar capacidade tem efeito imediato porque toda policy consulta `capacidades` com `revogada_em is null` na hora; portaria não lê a tabela de ingressos; fotógrafo só vê linhas com `fotografo_id = auth.uid()`.
 
@@ -442,7 +457,7 @@ Suíte de banco (mesmo modelo do NMI, contra Postgres real em desenvolvimento) e
 
 **Privilégios**
 - Toda função em `public` tem EXECUTE revogado de PUBLIC e anon; lista de exceções explícita e testada.
-- Nenhuma tabela de `usuarios`, `capacidades`, `veiculos`, `inscricoes_pista`, `pedidos*`, `ingressos`, `checkins`, `licencas`, `repasses` aceita INSERT/UPDATE/DELETE de anon ou authenticated.
+- Nenhuma tabela aceita INSERT/UPDATE/DELETE de anon. Para `authenticated`, escrita direta existe **só** em `usuarios` (UPDATE das colunas da seção 3.1, própria linha) e `veiculos` (própria linha); `capacidades`, `inscricoes_pista`, `decisoes_inscricao`, `pedidos*`, `ingressos`, `checkins`, `licencas`, `repasses` recusam qualquer escrita direta. Teste lê os privilégios de coluna e confere a lista exata.
 
 **Privacidade**
 - Anônimo e usuário comum não leem `usuarios` de terceiros; `perfil_publico` devolve nulo para perfil privado e exatamente a projeção para perfil público.
