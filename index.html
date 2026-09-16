@@ -23,8 +23,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:ital,wght@1,700;1,900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/cd.js"></script>
 </head>
 <body>
+<div class="barra-contagem" id="barraContagem" hidden></div>
 <header class="nav">
   <div class="wrap">
     <a class="marca" href="/">
@@ -94,6 +96,8 @@
   </div>
 </section>
 
+<div class="ticker-caixa" aria-hidden="true"><div class="ticker"><div class="faixa" id="faixa"></div></div></div>
+
 <section class="proximo">
   <div class="wrap">
     <div class="cabeca">
@@ -101,6 +105,21 @@
       <a href="/treinos/">Ver todos os treinos</a>
     </div>
     <div id="proximoTreino"><div class="evento" style="opacity:.6"><div class="data"><b>--</b><small>&nbsp;</small></div><div class="corpo"><h3>Carregando…</h3></div></div></div>
+  </div>
+</section>
+
+<section class="secao viver">
+  <div class="wrap">
+    <p class="eyebrow">Nos treinos</p>
+    <h2>O que você vai viver</h2>
+    <ul class="grade">
+      <li><span class="n">01</span><div><b>Pilotos locais na pista</b><p>A galera do drift carioca andando o dia todo, do treino de iniciação até a pista completa.</p></div></li>
+      <li><span class="n">02</span><div><b>Carona radical</b><p>Sente a adrenalina do banco do carona com um piloto de verdade. Capacete obrigatório.</p></div></li>
+      <li><span class="n">03</span><div><b>Zona de iniciação</b><p>Espaço ao lado do estacionamento pra quem está começando aprender sem pressão.</p></div></li>
+      <li><span class="n">04</span><div><b>Carros e cultura</b><p>Traz o seu carro, conhece os builds da cena e troca ideia com quem vive isso.</p></div></li>
+      <li><span class="n">05</span><div><b>Escolinha com o Fabinho</b><p>Quer aprender de verdade? Experiência de 2 horas ou curso completo em 8 módulos.</p></div></li>
+      <li><span class="n">06</span><div><b>Todos são bem-vindos</b><p>Família, amigos, quem só quer assistir. Ingressos no local, no dia.</p></div></li>
+    </ul>
   </div>
 </section>
 
@@ -136,9 +155,10 @@
 </section>
 </main>
 
-<script src="/assets/cd.js"></script>
 <script>
 (async () => {
+  const itens = ["Carioca Drift","Treinos abertos no RJ Race Park","Escolinha de Drift com Fabinho Drift Show","More than drift. It's a culture.","@cariocadrift_"];
+  document.getElementById('faixa').innerHTML = itens.map(t=>`<span>${t}</span>`).join('').repeat(4);
   const caixa = document.getElementById('proximoTreino');
   try {
     const todos = await CD.treinosPublicados();

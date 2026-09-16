@@ -37,13 +37,6 @@ nav: treinos
   .titulo .nome,.lead,.hero .acoes{animation:sobe .6s .15s ease both}
   @keyframes derrapa{from{transform:translateX(-40px) skewX(-12deg);opacity:0}to{transform:none;opacity:1}}
 }
-/* ===== TICKER ===== */
-.ticker-caixa{overflow:hidden;position:relative;z-index:2}
-.ticker{background:var(--faisca);color:var(--asfalto);overflow:hidden;white-space:nowrap;border-block:3px solid var(--asfalto);font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;text-transform:uppercase;letter-spacing:.02em;padding-block:8px;transform:rotate(-1.2deg) scale(1.02);margin-block:-6px 8px}
-.ticker .faixa{display:inline-flex;will-change:transform}
-.ticker span{padding-inline:22px}
-.ticker span::after{content:"◆";margin-left:44px;color:var(--fogo);font-style:normal;font-size:.55em;vertical-align:middle}
-@media (prefers-reduced-motion:no-preference){.ticker .faixa{animation:corre 40s linear infinite}@keyframes corre{to{transform:translateX(-50%)}}}
 /* ===== FICHA ===== */
 .ficha .cabeca{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
 .agenda{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--rotulo);font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--faisca);border-bottom:2px solid transparent;padding-bottom:2px}
@@ -101,6 +94,7 @@ footer{padding-bottom:110px}
 [hidden]{display:none!important}
 </style>
 
+<script>window.SEM_BARRA = true;</script>
 <main id="pagina">
   <div class="carregando wrap" id="carregando"><p class="eyebrow">Carregando treino…</p></div>
   <div class="nao-achado wrap" id="naoAchado" hidden>
@@ -114,7 +108,6 @@ footer{padding-bottom:110px}
 
 <div class="cta-fixa" id="ctaFixa" hidden><a class="btn btn-fogo" href="#confirmar">Confirmar presença</a></div>
 
-<script src="/assets/cd.js"></script>
 <script>
 (async () => {
   const { esc, paragrafos, rest, inicio, fim, hora, dataExtenso, dataCurta, foto } = CD;

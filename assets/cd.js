@@ -48,5 +48,28 @@ window.CD = (() => {
     return rest("treinos?select=*&publicado=eq.true&order=data.asc");
   }
 
+  // Barra fixa no topo com o próximo treino (todas as páginas, menos onde window.SEM_BARRA = true)
+  async function barraProximo(){
+    if (window.SEM_BARRA) return;
+    const el = document.getElementById('barraContagem'); if (!el) return;
+    try {
+      const todos = await treinosPublicados(); const agora = new Date();
+      const t = todos.find(x => fim(x) >= agora); if (!t) return;
+      const INICIO = inicio(t), FIM = fim(t);
+      el.innerHTML = `<a class="wrap" href="/treinos/${esc(t.slug)}/"><span class="bc-rotulo">Próximo treino</span><span class="bc-nome">${esc(t.titulo)} · ${esc(dataCurta(t.data))}</span><span class="bc-num" id="bcNum"></span><span class="bc-cta">Confirmar presença →</span></a>`;
+      el.hidden = false; document.documentElement.classList.add('com-barra');
+      const num = document.getElementById('bcNum');
+      (function tick(){
+        const agora = new Date();
+        if (agora >= FIM) { num.textContent = 'Encerrado'; return; }
+        if (agora >= INICIO) { num.textContent = 'Rolando agora'; return; }
+        let s = Math.floor((INICIO - agora)/1000); const d = Math.floor(s/86400); s -= d*86400; const h = Math.floor(s/3600); s -= h*3600; const m = Math.floor(s/60); s -= m*60;
+        num.innerHTML = `<b>${d}</b>d <b>${String(h).padStart(2,'0')}</b>h <b>${String(m).padStart(2,'0')}</b>m <b>${String(s).padStart(2,'0')}</b>s`;
+        setTimeout(tick, 1000 - (Date.now() % 1000));
+      })();
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', barraProximo); else barraProximo();
+
   return { SB_URL, SB_KEY, esc, paragrafos, rest, dataLocal, inicio, fim, hora, dataExtenso, dataCurta, mesDia, foto, cardTreino, treinosPublicados };
 })();
