@@ -69,6 +69,8 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
 
 /* ===== hero: vídeo (ou foto) ao fundo, marca + frase, grid de largada ===== */
 .hero .midia{position:relative;isolation:isolate;padding:56px 0 48px;overflow:hidden;min-height:520px;display:flex;align-items:flex-end}
+.hero .midia img.fundo{display:none}
+.hero.foto-hero .midia img.fundo{display:block}
 .hero .midia video,.hero .midia img.fundo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;z-index:-2}
 .hero .midia .veu{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,11,11,.5) 0%,rgba(11,11,11,.1) 35%,rgba(11,11,11,.75) 70%,var(--preto) 100%)}
 .hero .registro{position:absolute;right:var(--g);top:16px;font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(237,237,237,.75)}
@@ -109,7 +111,7 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;text-transfor
   .hero .data b{font-size:clamp(96px,14vw,200px)}
   .hero .evento .meta{font-size:16px}
 }
-@media (prefers-reduced-motion:reduce){.hero .midia video{display:none!important}}
+@media (prefers-reduced-motion:reduce){.hero .midia video{display:none!important}.hero .midia img.fundo{display:block}.hero .credito{display:block!important}}
 
 /* ===== ficha ===== */
 .ficha{background:var(--grafite);padding:64px 0}
@@ -215,9 +217,9 @@ footer .fim{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;p
 
 <section class="hero" id="hero">
   <div class="midia">
-    <video class="v-desk" autoplay muted loop playsinline preload="metadata" poster="../../../assets/fotos/foto-3129.jpg" aria-hidden="true"><source src="../../../assets/video/01-hero-noite-drift-23s-a-28s.mp4" type="video/mp4"></video>
+    <video class="v-desk" autoplay muted loop playsinline preload="metadata" poster="../../../assets/video/01-frame-hero.jpg" aria-hidden="true"><source src="../../../assets/video/01-hero-noite-drift-23s-a-28s.mp4" type="video/mp4"></video>
     <video class="v-mob" autoplay muted loop playsinline preload="metadata" poster="../../../assets/video/02-frame-mobile.jpg" aria-hidden="true"><source src="../../../assets/video/02-mobile-drone-17s-a-23s.mp4" type="video/mp4"></video>
-    <img class="fundo" id="fotoHero" src="../../../assets/fotos/foto-3129.jpg" alt="" hidden>
+    <img class="fundo" id="fotoHero" src="../../../assets/fotos/foto-3129.jpg" alt="">
     <div class="veu"></div>
     <span class="credito" id="creditoHero" hidden>Foto: Sergio Photos RJ</span>
     <span class="registro">Registro de treino anterior</span>
@@ -338,7 +340,7 @@ new IntersectionObserver(([e]) => { heroVisivel = e.isIntersecting || e.bounding
 new IntersectionObserver(([e]) => { rodapeVisivel = e.isIntersecting; atualiza(); }).observe(document.querySelector('footer'));
 // variantes de hero pra avaliação: ?hero=3129 ou ?hero=3126 trocam o vídeo pela foto
 const q = new URLSearchParams(location.search).get('hero');
-if (q) { const h = document.getElementById('hero'); h.classList.add('foto-hero'); const f = document.getElementById('fotoHero'); f.src = `../../../assets/fotos/foto-${q}.jpg`; f.hidden = false; document.getElementById('creditoHero').hidden = false; }
+if (q) { const h = document.getElementById('hero'); h.classList.add('foto-hero'); const f = document.getElementById('fotoHero'); f.src = `../../../assets/fotos/foto-${q}.jpg`; document.getElementById('creditoHero').hidden = false; }
 </script>
 </body>
 </html>
